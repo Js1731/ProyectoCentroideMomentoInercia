@@ -1,7 +1,6 @@
 package PryMecanica;
 import javax.swing.JFrame;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 public class Main {
@@ -41,3 +40,4 @@ public class Main {
         
     }
 }
+

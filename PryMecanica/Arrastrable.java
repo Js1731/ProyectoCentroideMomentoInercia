@@ -6,11 +6,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-public class PnArrastrable extends JPanel implements MouseInputListener{
+/**
+ * Controlador que permite que un panel se pueda arrastrar
+ */
+public class Arrastrable extends JPanel implements MouseInputListener{
 
     protected Point PtOffset = new Point(0,0);
 
-    public PnArrastrable(){
+    public Arrastrable(){
         setBounds(10, 10, 50, 50);
         
         addMouseListener(this);

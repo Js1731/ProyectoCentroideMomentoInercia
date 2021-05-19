@@ -2,9 +2,9 @@ package PryMecanica.Formas;
 
 import java.awt.Color;
 
-import PryMecanica.PnArrastrable;
+import PryMecanica.Arrastrable;
 
-public class Pin extends PnArrastrable {
+public class Pin extends Arrastrable {
     public Forma Fr;
 
     public Pin(Forma fr, int x, int y){

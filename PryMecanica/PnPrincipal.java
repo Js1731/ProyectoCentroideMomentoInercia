@@ -19,7 +19,7 @@ public class PnPrincipal extends JLayeredPane{
         PnPrinc = this;
 
         add(new FrRect(10,10,50,50));
-        add(new FrCirc(70,10));
+        add(new FrCirc(70,10,50));
         add(new FrTria(120,10));
         
         JButton BtRect = new JButton("Rect");

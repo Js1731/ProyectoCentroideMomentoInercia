@@ -11,6 +11,7 @@ import javax.swing.event.MouseInputListener;
  */
 public class Arrastrable extends JPanel implements MouseInputListener{
 
+    /**Distancia entre la esquina superior izquierda del componente al punto en el que el mouse esta arrastrando */
     protected Point PtOffset = new Point(0,0);
 
     public Arrastrable(){

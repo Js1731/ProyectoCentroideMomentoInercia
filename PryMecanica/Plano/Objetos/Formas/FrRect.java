@@ -1,4 +1,4 @@
-package PryMecanica.Formas;
+package PryMecanica.Plano.Objetos.Formas;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,13 +7,17 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 
 import PryMecanica.PnPrincipal;
+import PryMecanica.Plano.Objetos.Pin;
 
 /**
  * Rectangulo al que se le puede editar su ancho y altura
  */
 public class FrRect extends Forma{
+    
     public int Ancho = 50;
     public int Alto = 50;
+
+
 
     /**
      * Crea un rectangulo de 50x50 en el origen {@code (0, 0)}
@@ -35,7 +39,7 @@ public class FrRect extends Forma{
 
         Pines = new Pin[4];
 
-        setBounds(x, y, Ancho, Alto);
+        setBounds(PnPrincipal.PnPrinc.getX() + x, PnPrincipal.PnPrinc.getY() + y, Ancho, Alto);
         setBackground(Color.DARK_GRAY);
     }
 
@@ -43,17 +47,17 @@ public class FrRect extends Forma{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(new Color(200,200,200,50));
+        int x = Math.round(centroideX());
+        int y = Math.round(centroideY());
 
-        g.fillRect(0, 0, 100, 70);
+        g.setColor(Color.RED);
 
-        g.setColor(Color.WHITE);
-
-        g.drawString(getX() + ", " + getY(),10, 20);
-        g.drawString("Ancho " + Ancho, 10, 40);
-        g.drawString("Alto " + Alto, 10, 50);
+        g.fillOval(x-3,y-3,6,6);
     }
 
+
+
+    @Override
     public void ActualizarPines(){
         if(Pines[0] != null){
             Pines[0].setLocation(getX() - 15, getY() -15);
@@ -67,6 +71,29 @@ public class FrRect extends Forma{
             Alto = getHeight();
         }
     }
+
+    @Override
+    public void ActualizarCoordenadas() {
+        X = Math.round(getX() - PnPrincipal.PtOrigen.x);
+        Y = Math.round(getY() - PnPrincipal.PtOrigen.y);
+    }
+
+    @Override
+    public float calcularArea() {
+        return Ancho*Alto;
+    }
+
+    @Override
+    public float centroideX() {
+        return Ancho/2;
+    }
+
+    @Override
+    public float centroideY() {
+        return Alto/2;
+    }
+
+
 
     @Override
     public void mousePressed(MouseEvent e) {

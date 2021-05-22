@@ -1,8 +1,9 @@
-package PryMecanica.Formas;
+package PryMecanica.Plano.Objetos.Formas;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
 
@@ -11,14 +12,18 @@ import javax.swing.SwingUtilities;
 
 import PryMecanica.Main;
 import PryMecanica.PnPrincipal;
+import PryMecanica.Plano.Punto;
+import PryMecanica.Plano.Objetos.Pin;
 
 /**
  * Circulo que con diametro deformable y que se puede moficiar el arco
  */
 public class FrCirc extends Forma{
+
     public Arc2D.Double Sector;
 
     public int Diametro = 50;
+
 
 
     /**
@@ -37,9 +42,11 @@ public class FrCirc extends Forma{
         setOpaque(false);
         Pines = new Pin[3];
         Diametro = dia;
-        setBounds(X, Y, Diametro, Diametro);
+        setBounds(PnPrincipal.PnPrinc.getX() + X, PnPrincipal.PnPrinc.getY() +  Y, Diametro, Diametro);
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), 90, 360, Arc2D.PIE);
     }
+    
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -48,7 +55,16 @@ public class FrCirc extends Forma{
         Graphics2D G2 = (Graphics2D)g;
 
         G2.fill(Sector);
+
+        int x = Math.round(centroideX());
+        int y = Math.round(centroideY());
+
+        g.setColor(Color.RED);
+
+        g.fillOval(getWidth()/2 + x-3,getHeight()/2 + y-3,6,6);
     }
+
+
 
     @Override
     public void ActualizarPines() {
@@ -77,8 +93,81 @@ public class FrCirc extends Forma{
         PinY = getY() + getHeight()/2 + Math.round((float)((Diametro/5)*Math.sin(Math.toRadians(-Sector.start))));
 
         Pines[2].setLocation(PinX, PinY);
-        
     }
+
+    @Override
+    public void ActualizarCoordenadas() {
+        X = Math.round(getX() + getWidth()/2 - PnPrincipal.PtOrigen.x);
+        Y = Math.round(getY() + getHeight()/2 - PnPrincipal.PtOrigen.y);
+    }
+
+    @Override
+    public float calcularArea() {
+        return (float)(Diametro*Diametro*Math.toRadians(Sector.extent))/8;
+    }
+
+    private float areaSector(float r, float a){
+        return (float)(r*r*Math.toRadians(a))/2;
+    }
+
+    private float distSect(float r, float a){
+        float Dist = (float)(4*r*Math.pow(Math.sin(a/2),3))/(float)(3*(a - Math.sin(a))) - r*(float)Math.cos(a/2);
+        
+        return Dist;
+    }
+
+
+    @Override
+    public float centroideX() {
+        //BUSCAR RADIO DEL CENTROIDE
+        float Radio = Diametro/2;
+        float Ang = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180));
+        float AngSec = (float)Math.toRadians(Main.clamp(((float)Sector.extent - 180), 0, 180)/2);
+
+        //DISTANCIA DE SECTOR PRINCIPAL
+        float distSectPrinc = distSect(Radio, Ang);
+
+        //DISTANCIAS DE SECTORES SECUNDARIOS
+        float distSectSec = distSect(Radio, AngSec);
+
+        float CentXP = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start)) * distSectPrinc;
+        float CentXS1 = (float)Math.cos(Math.toRadians(Sector.start + 90) - AngSec/2) * distSectSec;
+        float CentXS2 = (float)Math.cos(Math.toRadians(Sector.start - 90) + AngSec/2) * distSectSec;
+
+        float AreaP = areaSector(Radio, Ang);
+        float AreaS = areaSector(Radio, AngSec);
+
+        float SumaAreaPorX = CentXP*AreaP + CentXS1*AreaS + CentXS2*AreaS;
+        
+        return SumaAreaPorX/(AreaP + AreaS);
+    }
+
+    @Override
+    public float centroideY() {
+        //BUSCAR RADIO DEL CENTROIDE
+        float Radio = Diametro/2;
+        float Ang = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180));
+        float AngSec = (float)Math.toRadians(Main.clamp(((float)Sector.extent - 180), 0, 180)/2);
+
+        //DISTANCIA DE SECTOR PRINCIPAL
+        float distSectPrinc = distSect(Radio, Ang);
+
+        //DISTANCIAS DE SECTORES SECUNDARIOS
+        float distSectSec = distSect(Radio, AngSec);
+
+        float CentXP = -(float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start)) * distSectPrinc;
+        float CentXS1 = -(float)Math.sin(Math.toRadians(Sector.start + 90) - AngSec/2) * distSectSec;
+        float CentXS2 = -(float)Math.sin(Math.toRadians(Sector.start - 90) + AngSec/2) * distSectSec;
+
+        float AreaP = areaSector(Radio, Ang);
+        float AreaS = areaSector(Radio, AngSec);
+
+        float SumaAreaPorX = CentXP*AreaP + CentXS1*AreaS + CentXS2*AreaS;
+        
+        return SumaAreaPorX/(AreaP + 2*AreaS);
+    }
+
+
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -100,6 +189,9 @@ public class FrCirc extends Forma{
                     setBounds(Pos.x - PtOffset.x, Fr.getY() + Diametro/2, getWidth(), getHeight());
                     
                     Diametro = (Fr.getWidth() + getX()) - (Fr.getX() + Fr.getWidth());
+                    
+                    if(Fr.Grp != null)
+                        Fr.Grp.ActualizarBordes();
                     ActualizarPines();
                 }
             };

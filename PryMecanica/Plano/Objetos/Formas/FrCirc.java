@@ -30,20 +30,22 @@ public class FrCirc extends Forma{
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
      */
     public FrCirc(){
-        this(0, 0, 50);
+        this(0, 0, 50, 90, 360);
     }
 
     /**
      * Crea un circulo definiendo el diametro y la posicion de la esquina superior izquierda
      * @param X
      * @param Y
+     * @param AngIni Angulo inicial del sector
+     * @param Ext Angulo del sector
      */
-    public FrCirc(int X, int Y, int dia){
+    public FrCirc(float X, float Y, float dia, int AngIni, int Ext){
         setOpaque(false);
         Pines = new Pin[3];
-        Diametro = dia;
-        setBounds(PnPrincipal.PnPrinc.getX() + X, PnPrincipal.PnPrinc.getY() +  Y, Diametro, Diametro);
-        Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), 90, 360, Arc2D.PIE);
+        Diametro = Math.round(dia*Escala);
+        setBounds(Math.round(PnPrincipal.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPrincipal.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
+        Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
     }
     
 
@@ -107,64 +109,74 @@ public class FrCirc extends Forma{
     }
 
     private float areaSector(float r, float a){
-        return (float)(r*r*Math.toRadians(a))/2;
+        return r*r*a;
     }
 
     private float distSect(float r, float a){
-        float Dist = (float)(4*r*Math.pow(Math.sin(a/2),3))/(float)(3*(a - Math.sin(a))) - r*(float)Math.cos(a/2);
-        
-        return Dist;
+        if(a != 0)
+            return (float)(2*r*Math.sin(a))/(3*a);
+        else
+            return 0;
     }
 
 
     @Override
     public float centroideX() {
-        //BUSCAR RADIO DEL CENTROIDE
+
         float Radio = Diametro/2;
-        float Ang = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180));
-        float AngSec = (float)Math.toRadians(Main.clamp(((float)Sector.extent - 180), 0, 180)/2);
 
-        //DISTANCIA DE SECTOR PRINCIPAL
-        float distSectPrinc = distSect(Radio, Ang);
+        //ANGULO a DEL SECTOR PRINCIPAL
+        float a = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180)/2);
+        //ANGULO a DEL SECTOR SECUNDARIO
+        float a2 = (float)Math.toRadians(Main.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
 
-        //DISTANCIAS DE SECTORES SECUNDARIOS
-        float distSectSec = distSect(Radio, AngSec);
+        float DistP = distSect(Radio, a);
+        float DistS = distSect(Radio, a2);
 
-        float CentXP = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start)) * distSectPrinc;
-        float CentXS1 = (float)Math.cos(Math.toRadians(Sector.start + 90) - AngSec/2) * distSectSec;
-        float CentXS2 = (float)Math.cos(Math.toRadians(Sector.start - 90) + AngSec/2) * distSectSec;
+        float xP = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start)) * DistP;
+        float xS1 = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start) - Math.PI/2 - a2) * DistS;
+        float xS2 = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start) + Math.PI/2 + a2) * DistS;
 
-        float AreaP = areaSector(Radio, Ang);
-        float AreaS = areaSector(Radio, AngSec);
+        float AreaP = areaSector(Radio, a);
+        float AreaS = areaSector(Radio, a2);
 
-        float SumaAreaPorX = CentXP*AreaP + CentXS1*AreaS + CentXS2*AreaS;
-        
-        return SumaAreaPorX/(AreaP + AreaS);
+        float Axp = AreaP*xP;
+        float AxS1 = AreaS*xS1;
+        float AxS2 = AreaS*xS2;
+
+        float SumaAreas = AreaP + 2*AreaS;
+        float SumaAreasPorX = Axp + AxS1 + AxS2;
+
+        return SumaAreasPorX/SumaAreas;
     }
 
     @Override
     public float centroideY() {
-        //BUSCAR RADIO DEL CENTROIDE
         float Radio = Diametro/2;
-        float Ang = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180));
-        float AngSec = (float)Math.toRadians(Main.clamp(((float)Sector.extent - 180), 0, 180)/2);
 
-        //DISTANCIA DE SECTOR PRINCIPAL
-        float distSectPrinc = distSect(Radio, Ang);
+        //ANGULO a DEL SECTOR PRINCIPAL
+        float a = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180)/2);
+        //ANGULO a DEL SECTOR SECUNDARIO
+        float a2 = (float)Math.toRadians(Main.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
 
-        //DISTANCIAS DE SECTORES SECUNDARIOS
-        float distSectSec = distSect(Radio, AngSec);
+        float DistP = distSect(Radio, a);
+        float DistS = distSect(Radio, a2);
 
-        float CentXP = -(float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start)) * distSectPrinc;
-        float CentXS1 = -(float)Math.sin(Math.toRadians(Sector.start + 90) - AngSec/2) * distSectSec;
-        float CentXS2 = -(float)Math.sin(Math.toRadians(Sector.start - 90) + AngSec/2) * distSectSec;
+        float yP = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start)) * DistP;
+        float yS1 = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start) - Math.PI/2 - a2) * DistS;
+        float yS2 = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start) + Math.PI/2 + a2) * DistS;
 
-        float AreaP = areaSector(Radio, Ang);
-        float AreaS = areaSector(Radio, AngSec);
+        float AreaP = areaSector(Radio, a);
+        float AreaS = areaSector(Radio, a2);
 
-        float SumaAreaPorX = CentXP*AreaP + CentXS1*AreaS + CentXS2*AreaS;
-        
-        return SumaAreaPorX/(AreaP + 2*AreaS);
+        float Ayp = AreaP*yP;
+        float AyS1 = AreaS*yS1;
+        float AyS2 = AreaS*yS2;
+
+        float SumaAreas = AreaP + 2*AreaS;
+        float SumaAreasPorX = Ayp + AyS1 + AyS2;
+
+        return -SumaAreasPorX/SumaAreas;
     }
 
 

@@ -23,7 +23,7 @@ public class PnPrincipal extends JLayeredPane implements MouseInputListener{
     public static PnPrincipal PnPrinc;
 
     public static Punto Escala = new Punto(1,1);
-    public static Punto PtOrigen = new Punto(0,0);
+    public static Punto PtOrigen = new Punto(500,500);
 
     Punto PtInicioSel = new Punto();
     Punto PtFinSel = new Punto();
@@ -46,13 +46,13 @@ public class PnPrincipal extends JLayeredPane implements MouseInputListener{
 
         PnPrinc = this;
 
-        Forma R = new FrRect(10,10,50,50);
-        Forma T = new FrCirc(70,10,50);
-        Forma C = new FrTria(120,10);
+        Forma R = new FrRect(2.20f,-6.36f,5.96f,6.36f);
+        Forma C = new FrCirc(5.96f,-6.36f,4.40f,270,180);
+        Forma T = new FrTria(0,-6.36f,0,6.36f,2.20f,0,2.20f,6.36f);
 
         add(R, JLayeredPane.DRAG_LAYER);
-        add(T, JLayeredPane.DRAG_LAYER);
-        add(C, JLayeredPane.DRAG_LAYER);     
+        add(C, JLayeredPane.DRAG_LAYER);
+        add(T, JLayeredPane.DRAG_LAYER);     
 
         add(new Origen());
     }
@@ -77,10 +77,26 @@ public class PnPrincipal extends JLayeredPane implements MouseInputListener{
 
         if(Arrastrando){
             g.setColor(ColSel);
-            g.fillRect(Math.round(PtInicioSel.x), 
-                       Math.round(PtInicioSel.y),
-                       Math.round( PtFinSel.x - PtInicioSel.x),
-                       Math.round( PtFinSel.y - PtInicioSel.y));
+
+            float xIni = PtInicioSel.x;
+            float xFin = PtFinSel.x;
+            float yIni = PtInicioSel.y;
+            float yFin = PtFinSel.y;
+    
+            if(PtInicioSel.y > PtFinSel.y){
+                yIni = PtFinSel.y;
+                yFin = PtInicioSel.y;
+            }
+    
+            if(PtInicioSel.x > PtFinSel.x){
+                xIni = PtFinSel.x;
+                xFin = PtInicioSel.x;
+            }
+
+            g.fillRect(Math.round(xIni), 
+                       Math.round(yIni),
+                       Math.round((float)Math.abs(xFin - xIni)),
+                       Math.round((float)Math.abs(yFin- yIni)));
         }
 
     }

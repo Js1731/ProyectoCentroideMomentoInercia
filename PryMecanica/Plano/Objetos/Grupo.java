@@ -43,19 +43,21 @@ public class Grupo extends Objeto2D{
         for (Forma forma : LstForma) {
             float Area = forma.calcularArea();
             SumaAreas += Area;
+
             float CentX = forma.X + forma.centroideX();
-            float CentY = forma.X + forma.centroideX();
+            float CentY = forma.Y + forma.centroideY();
 
             SumaAreasPorX += CentX*Area;
             SumaAreasPorY += CentY*Area;
         }
 
-        int x = Math.round(SumaAreasPorX/SumaAreas);
-        int y = Math.round(SumaAreasPorY/SumaAreas);
+        int x = Math.round(PnPrincipal.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        int y = Math.round(PnPrincipal.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
 
         g.setColor(Color.GREEN);
 
         g.fillOval(x-3,y-3,6,6);
+        g.drawString((PnPrincipal.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas)/Escala + ", " + (PnPrincipal.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas)/Escala,x-3,y-3);
     }
 
     public void agregarForma(Forma Fr){

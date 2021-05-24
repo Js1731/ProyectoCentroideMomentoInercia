@@ -13,7 +13,7 @@ import PryMecanica.Plano.Objetos.Formas.FrTria;
 public class Origen extends Arrastrable{
     public Origen(){
         setBackground(Color.RED);
-        setBounds(0, 0, 10, 10);
+        setBounds(Math.round(PnPrincipal.PtOrigen.x), Math.round(PnPrincipal.PtOrigen.y), 10, 10);
     }
 
     @Override

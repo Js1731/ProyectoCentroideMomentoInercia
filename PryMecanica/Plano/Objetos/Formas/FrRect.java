@@ -33,13 +33,13 @@ public class FrRect extends Forma{
      * @param an Ancho
      * @param al Alto
      */
-    public FrRect(int x, int y, int an, int al){
-        Ancho = an;
-        Alto = al;
+    public FrRect(float x, float y, float an, float al){
+        Ancho = Math.round(an*Escala);
+        Alto = Math.round(al*Escala);
 
         Pines = new Pin[4];
 
-        setBounds(PnPrincipal.PnPrinc.getX() + x, PnPrincipal.PnPrinc.getY() + y, Ancho, Alto);
+        setBounds(Math.round(PnPrincipal.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPrincipal.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);
         setBackground(Color.DARK_GRAY);
     }
 
@@ -103,10 +103,12 @@ public class FrRect extends Forma{
         if(Pines[0] == null){
 
             //REDIM ESQUINA SUPERIOR IZQUIERDA
-            Pines[0] = new Pin(this, getX() - 15, getY() -15){
+            Pines[0] = new Pin(this, getX() - 15, getY()){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
+
+                    setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
 
                     int DifX = getX() + 15 - Fr.getX();
                     int DifY = getY() + 15 - Fr.getY();
@@ -122,6 +124,8 @@ public class FrRect extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
+
                     int DifX = getX() + 15 - Fr.getX();
                     int DifY = (getY() - 15) - (Fr.getY() + Fr.getHeight());
                     
@@ -136,6 +140,8 @@ public class FrRect extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
+
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());
                     int DifY = getY() + 15 - Fr.getY();
                     
@@ -149,6 +155,8 @@ public class FrRect extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
+
+                    setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
 
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());
                     int DifY = (getY() - 15) - (Fr.getY() + Fr.getHeight());

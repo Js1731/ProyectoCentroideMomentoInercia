@@ -31,24 +31,32 @@ public class FrTria extends Forma{
      * Crea un tringulo en el origen de 50x50
      */
     public FrTria(){
-        this(0,0);
+        this(0,0,0,50,25,0,50,50);
     }
 
     /**
      * Crea un tringulo en las coordenadas especificadas
+     * @param X X del panel que contiene a la figura
+     * @param Y Y del panel que contiene a la figura
+     * @param x1 X del Vertice 1 local al panel
+     * @param y1 Y del Vertice 1 local al panel
+     * @param x2 X del Vertice 2 local al panel
+     * @param y2 Y del Vertice 2 local al panel
+     * @param x3 X del Vertice 3 local al panel
+     * @param y3 Y del Vertice 3 local al panel
      */
-    public FrTria(int X, int Y){
+    public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3){
 
         Pines = new Pin[3];
 
-        Ver1.x = PnPrincipal.PnPrinc.getX() + X;
-        Ver1.y = PnPrincipal.PnPrinc.getY() + Y + 50;
+        Ver1.x = Math.round(PnPrincipal.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);
+        Ver1.y = Math.round(PnPrincipal.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y1*Escala);
 
-        Ver2.x = PnPrincipal.PnPrinc.getX() + X + 25;
-        Ver2.y = PnPrincipal.PnPrinc.getY() + Y;
+        Ver2.x = Math.round(PnPrincipal.PtOrigen.x) + Math.round(X*Escala) + Math.round(x2*Escala);
+        Ver2.y = Math.round(PnPrincipal.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y2*Escala);
 
-        Ver3.x = PnPrincipal.PnPrinc.getX() + X + 50;
-        Ver3.y = PnPrincipal.PnPrinc.getY() + Y + 50;
+        Ver3.x = Math.round(PnPrincipal.PtOrigen.x) + Math.round(X*Escala) + Math.round(x3*Escala);
+        Ver3.y = Math.round(PnPrincipal.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y3*Escala);
 
         setOpaque(false);
         ActualizarBordes();
@@ -157,6 +165,8 @@ public class FrTria extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+
                     Ver1.x = getX();
                     Ver1.y = getY();
 
@@ -170,6 +180,8 @@ public class FrTria extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+
                     Ver2.x = getX();
                     Ver2.y = getY();
 
@@ -182,6 +194,8 @@ public class FrTria extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
+
+                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
 
                     Ver3.x = getX();
                     Ver3.y = getY();
@@ -227,7 +241,28 @@ public class FrTria extends Forma{
         
         if(Grp != null)
             Grp.ActualizarBordes();
+        
+        Point PtPrev = getLocation();
 
+        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
+                    snap(getY() + getHeight(), SnapYs) - getHeight());
+
+        //DISTANCIA ENTRE POSICION INICIAL Y FINAL
+        DifX = getX() - PtPrev.x;
+        DifY = getY() - PtPrev.y;
+
+        //ACTUALIZAR VERTICES
+        Ver1.x += DifX;
+        Ver1.y += DifY;
+
+        Ver2.x += DifX;
+        Ver2.y += DifY;
+
+        Ver3.x += DifX;
+        Ver3.y += DifY;
+
+        ActualizarPines();
         
     }
 }

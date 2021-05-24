@@ -1,6 +1,8 @@
 package PryMecanica.Plano.Objetos.Formas;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import PryMecanica.PnPrincipal;
 import PryMecanica.Plano.Objetos.Grupo;
@@ -17,10 +19,12 @@ public abstract class Forma extends Objeto2D{
     /**Conjunto de pines para deformar esta forma */
     public Pin[] Pines;
 
-
+    public ArrayList<Integer> SnapXs = new ArrayList<Integer>(); 
+    public ArrayList<Integer> SnapYs = new ArrayList<Integer>(); 
 
     public Forma(){
         PnPrincipal.PnPrinc.LstObjetos.add(this);
+        setBackground(Color.LIGHT_GRAY);
     }
 
 
@@ -52,6 +56,15 @@ public abstract class Forma extends Objeto2D{
         }
     }
 
+    public int snap(int c, ArrayList<Integer> lst){
+        for (int snap : lst) {
+            if(Math.abs(c - snap) < 30){
+                return snap;
+            }
+        }
+        return c;
+    }
+
 
     
     @Override
@@ -68,6 +81,19 @@ public abstract class Forma extends Objeto2D{
 
         if(PnPrincipal.PnPrinc.FrSel != this)
             PnPrincipal.PnPrinc.SelForma(this);
+
+        //BUSCAR X PARA AJUSTARSE
+        SnapXs.removeAll(SnapXs);
+        SnapYs.removeAll(SnapYs);
+        for (Objeto2D obj : PnPrincipal.PnPrinc.LstObjetos) {
+            if(obj != this){
+                SnapXs.add(obj.getX());
+                SnapXs.add(obj.getX() + obj.getWidth());
+
+                SnapYs.add(obj.getY());
+                SnapYs.add(obj.getY() + obj.getHeight());
+            }
+        }
     }
 
     @Override
@@ -77,5 +103,9 @@ public abstract class Forma extends Objeto2D{
         if(Grp != null)
             Grp.ActualizarBordes();
         ActualizarCoordenadas();
+
+        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
+                    snap(getY() + getHeight(), SnapYs) - getHeight());
     }
 }

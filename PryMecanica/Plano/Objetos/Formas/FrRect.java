@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 
 import PryMecanica.PnPlano;
-import PryMecanica.GUI.PnPrincipal;
 import PryMecanica.Plano.Objetos.Pin;
 
 /**
@@ -66,7 +65,7 @@ public class FrRect extends Forma{
             Pines[2].setLocation(getX() + getWidth() + 15, getY() - 15);
             Pines[3].setLocation(getX() + getWidth() + 15, getY() + getHeight() + 15);
 
-            PnPlano.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
 
             Ancho = getWidth();
             Alto = getHeight();
@@ -99,8 +98,6 @@ public class FrRect extends Forma{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-
-        PnPrincipal.PanelPrinc.PnPropiedades.PR.cambiarRectangulo(this);
 
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){
@@ -171,11 +168,11 @@ public class FrRect extends Forma{
 
             //AGREGAR PINES AL PANEL PRINCIPAL
             for (Pin pin : Pines) {
-                PnPlano.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPlano.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PlPrinc.moveToFront(pin);
             }
 
-            PnPlano.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 
@@ -183,8 +180,6 @@ public class FrRect extends Forma{
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
 
-        
-        PnPrincipal.PanelPrinc.PnPropiedades.PR.actualizarDatos();
         ActualizarPines();
     }
 }

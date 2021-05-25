@@ -48,7 +48,7 @@ public abstract class Objeto2D extends Arrastrable{
         SnapXs.add(Math.round(PnPlano.PtOrigen.x));
         SnapYs.add(Math.round(PnPlano.PtOrigen.y));
 
-        for (Objeto2D obj : PnPlano.PnPrinc.LstObjetos) {
+        for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
             if(obj != this){
                 SnapXs.add(obj.getX());
                 SnapXs.add(obj.getX() + obj.getWidth());

@@ -19,8 +19,6 @@ public class PnPrincipal extends JPanel{
 
     public static PnPrincipal PanelPrinc;
 
-    public PnPropiedades PnPropiedades = new PnPropiedades();
-
     public PnPrincipal(){
 
         PanelPrinc = this;
@@ -69,11 +67,8 @@ public class PnPrincipal extends JPanel{
         Ly.putConstraint(SpringLayout.WEST, PrimerPlano, 0, SpringLayout.WEST, this);
         Ly.putConstraint(SpringLayout.NORTH, PrimerPlano, 0, SpringLayout.SOUTH, PnBarraSup);
         Ly.putConstraint(SpringLayout.SOUTH, PrimerPlano, 0, SpringLayout.SOUTH, this);
-        Ly.putConstraint(SpringLayout.EAST, PrimerPlano, 0, SpringLayout.WEST, PnPropiedades);
+        Ly.putConstraint(SpringLayout.EAST, PrimerPlano, 0, SpringLayout.EAST, this);
         
-        Ly.putConstraint(SpringLayout.EAST, PnPropiedades, 0, SpringLayout.EAST, this);
-        Ly.putConstraint(SpringLayout.NORTH, PnPropiedades, 0, SpringLayout.SOUTH, PnBarraSup);
-        Ly.putConstraint(SpringLayout.SOUTH, PnPropiedades, 0, SpringLayout.SOUTH, this);
         
         Ly.putConstraint(SpringLayout.NORTH, PnBarraSup, 0, SpringLayout.NORTH, this);
         Ly.putConstraint(SpringLayout.WEST, PnBarraSup, 0, SpringLayout.WEST, this);
@@ -82,6 +77,5 @@ public class PnPrincipal extends JPanel{
 
         add(PnBarraSup);
         add(PrimerPlano);
-        add(PnPropiedades);
     }
 }

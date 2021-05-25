@@ -70,19 +70,19 @@ public class FrTria extends Forma{
 
         //VERTICE 1
         Point TmpVer1 = new Point(Math.round(Ver1.x), Math.round(Ver1.y));
-        SwingUtilities.convertPoint(PnPlano.PnPrinc, TmpVer1, this);
+        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer1, this);
         
         Poligono.addPoint(TmpVer1.x - getX(), TmpVer1.y - getY());
         
         //VERTICE 2
         Point TmpVer2 = new Point(Math.round(Ver2.x), Math.round(Ver2.y));
-        SwingUtilities.convertPoint(PnPlano.PnPrinc, TmpVer2, this);
+        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer2, this);
         
         Poligono.addPoint(TmpVer2.x - getX(), TmpVer2.y - getY());
         
         //VERTICE 3
         Point TmpVer3 = new Point(Math.round(Ver3.x), Math.round(Ver3.y));
-        SwingUtilities.convertPoint(PnPlano.PnPrinc, TmpVer3, this);
+        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer3, this);
         
         Poligono.addPoint(TmpVer3.x - getX(), TmpVer3.y - getY());
 
@@ -219,20 +219,20 @@ public class FrTria extends Forma{
 
             //AGREGAR PINES AL PANEL PRINCIPAL
             for (Pin pin : Pines) {
-                PnPlano.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPlano.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PlPrinc.moveToFront(pin);
             }
 
             ActualizarPines();
 
-            PnPlano.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         int DifX = Pos.x - (PtOffset.x + getX());

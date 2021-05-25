@@ -84,8 +84,8 @@ public class Grupo extends Objeto2D{
         ActualizarBordes();
 
         if(LstForma.size() == 0){
-            PnPlano.PnPrinc.LstObjetos.remove(this);
-            PnPlano.PnPrinc.remove(this);
+            PnPlano.PlPrinc.LstObjetos.remove(this);
+            PnPlano.PlPrinc.remove(this);
         }
     }
 
@@ -97,8 +97,8 @@ public class Grupo extends Objeto2D{
 
     public void eliminarGrupo(){
         vaciarGrupo();
-        PnPlano.PnPrinc.LstObjetos.remove(this);
-        PnPlano.PnPrinc.remove(this);
+        PnPlano.PlPrinc.LstObjetos.remove(this);
+        PnPlano.PlPrinc.remove(this);
     }
 
     /**Acualiza las dimensiones del panel del grupo */
@@ -174,7 +174,7 @@ public class Grupo extends Objeto2D{
 
         if(e.getClickCount() > 1){
             MoviendoFormas = true;
-            PnPlano.PnPrinc.moveToBack(this);
+            PnPlano.PlPrinc.moveToBack(this);
         }
 
         if(SwingUtilities.isRightMouseButton(e)){
@@ -190,18 +190,18 @@ public class Grupo extends Objeto2D{
                         Gp.eliminarGrupo();
                     }
 
-                    PnPlano.PnPrinc.remove(Lo);
+                    PnPlano.PlPrinc.remove(Lo);
                 }
             };
             Lo.agregarOpcion(Agrupar);
 
-            PnPlano.PnPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
-            PnPlano.PnPrinc.moveToFront(Lo);
+            PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
+            PnPlano.PlPrinc.moveToFront(Lo);
             Lo.repaint();
         }
 
         //DESELECCIONAR FIGURA ACTUAL
-        PnPlano.PnPrinc.SelForma(null);
+        PnPlano.PlPrinc.SelForma(null);
 
         //BUSCAR X PARA AJUSTARSE
         SnapXs.removeAll(SnapXs);
@@ -210,7 +210,7 @@ public class Grupo extends Objeto2D{
         SnapXs.add(Math.round(PnPlano.PtOrigen.x));
         SnapYs.add(Math.round(PnPlano.PtOrigen.y));
 
-        for (Objeto2D obj : PnPlano.PnPrinc.LstObjetos) {
+        for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
             if(obj != this && !LstForma.contains(obj)){
                 SnapXs.add(obj.getX());
                 SnapXs.add(obj.getX() + obj.getWidth());
@@ -225,7 +225,7 @@ public class Grupo extends Objeto2D{
     public void mouseDragged(MouseEvent e) {
         //ARRASTRAR OBJETO
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         int DifX = Pos.x - (PtOffset.x + getX());
@@ -251,6 +251,6 @@ public class Grupo extends Objeto2D{
         moverFormas(DifX, DifY);
         
         ActualizarCoordenadas();
-        PnPlano.PnPrinc.repaint();
+        PnPlano.PlPrinc.repaint();
     }
 }

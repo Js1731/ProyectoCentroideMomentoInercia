@@ -196,7 +196,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
             
                     setBounds(Pos.x - PtOffset.x, Fr.getY() + Diametro/2, getWidth(), getHeight());
                     
@@ -215,7 +215,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -256,7 +256,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -288,8 +288,8 @@ public class FrCirc extends Forma{
 
             //AGREGAR PINES
             for (Pin pin : Pines) {
-                PnPlano.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPlano.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PlPrinc.moveToFront(pin);
             }
 
             ActualizarPines();

@@ -10,19 +10,18 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
+import PryMecanica.GUI.ArbolObjetos;
 import PryMecanica.GUI.ListaOpciones;
 import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Grupo;
 import PryMecanica.Plano.Objetos.Objeto2D;
 import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrCirc;
-import PryMecanica.Plano.Objetos.Formas.FrRect;
 import PryMecanica.Plano.Objetos.Formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */
 public class PnPlano extends JLayeredPane implements MouseInputListener{
 
-    public static PnPlano PnPrinc;
+    public static PnPlano PlPrinc;
 
     /**Escala de las coordenadas del plano */
     public static Punto Escala = new Punto(1,1);
@@ -33,7 +32,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     /**Posicion inicial de la seleccion */
     Punto PtInicioSel = new Punto();
 
-    /**Posicion final de la seleccion */
+    /**Posicion final de la seleccion s*/
     Punto PtFinSel = new Punto();
 
     /**Indica si se esta arrastrando el mouse para hacer una seleccion */
@@ -56,16 +55,19 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     private Point PtOffset = new Point(0,0);
 
+    public ArbolObjetos AB = new ArbolObjetos(LstObjetos);
+
     public PnPlano(){
         setLayout(null);
 
         addMouseMotionListener(this);
         addMouseListener(this);
 
-        PnPrinc = this;
+        PlPrinc = this;
         
         LOP.setVisible(false);;
         add(LOP, JLayeredPane.DRAG_LAYER);
+        add(AB);
     }
 
     public void SelForma(Forma Fr){
@@ -86,16 +88,19 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         g.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
         g.drawLine(Math.round(PtOrigen.x), 0,Math.round(PtOrigen.x), getHeight());
 
+        //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
             g.drawLine(Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y - 5), Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 5));
             g.drawString(""+(ux),Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 20));
         }
 
+        //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
             g.drawLine(Math.round(PtOrigen.x - 5),Math.round(PtOrigen.y + uy*Forma.Escala), Math.round(PtOrigen.x + 5), Math.round(PtOrigen.y + uy*Forma.Escala));
             g.drawString(""+(-uy),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*Forma.Escala));
         }
 
+        //DIBUJAR AREA DE SELECCION
         if(Seleccinando){
             g.setColor(ColSel);
 
@@ -162,6 +167,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     
     public void mouseDragged(MouseEvent e) {
 
+        //SELECCIONAR
         if(SwingUtilities.isLeftMouseButton(e)){
             Point Pos = e.getLocationOnScreen();
             SwingUtilities.convertPointFromScreen(Pos, this);
@@ -174,6 +180,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             repaint();
         }
 
+        //MOVER EL AREA DEL PLANO
         if(SwingUtilities.isMiddleMouseButton(e)){
             Point Pos = e.getLocationOnScreen();
             SwingUtilities.convertPointFromScreen(Pos, this);
@@ -186,7 +193,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             PnPlano.PtOrigen.x = Pos.x + PtOffset.x;
             PnPlano.PtOrigen.y = Pos.y + PtOffset.y;
     
-            for (Objeto2D obj : PnPlano.PnPrinc.LstObjetos) {
+            for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
                 obj.setBounds(obj.getX() + DifX, obj.getY() + DifY, obj.getWidth(), obj.getHeight());
                 if(obj instanceof FrTria){
                     //ACTUALIZAR VERTICES
@@ -201,7 +208,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 }
             }
     
-            PnPlano.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 

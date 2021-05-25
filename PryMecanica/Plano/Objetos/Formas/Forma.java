@@ -2,7 +2,6 @@ package PryMecanica.Plano.Objetos.Formas;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Grupo;
@@ -20,7 +19,11 @@ public abstract class Forma extends Objeto2D{
     public Pin[] Pines;
 
     public Forma(){
-        PnPlano.PnPrinc.LstObjetos.add(this);
+        PnPlano.PlPrinc.LstObjetos.add(this);
+
+        PnPlano.PlPrinc.AB.generarArbol();
+        PnPlano.PlPrinc.AB.actualizarVisualizacion();
+        
         setBackground(Color.LIGHT_GRAY);
     }
 
@@ -45,11 +48,11 @@ public abstract class Forma extends Objeto2D{
     public void eliminarPines(){
         if(Pines[0] != null){
             for (int i = 0; i < Pines.length; i++) {
-                PnPlano.PnPrinc.remove(Pines[i]);
+                PnPlano.PlPrinc.remove(Pines[i]);
                 Pines[i] = null;
                 
             }
-            PnPlano.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 
@@ -60,15 +63,15 @@ public abstract class Forma extends Objeto2D{
         super.mousePressed(e);
 
         //SELECCIONA LA FORMA
-        PnPlano.PnPrinc.moveToFront(this);
+        PnPlano.PlPrinc.moveToFront(this);
 
         if(Pines[0] != null){
             for (Pin pin : Pines) 
-                PnPlano.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.moveToFront(pin);
         }
 
-        if(PnPlano.PnPrinc.FrSel != this)
-            PnPlano.PnPrinc.SelForma(this);
+        if(PnPlano.PlPrinc.FrSel != this)
+            PnPlano.PlPrinc.SelForma(this);
     }
 
     @Override

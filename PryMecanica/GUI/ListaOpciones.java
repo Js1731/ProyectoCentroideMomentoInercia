@@ -36,7 +36,7 @@ public class ListaOpciones extends JPanel{
                     try{
                         if(!LP.contains(SwingUtilities.convertPoint((JComponent)event.getSource(), ((MouseEvent)event).getPoint(), LP))){
                             LP.setVisible(false);
-                            PnPlano.PnPrinc.repaint();
+                            PnPlano.PlPrinc.repaint();
                         }
                     }catch(ClassCastException e){}
                 }

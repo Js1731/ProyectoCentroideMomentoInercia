@@ -10,8 +10,8 @@ import java.awt.geom.Arc2D;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
-import PryMecanica.Main;
-import PryMecanica.PnPrincipal;
+import PryMecanica.Ctrl;
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Pin;
 
@@ -22,7 +22,7 @@ public class FrCirc extends Forma{
 
     public Arc2D.Double Sector;
 
-    public int Diametro = 50;
+    public int Diametro = 5;
 
 
 
@@ -30,7 +30,7 @@ public class FrCirc extends Forma{
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
      */
     public FrCirc(){
-        this(0, 0, 50, 90, 360);
+        this(0, -5, 5, 90, 360);
     }
 
     /**
@@ -44,7 +44,7 @@ public class FrCirc extends Forma{
         setOpaque(false);
         Pines = new Pin[3];
         Diametro = Math.round(dia*Escala);
-        setBounds(Math.round(PnPrincipal.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPrincipal.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
+        setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPlano.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
     }
     
@@ -99,8 +99,8 @@ public class FrCirc extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() + getWidth()/2 - PnPrincipal.PtOrigen.x);
-        Y = Math.round(getY() + getHeight()/2 - PnPrincipal.PtOrigen.y);
+        X = Math.round(getX() + getWidth()/2 - PnPlano.PtOrigen.x);
+        Y = Math.round(getY() + getHeight()/2 - PnPlano.PtOrigen.y);
     }
 
     @Override
@@ -126,9 +126,9 @@ public class FrCirc extends Forma{
         float Radio = Diametro/2;
 
         //ANGULO a DEL SECTOR PRINCIPAL
-        float a = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180)/2);
+        float a = (float)Math.toRadians(Ctrl.Utils.clamp((float)Sector.extent, 0f, 180f)/2);
         //ANGULO a DEL SECTOR SECUNDARIO
-        float a2 = (float)Math.toRadians(Main.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
+        float a2 = (float)Math.toRadians(Ctrl.Utils.clamp((float)(Sector.extent - 180)/2, 0f, 180f)/2);
 
         float DistP = distSect(Radio, a);
         float DistS = distSect(Radio, a2);
@@ -155,9 +155,9 @@ public class FrCirc extends Forma{
         float Radio = Diametro/2;
 
         //ANGULO a DEL SECTOR PRINCIPAL
-        float a = (float)Math.toRadians(Main.clamp((float)Sector.extent, 0, 180)/2);
+        float a = (float)Math.toRadians(Ctrl.Utils.clamp((float)Sector.extent, 0, 180)/2);
         //ANGULO a DEL SECTOR SECUNDARIO
-        float a2 = (float)Math.toRadians(Main.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
+        float a2 = (float)Math.toRadians(Ctrl.Utils.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
 
         float DistP = distSect(Radio, a);
         float DistS = distSect(Radio, a2);
@@ -196,7 +196,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPrincipal.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
             
                     setBounds(Pos.x - PtOffset.x, Fr.getY() + Diametro/2, getWidth(), getHeight());
                     
@@ -215,7 +215,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPrincipal.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -235,7 +235,7 @@ public class FrCirc extends Forma{
                     /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
                     *se busca un angulo usando las coordenadas del primero pero con -y
                     */
-                    float angInv = Main.angulo(0f, 0f,VectDir.x,-VectDir.y);
+                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
 
                     /* Restar el area del sector del circulo cuando se ajuste el arco
                      * EXTFIN = EXTACT - EL DOBLE DEL AREA SOMBREADA REMOVIDA
@@ -256,7 +256,7 @@ public class FrCirc extends Forma{
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPrincipal.PnPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PnPrinc);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -276,7 +276,7 @@ public class FrCirc extends Forma{
                     /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
                     *se busca un angulo usando las coordenadas del primero pero con -y
                     */
-                    float angInv = Main.angulo(0f, 0f,VectDir.x,-VectDir.y);
+                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
 
                     //AJUSTAR NUEVO ANGULO INICIAL
                     Sector.start = Math.toDegrees(angInv);
@@ -288,8 +288,8 @@ public class FrCirc extends Forma{
 
             //AGREGAR PINES
             for (Pin pin : Pines) {
-                PnPrincipal.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPrincipal.PnPrinc.moveToFront(pin);
+                PnPlano.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PnPrinc.moveToFront(pin);
             }
 
             ActualizarPines();

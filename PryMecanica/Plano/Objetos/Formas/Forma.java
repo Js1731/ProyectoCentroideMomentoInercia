@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import PryMecanica.PnPrincipal;
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Grupo;
 import PryMecanica.Plano.Objetos.Objeto2D;
 import PryMecanica.Plano.Objetos.Pin;
@@ -19,11 +19,8 @@ public abstract class Forma extends Objeto2D{
     /**Conjunto de pines para deformar esta forma */
     public Pin[] Pines;
 
-    public ArrayList<Integer> SnapXs = new ArrayList<Integer>(); 
-    public ArrayList<Integer> SnapYs = new ArrayList<Integer>(); 
-
     public Forma(){
-        PnPrincipal.PnPrinc.LstObjetos.add(this);
+        PnPlano.PnPrinc.LstObjetos.add(this);
         setBackground(Color.LIGHT_GRAY);
     }
 
@@ -48,52 +45,30 @@ public abstract class Forma extends Objeto2D{
     public void eliminarPines(){
         if(Pines[0] != null){
             for (int i = 0; i < Pines.length; i++) {
-                PnPrincipal.PnPrinc.remove(Pines[i]);
+                PnPlano.PnPrinc.remove(Pines[i]);
                 Pines[i] = null;
                 
             }
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PnPrinc.repaint();
         }
     }
 
-    public int snap(int c, ArrayList<Integer> lst){
-        for (int snap : lst) {
-            if(Math.abs(c - snap) < 30){
-                return snap;
-            }
-        }
-        return c;
-    }
 
 
-    
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
         //SELECCIONA LA FORMA
-        PnPrincipal.PnPrinc.moveToFront(this);
+        PnPlano.PnPrinc.moveToFront(this);
 
         if(Pines[0] != null){
             for (Pin pin : Pines) 
-                PnPrincipal.PnPrinc.moveToFront(pin);
+                PnPlano.PnPrinc.moveToFront(pin);
         }
 
-        if(PnPrincipal.PnPrinc.FrSel != this)
-            PnPrincipal.PnPrinc.SelForma(this);
-
-        //BUSCAR X PARA AJUSTARSE
-        SnapXs.removeAll(SnapXs);
-        SnapYs.removeAll(SnapYs);
-        for (Objeto2D obj : PnPrincipal.PnPrinc.LstObjetos) {
-            if(obj != this){
-                SnapXs.add(obj.getX());
-                SnapXs.add(obj.getX() + obj.getWidth());
-
-                SnapYs.add(obj.getY());
-                SnapYs.add(obj.getY() + obj.getHeight());
-            }
-        }
+        if(PnPlano.PnPrinc.FrSel != this)
+            PnPlano.PnPrinc.SelForma(this);
     }
 
     @Override
@@ -103,9 +78,5 @@ public abstract class Forma extends Objeto2D{
         if(Grp != null)
             Grp.ActualizarBordes();
         ActualizarCoordenadas();
-
-        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
-        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
-                    snap(getY() + getHeight(), SnapYs) - getHeight());
     }
 }

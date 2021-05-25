@@ -6,7 +6,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLayeredPane;
 
-import PryMecanica.PnPrincipal;
+import PryMecanica.PnPlano;
+import PryMecanica.GUI.PnPrincipal;
 import PryMecanica.Plano.Objetos.Pin;
 
 /**
@@ -23,7 +24,7 @@ public class FrRect extends Forma{
      * Crea un rectangulo de 50x50 en el origen {@code (0, 0)}
      */
     public FrRect(){
-        this(0,0,50, 50);
+        this(0,-5,5, 5);
     }
 
     /**
@@ -39,7 +40,7 @@ public class FrRect extends Forma{
 
         Pines = new Pin[4];
 
-        setBounds(Math.round(PnPrincipal.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPrincipal.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);
+        setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPlano.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);
         setBackground(Color.DARK_GRAY);
     }
 
@@ -60,12 +61,12 @@ public class FrRect extends Forma{
     @Override
     public void ActualizarPines(){
         if(Pines[0] != null){
-            Pines[0].setLocation(getX() - 15, getY() -15);
+            Pines[0].setLocation(getX() - 15, getY() - 15);
             Pines[1].setLocation(getX() - 15, getY() + getHeight() + 15);
             Pines[2].setLocation(getX() + getWidth() + 15, getY() - 15);
             Pines[3].setLocation(getX() + getWidth() + 15, getY() + getHeight() + 15);
 
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PnPrinc.repaint();
 
             Ancho = getWidth();
             Alto = getHeight();
@@ -74,8 +75,8 @@ public class FrRect extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPrincipal.PtOrigen.x);
-        Y = Math.round(getY() - PnPrincipal.PtOrigen.y);
+        X = Math.round(getX() - PnPlano.PtOrigen.x);
+        Y = Math.round(getY() - PnPlano.PtOrigen.y);
     }
 
     @Override
@@ -99,11 +100,13 @@ public class FrRect extends Forma{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        PnPrincipal.PanelPrinc.PnPropiedades.PR.cambiarRectangulo(this);
+
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){
 
             //REDIM ESQUINA SUPERIOR IZQUIERDA
-            Pines[0] = new Pin(this, getX() - 15, getY()){
+            Pines[0] = new Pin(this, getX() - 15, getY() - 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
@@ -168,11 +171,11 @@ public class FrRect extends Forma{
 
             //AGREGAR PINES AL PANEL PRINCIPAL
             for (Pin pin : Pines) {
-                PnPrincipal.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPrincipal.PnPrinc.moveToFront(pin);
+                PnPlano.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PnPrinc.moveToFront(pin);
             }
 
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PnPrinc.repaint();
         }
     }
 
@@ -180,6 +183,8 @@ public class FrRect extends Forma{
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
 
+        
+        PnPrincipal.PanelPrinc.PnPropiedades.PR.actualizarDatos();
         ActualizarPines();
     }
 }

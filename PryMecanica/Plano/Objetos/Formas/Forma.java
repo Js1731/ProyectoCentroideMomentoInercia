@@ -1,8 +1,9 @@
 package PryMecanica.Plano.Objetos.Formas;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 
-import PryMecanica.PnPrincipal;
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Grupo;
 import PryMecanica.Plano.Objetos.Objeto2D;
 import PryMecanica.Plano.Objetos.Pin;
@@ -17,10 +18,12 @@ public abstract class Forma extends Objeto2D{
     /**Conjunto de pines para deformar esta forma */
     public Pin[] Pines;
 
-
+    public boolean Hueco = false;
 
     public Forma(){
-        PnPrincipal.PnPrinc.LstObjetos.add(this);
+        PnPlano.PlPrinc.LstObjetos.add(this);
+
+        setBackground(Color.LIGHT_GRAY);
     }
 
 
@@ -44,30 +47,32 @@ public abstract class Forma extends Objeto2D{
     public void eliminarPines(){
         if(Pines[0] != null){
             for (int i = 0; i < Pines.length; i++) {
-                PnPrincipal.PnPrinc.remove(Pines[i]);
+                PnPlano.PlPrinc.remove(Pines[i]);
                 Pines[i] = null;
                 
             }
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 
 
-    
+
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        requestFocus();
+
         //SELECCIONA LA FORMA
-        PnPrincipal.PnPrinc.moveToFront(this);
+        PnPlano.PlPrinc.moveToFront(this);
 
         if(Pines[0] != null){
             for (Pin pin : Pines) 
-                PnPrincipal.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.moveToFront(pin);
         }
 
-        if(PnPrincipal.PnPrinc.FrSel != this)
-            PnPrincipal.PnPrinc.SelForma(this);
+        if(PnPlano.PlPrinc.FrSel != this)
+            PnPlano.PlPrinc.SelForma(this);
     }
 
     @Override

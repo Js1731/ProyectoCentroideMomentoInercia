@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLayeredPane;
 
-import PryMecanica.PnPrincipal;
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Pin;
 
 /**
@@ -23,7 +23,7 @@ public class FrRect extends Forma{
      * Crea un rectangulo de 50x50 en el origen {@code (0, 0)}
      */
     public FrRect(){
-        this(0,0,50, 50);
+        this(0,-5,5, 5);
     }
 
     /**
@@ -33,14 +33,20 @@ public class FrRect extends Forma{
      * @param an Ancho
      * @param al Alto
      */
-    public FrRect(int x, int y, int an, int al){
-        Ancho = an;
-        Alto = al;
+    public FrRect(float x, float y, float an, float al){
+        Ancho = Math.round(an*Escala);
+        Alto = Math.round(al*Escala);
+
+        Nombre = "Rectangulo";
+        PnPlano.PlPrinc.notificarCambios(0);
 
         Pines = new Pin[4];
 
-        setBounds(PnPrincipal.PnPrinc.getX() + x, PnPrincipal.PnPrinc.getY() + y, Ancho, Alto);
+        setOpaque(false);
+
+        setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPlano.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);
         setBackground(Color.DARK_GRAY);
+        ActualizarCoordenadas();
     }
 
     @Override
@@ -49,8 +55,19 @@ public class FrRect extends Forma{
 
         int x = Math.round(centroideX());
         int y = Math.round(centroideY());
+        
+        g.setColor(Color.DARK_GRAY);
+        
+        if(Hueco){
+            g.setColor(Color.WHITE);
+            g.fillRect(0,0,getWidth(),getHeight());
+            g.setColor(Color.DARK_GRAY);
+            g.drawRect(0,0,getWidth()-1,getHeight()-1);
+        }else
+            g.fillRect(0,0,getWidth(),getHeight());
 
         g.setColor(Color.RED);
+
 
         g.fillOval(x-3,y-3,6,6);
     }
@@ -60,12 +77,12 @@ public class FrRect extends Forma{
     @Override
     public void ActualizarPines(){
         if(Pines[0] != null){
-            Pines[0].setLocation(getX() - 15, getY() -15);
+            Pines[0].setLocation(getX() - 15, getY() - 15);
             Pines[1].setLocation(getX() - 15, getY() + getHeight() + 15);
             Pines[2].setLocation(getX() + getWidth() + 15, getY() - 15);
             Pines[3].setLocation(getX() + getWidth() + 15, getY() + getHeight() + 15);
 
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
 
             Ancho = getWidth();
             Alto = getHeight();
@@ -74,13 +91,16 @@ public class FrRect extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPrincipal.PtOrigen.x);
-        Y = Math.round(getY() - PnPrincipal.PtOrigen.y);
+        X = Math.round(getX() - PnPlano.PtOrigen.x);
+        Y = Math.round(getY() - PnPlano.PtOrigen.y);
+
+        Ancho = getWidth();
+        Alto = getHeight();
     }
 
     @Override
     public float calcularArea() {
-        return Ancho*Alto;
+        return (Hueco ? -1 : 1)*Ancho*Alto;
     }
 
     @Override
@@ -98,21 +118,25 @@ public class FrRect extends Forma{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
+        
 
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){
 
             //REDIM ESQUINA SUPERIOR IZQUIERDA
-            Pines[0] = new Pin(this, getX() - 15, getY() -15){
+            Pines[0] = new Pin(this, getX() - 15, getY() - 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
+
+                    setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
 
                     int DifX = getX() + 15 - Fr.getX();
                     int DifY = getY() + 15 - Fr.getY();
                     
                     Fr.setBounds(getX() + 15, getY() + 15, Fr.getWidth() - DifX, Fr.getHeight() - DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -122,11 +146,14 @@ public class FrRect extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
+
                     int DifX = getX() + 15 - Fr.getX();
                     int DifY = (getY() - 15) - (Fr.getY() + Fr.getHeight());
                     
                     Fr.setBounds(getX() + 15, Fr.getY(), Fr.getWidth() - DifX, Fr.getHeight() + DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -136,11 +163,14 @@ public class FrRect extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
+
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());
                     int DifY = getY() + 15 - Fr.getY();
                     
                     Fr.setBounds(Fr.getX(), getY() + 15, Fr.getWidth() + DifX, Fr.getHeight() - DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -150,21 +180,24 @@ public class FrRect extends Forma{
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
+
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());
                     int DifY = (getY() - 15) - (Fr.getY() + Fr.getHeight());
                     
                     Fr.setBounds(Fr.getX(), Fr.getY(), Fr.getWidth() + DifX, Fr.getHeight() + DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
             //AGREGAR PINES AL PANEL PRINCIPAL
             for (Pin pin : Pines) {
-                PnPrincipal.PnPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPrincipal.PnPrinc.moveToFront(pin);
+                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
+                PnPlano.PlPrinc.moveToFront(pin);
             }
 
-            PnPrincipal.PnPrinc.repaint();
+            PnPlano.PlPrinc.repaint();
         }
     }
 

@@ -6,9 +6,13 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
-import PryMecanica.PnPrincipal;
+import PryMecanica.PnPlano;
+import PryMecanica.GUI.ListaOpciones;
+import PryMecanica.GUI.Opcion;
+import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Formas.Forma;
 import PryMecanica.Plano.Objetos.Formas.FrTria;
 
@@ -22,9 +26,13 @@ public class Grupo extends Objeto2D{
 
     public boolean MoviendoFormas = false;
 
+    public boolean GrupoTemporal = true;
+
     /**Crea un nuevo grupo vacio en el origen*/
     public Grupo(){
         setOpaque(false);
+        Nombre = "Grupo";
+        repaint();
     }
 
     @Override
@@ -41,21 +49,50 @@ public class Grupo extends Objeto2D{
         float SumaAreasPorY = 0;
 
         for (Forma forma : LstForma) {
+            forma.ActualizarCoordenadas();
             float Area = forma.calcularArea();
             SumaAreas += Area;
+
             float CentX = forma.X + forma.centroideX();
-            float CentY = forma.X + forma.centroideX();
+            float CentY = forma.Y + forma.centroideY();
 
             SumaAreasPorX += CentX*Area;
             SumaAreasPorY += CentY*Area;
         }
 
-        int x = Math.round(SumaAreasPorX/SumaAreas);
-        int y = Math.round(SumaAreasPorY/SumaAreas);
+        int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
 
         g.setColor(Color.GREEN);
 
         g.fillOval(x-3,y-3,6,6);
+        ActualizarCoordenadas();
+        g.drawString( (PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas + X)/Escala+", " +  (-(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas + Y)/Escala),
+                      x-3,
+                      y-3);
+    }
+
+    public Punto centroide(){
+        float SumaAreas = 0;
+        float SumaAreasPorX = 0;
+        float SumaAreasPorY = 0;
+
+        for (Forma forma : LstForma) {
+            forma.ActualizarCoordenadas();
+            float Area = forma.calcularArea();
+            SumaAreas += Area;
+
+            float CentX = forma.X + forma.centroideX();
+            float CentY = forma.Y + forma.centroideY();
+
+            SumaAreasPorX += CentX*Area;
+            SumaAreasPorY += CentY*Area;
+        }
+
+        int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
+
+        return new Punto(x,y);
     }
 
     public void agregarForma(Forma Fr){
@@ -68,11 +105,25 @@ public class Grupo extends Objeto2D{
 
     public void sacarForma(Forma Fr){
         LstForma.remove(Fr);
+        Fr.Grp = null;
         ActualizarBordes();
 
         if(LstForma.size() == 0){
-            PnPrincipal.PnPrinc.remove(this);
+            PnPlano.PlPrinc.LstObjetos.remove(this);
+            PnPlano.PlPrinc.remove(this);
         }
+    }
+
+    public void vaciarGrupo(){
+        for (Forma fr : LstForma) {
+            fr.Grp = null;
+        }
+    }
+
+    public void eliminarGrupo(){
+        vaciarGrupo();
+        PnPlano.PlPrinc.LstObjetos.remove(this);
+        PnPlano.PlPrinc.remove(this);
     }
 
     /**Acualiza las dimensiones del panel del grupo */
@@ -108,61 +159,128 @@ public class Grupo extends Objeto2D{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPrincipal.PtOrigen.x);
-        Y = Math.round(getY() - PnPrincipal.PtOrigen.y);
+        X = Math.round(getX() - PnPlano.PtOrigen.x);
+        Y = Math.round(getY() - PnPlano.PtOrigen.y);
 
         repaint();
     }
+
+    private void moverFormas(int distx, int disty) {
+        //ACTUALIZAR POSICIONES DE LAS FORMAS
+        for (Forma Fr : LstForma) {
+            Fr.setBounds(Fr.getX() + distx, Fr.getY() + disty, Fr.getWidth(), Fr.getHeight());
+            Fr.ActualizarCoordenadas();
+            
+            if(Fr instanceof FrTria){
+                //ACTUALIZAR VERTICES
+                ((FrTria)Fr).Ver1.x += distx;
+                ((FrTria)Fr).Ver1.y += disty;
+                
+                ((FrTria)Fr).Ver2.x += distx;
+                ((FrTria)Fr).Ver2.y += disty;
+                
+                ((FrTria)Fr).Ver3.x += distx;
+                ((FrTria)Fr).Ver3.y += disty;
+            }
+        }
+    }
+
 
 
 
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-        
+
         //SELECCIONA GRUPO
-        PnPrincipal.GrupoSel = this;
+        PnPlano.GrupoSel = this;
+
+
 
         if(e.getClickCount() > 1){
             MoviendoFormas = true;
-            PnPrincipal.PnPrinc.moveToBack(this);
+            PnPlano.PlPrinc.moveToBack(this);
+        }
+
+        if(SwingUtilities.isRightMouseButton(e)){
+            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY());
+            Grupo Gp = this;
+            Opcion Agrupar = new Opcion(GrupoTemporal ? "Agrupar" : "Desagrupar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    Gp.GrupoTemporal = !Gp.GrupoTemporal;
+
+                    if(Gp.GrupoTemporal){
+                        Gp.eliminarGrupo();
+                    }
+                        
+                    PnPlano.PlPrinc.notificarCambios(0);
+                
+                    PnPlano.PlPrinc.remove(Lo);
+                }
+            };
+            Lo.agregarOpcion(Agrupar);
+
+            PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
+            PnPlano.PlPrinc.moveToFront(Lo);
+            Lo.repaint();
         }
 
         //DESELECCIONAR FIGURA ACTUAL
-        PnPrincipal.PnPrinc.SelForma(null);
+        PnPlano.PlPrinc.SelForma(null);
+
+        //BUSCAR X PARA AJUSTARSE
+        SnapXs.removeAll(SnapXs);
+        SnapYs.removeAll(SnapYs);
+
+        SnapXs.add(Math.round(PnPlano.PtOrigen.x));
+        SnapYs.add(Math.round(PnPlano.PtOrigen.y));
+
+        for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
+            if(obj != this && !LstForma.contains(obj)){
+                SnapXs.add(obj.getX());
+                SnapXs.add(obj.getX() + obj.getWidth());
+
+                SnapYs.add(obj.getY());
+                SnapYs.add(obj.getY() + obj.getHeight());
+            }
+        }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
+        PnPlano.PlPrinc.notificarCambios(1);
+
         //ARRASTRAR OBJETO
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPrincipal.PnPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         int DifX = Pos.x - (PtOffset.x + getX());
         int DifY = Pos.y - (PtOffset.y + getY());
 
         setBounds(Pos.x - PtOffset.x, Pos.y - PtOffset.y, getWidth(), getHeight());
-        
+
         //ACTUALIZAR POSICIONES DE LAS FORMAS
-        for (Forma Fr : LstForma) {
-            Fr.setBounds(Fr.getX() + DifX, Fr.getY() + DifY, Fr.getWidth(), Fr.getHeight());
-            Fr.ActualizarCoordenadas();
-            
-            if(Fr instanceof FrTria){
-                //ACTUALIZAR VERTICES
-                ((FrTria)Fr).Ver1.x += DifX;
-                ((FrTria)Fr).Ver1.y += DifY;
-                
-                ((FrTria)Fr).Ver2.x += DifX;
-                ((FrTria)Fr).Ver2.y += DifY;
-                
-                ((FrTria)Fr).Ver3.x += DifX;
-                ((FrTria)Fr).Ver3.y += DifY;
-            }
-        }
+        moverFormas(DifX, DifY);
+
+        //AUTOAJUSTAR A FORMAS CERCANAS
+        Point PtPrev = getLocation();
+
+        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
+                    snap(getY() + getHeight(), SnapYs) - getHeight());
+
+        //DISTANCIA ENTRE POSICION INICIAL Y FINAL
+        DifX = getX() - PtPrev.x;
+        DifY = getY() - PtPrev.y;
+
+        //ACTUALIZAR POSICIONES DE LAS FORMAS
+        moverFormas(DifX, DifY);
         
         ActualizarCoordenadas();
-        PnPrincipal.PnPrinc.repaint();
+        PnPlano.PlPrinc.repaint();
     }
 }

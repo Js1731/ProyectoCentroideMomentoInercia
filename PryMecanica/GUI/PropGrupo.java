@@ -59,5 +59,10 @@ public class PropGrupo extends PnPropiedades{
         LbCentX.setText("Centroide en x:     "+f.format((float)(Centroide.x + ((Grupo)ObjRef).X)/Forma.Escala));
         LbCentY.setText("Centroide en Y:     "+f.format(-(float)(Centroide.y + ((Grupo)ObjRef).Y)/Forma.Escala));
     }
+
+    @Override
+    public void actualizarForma() {
+        System.out.println("ola soi rectangulo");
+    }
     
 }

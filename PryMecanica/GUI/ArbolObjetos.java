@@ -5,6 +5,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.Graphics;
 import java.util.ArrayList;
+
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import PryMecanica.PnPlano;
@@ -170,14 +172,16 @@ class PnNodo extends JPanel implements MouseListener{
             }
         
             if(Nd.Objeto instanceof FrRect){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropRect(Nd.Objeto));
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropRect(Nd.Objeto), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrCirc){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropCirc(Nd.Objeto));
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropCirc(Nd.Objeto), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrTria){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropTria(Nd.Objeto));
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropTria(Nd.Objeto), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof Grupo){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropGrupo(Nd.Objeto));
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropGrupo(Nd.Objeto), JLayeredPane.DRAG_LAYER);
             }
+
+            PnPlano.PlPrinc.moveToFront(PnPlano.PlPrinc.PnPropActual);
         }
     }
 

@@ -18,6 +18,8 @@ public abstract class Forma extends Objeto2D{
     /**Conjunto de pines para deformar esta forma */
     public Pin[] Pines;
 
+    public boolean Hueco = false;
+
     public Forma(){
         PnPlano.PlPrinc.LstObjetos.add(this);
 
@@ -58,6 +60,8 @@ public abstract class Forma extends Objeto2D{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
+
+        requestFocus();
 
         //SELECCIONA LA FORMA
         PnPlano.PlPrinc.moveToFront(this);

@@ -1,10 +1,15 @@
 package PryMecanica.GUI;
 
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Objeto2D;
 import PryMecanica.Plano.Objetos.Formas.Forma;
 import PryMecanica.Plano.Objetos.Formas.FrCirc;
@@ -14,6 +19,8 @@ public class PropCirc extends PnPropiedades{
     private JLabel LbArea = new JLabel("Area:");
     private JLabel LbCentX = new JLabel("Centroide en X:");
     private JLabel LbCentY = new JLabel("Centroide en Y:");
+
+    JCheckBox CBHueco = new JCheckBox("Hueco");
 
     private JTextField TFX = new JTextField();
     private JTextField TFY = new JTextField();
@@ -29,35 +36,51 @@ public class PropCirc extends PnPropiedades{
         LbX.setBounds(10, 15, 50, 10);
         
         TFX.setBounds(30, 10, 50, 20);
+        TFX.addKeyListener(KL);
 
         //POSICION Y
         JLabel LbY = new JLabel("Y");
         LbY.setBounds(100, 15, 50, 10);
         
         TFY.setBounds(130, 10, 50, 20);
+        TFY.addKeyListener(KL);
 
         //Radio
         JLabel LbRad = new JLabel("Radio");
         LbRad.setBounds(10, 55, 50, 10);
         
         TFRadio.setBounds(110, 50, 80, 20);
+        TFRadio.addKeyListener(KL);
 
         //ANGULO INI
         JLabel LbAngIni = new JLabel("Angulo Inicial");
         LbAngIni.setBounds(10, 85, 100, 10);
         
         TFAngIni.setBounds(110, 80, 80, 20);
+        TFAngIni.addKeyListener(KL);
 
         //Extension
         JLabel LbExt = new JLabel("Extension");
         LbExt.setBounds(10, 115, 100, 10);
         
         TFExt.setBounds(110, 110, 80, 20);
+        TFExt.addKeyListener(KL);
 
         //PROPIEDADES
         LbArea.setBounds(10, 160, 200, 10);
         LbCentX.setBounds(10, 185, 200, 10);
         LbCentY.setBounds(10, 210, 200, 10);
+
+        CBHueco.setBounds(8, 230 , 120, 30);
+        CBHueco.addChangeListener(new ChangeListener(){
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ((FrCirc)ObjRef).Hueco = CBHueco.isSelected();
+                PnPlano.PlPrinc.repaint();
+            }
+
+        });
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -73,22 +96,48 @@ public class PropCirc extends PnPropiedades{
         PnCont.add(LbCentX);
         PnCont.add(LbCentY);
 
+        PnCont.add(CBHueco);
+
         actualizarDatos();
     }
 
     @Override
     public void actualizarDatos() {
-        TFX.setText(""+(float)ObjRef.X/Forma.Escala);
-        TFY.setText(""+(float)-ObjRef.Y/Forma.Escala);
-        TFRadio.setText(""+(float)(((FrCirc)ObjRef).Diametro/2)/Forma.Escala);
+        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/Forma.Escala);
+        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/Forma.Escala);
+        TFRadio.setText(""+PnPlano.Escala*(float)(((FrCirc)ObjRef).Diametro/2)/Forma.Escala);
         
+        CBHueco.setSelected(((Forma)ObjRef).Hueco);
+
         DecimalFormat f = new DecimalFormat("#0.00");
         TFAngIni.setText(""+f.format(((FrCirc)ObjRef).Sector.start));
         TFExt.setText(""+f.format(((FrCirc)ObjRef).Sector.extent));
 
-        LbArea.setText("Area:                      "+f.format((float)((FrCirc)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
-        LbCentX.setText("Centroide en x:     "+f.format((float)((FrCirc)ObjRef).centroideX()/Forma.Escala));
-        LbCentY.setText("Centroide en Y:     "+f.format((float)((FrCirc)ObjRef).centroideY()/Forma.Escala));
+        LbArea.setText("Area:                      "+f.format(PnPlano.Escala*(float)((FrCirc)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
+        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrCirc)ObjRef).centroideX()/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format(PnPlano.Escala*(float)(((FrCirc)ObjRef).getHeight() - ((FrCirc)ObjRef).centroideY())/Forma.Escala));
     }
+
+    @Override
+    public void actualizarForma() {
+        FrCirc Circ = (FrCirc)ObjRef;
+
+        Circ.setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
+                      Math.round(PnPlano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
+                      2*Math.round(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))*Forma.Escala/PnPlano.Escala), 
+                      2*Math.round(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))*Forma.Escala/PnPlano.Escala));
+
+        Circ.Hueco = CBHueco.isSelected();
+
+        Circ.Sector.start = Float.parseFloat(TFAngIni.getText().isEmpty() || TFAngIni.getText().equals("-") ? "0" : TFAngIni.getText());
+        Circ.Sector.extent = Float.parseFloat(TFExt.getText().isEmpty() || TFExt.getText().equals("-") ? "0" : TFExt.getText());
+
+        Circ.ActualizarCoordenadas();
+        Circ.ActualizarPines();
+
+        PnPlano.PlPrinc.repaint();
+    }
+
+
     
 }

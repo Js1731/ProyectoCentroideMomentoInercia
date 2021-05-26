@@ -63,6 +63,7 @@ public class FrTria extends Forma{
 
         setOpaque(false);
         ActualizarBordes();
+        ActualizarCoordenadas();
     }
 
     @Override
@@ -89,11 +90,15 @@ public class FrTria extends Forma{
         
         Poligono.addPoint(TmpVer3.x - getX(), TmpVer3.y - getY());
 
-        g.fillPolygon(Poligono);
+        if(Hueco){
+            g.setColor(Color.WHITE);
+            g.fillPolygon(Poligono);
+            g.setColor(Color.DARK_GRAY);
+            g.drawPolygon(Poligono);
+        }else
+            g.fillPolygon(Poligono);
         
         g.setColor(Color.WHITE);
-
-        g.drawString("Area " + calcularArea(), 50, 50);
 
         int x = Math.round(centroideX());
         int y = Math.round(centroideY());
@@ -107,6 +112,9 @@ public class FrTria extends Forma{
 
     @Override
     public void ActualizarPines() {
+        if(Pines[0] == null)
+            return;
+
         Pines[0].setLocation(Math.round(Ver1.x), Math.round(Ver1.y));
         Pines[1].setLocation(Math.round(Ver2.x), Math.round(Ver2.y));
         Pines[2].setLocation(Math.round(Ver3.x), Math.round(Ver3.y));
@@ -132,7 +140,7 @@ public class FrTria extends Forma{
         Y = Math.round(getY() - PnPlano.PtOrigen.y);
     }
 
-    private void moverVertices(int distx, int disty){
+    public void moverVertices(int distx, int disty){
         //ACTUALIZAR VERTICES
         Ver1.x += distx;
         Ver1.y += disty;
@@ -152,7 +160,7 @@ public class FrTria extends Forma{
 
         float s = (LadoA + LadoB + LadoC)/2;
 
-        return (float)Math.round(Math.sqrt(s * (s - LadoA) * (s - LadoB) * (s - LadoC)));
+        return (Hueco ? -1 : 1)*(float)Math.round(Math.sqrt(s * (s - LadoA) * (s - LadoB) * (s - LadoC)));
     }
 
     @Override
@@ -271,6 +279,5 @@ public class FrTria extends Forma{
 
         ActualizarPines();
         ActualizarCoordenadas();
-        
     }
 }

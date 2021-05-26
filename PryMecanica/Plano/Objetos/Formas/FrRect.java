@@ -42,8 +42,11 @@ public class FrRect extends Forma{
 
         Pines = new Pin[4];
 
+        setOpaque(false);
+
         setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPlano.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);
         setBackground(Color.DARK_GRAY);
+        ActualizarCoordenadas();
     }
 
     @Override
@@ -52,8 +55,19 @@ public class FrRect extends Forma{
 
         int x = Math.round(centroideX());
         int y = Math.round(centroideY());
+        
+        g.setColor(Color.DARK_GRAY);
+        
+        if(Hueco){
+            g.setColor(Color.WHITE);
+            g.fillRect(0,0,getWidth(),getHeight());
+            g.setColor(Color.DARK_GRAY);
+            g.drawRect(0,0,getWidth()-1,getHeight()-1);
+        }else
+            g.fillRect(0,0,getWidth(),getHeight());
 
         g.setColor(Color.RED);
+
 
         g.fillOval(x-3,y-3,6,6);
     }
@@ -79,11 +93,14 @@ public class FrRect extends Forma{
     public void ActualizarCoordenadas() {
         X = Math.round(getX() - PnPlano.PtOrigen.x);
         Y = Math.round(getY() - PnPlano.PtOrigen.y);
+
+        Ancho = getWidth();
+        Alto = getHeight();
     }
 
     @Override
     public float calcularArea() {
-        return Ancho*Alto;
+        return (Hueco ? -1 : 1)*Ancho*Alto;
     }
 
     @Override
@@ -101,6 +118,7 @@ public class FrRect extends Forma{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
+        
 
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){

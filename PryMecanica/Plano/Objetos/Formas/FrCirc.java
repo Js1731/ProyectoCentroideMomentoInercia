@@ -51,6 +51,7 @@ public class FrCirc extends Forma{
         Diametro = Math.round(dia*Escala);
         setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPlano.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
+        ActualizarCoordenadas();
     }
     
 
@@ -61,20 +62,29 @@ public class FrCirc extends Forma{
 
         Graphics2D G2 = (Graphics2D)g;
 
-        G2.fill(Sector);
+        if(Hueco){
+            g.setColor(Color.WHITE);
+            G2.fill(Sector);
+            g.setColor(Color.DARK_GRAY);
+            G2.draw(Sector);
+        }else
+            G2.fill(Sector);
 
         int x = Math.round(centroideX());
         int y = Math.round(centroideY());
 
         g.setColor(Color.RED);
 
-        g.fillOval(getWidth()/2 + x-3,getHeight()/2 + y-3,6,6);
+        g.fillOval(x-3,y-3,6,6);
     }
 
 
 
     @Override
     public void ActualizarPines() {
+
+        if(Pines[0] == null)
+            return;
 
         //ACTUALIZAR CIRCULO
         setBounds(getX(), getY(), Diametro, Diametro);
@@ -104,13 +114,15 @@ public class FrCirc extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() + getWidth()/2 - PnPlano.PtOrigen.x);
-        Y = Math.round(getY() + getHeight()/2 - PnPlano.PtOrigen.y);
+        X = Math.round(getX() - PnPlano.PtOrigen.x);
+        Y = Math.round(getY() - PnPlano.PtOrigen.y);
+
+        Diametro = getWidth();
     }
 
     @Override
     public float calcularArea() {
-        return (float)(Diametro*Diametro*Math.toRadians(Sector.extent))/8;
+        return (Hueco ? -1 : 1)*(float)(Diametro*Diametro*Math.toRadians(Sector.extent))/8;
     }
 
     private float areaSector(float r, float a){
@@ -152,7 +164,7 @@ public class FrCirc extends Forma{
         float SumaAreas = AreaP + 2*AreaS;
         float SumaAreasPorX = Axp + AxS1 + AxS2;
 
-        return SumaAreasPorX/SumaAreas;
+        return SumaAreasPorX/SumaAreas + Diametro/2;
     }
 
     @Override
@@ -181,7 +193,7 @@ public class FrCirc extends Forma{
         float SumaAreas = AreaP + 2*AreaS;
         float SumaAreasPorX = Ayp + AyS1 + AyS2;
 
-        return -SumaAreasPorX/SumaAreas;
+        return -SumaAreasPorX/SumaAreas + Diametro/2;
     }
 
 

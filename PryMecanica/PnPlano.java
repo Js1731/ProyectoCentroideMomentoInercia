@@ -25,7 +25,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     public static PnPlano PlPrinc;
 
     /**Escala de las coordenadas del plano */
-    public static Punto Escala = new Punto(1,1);
+    public static int Escala = 10;
 
     /**Posicion del origen dentro del Panel del plano */
     public static Punto PtOrigen = new Punto(500,500);
@@ -156,13 +156,16 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             case 0:{
                 AB.generarArbol();
                 AB.actualizarVisualizacion();
-                System.out.println("Se ha agregado/ Eliminado un objeto");
+                //System.out.println("Se ha agregado/ Eliminado un objeto");
             }
 
             case 1:{
                 if(PnPropActual != null)
                     PnPropActual.actualizarDatos();
-                System.out.println("Se han modificado los objetos del plano");
+
+                if(PnPropActual != null)
+                    PnPlano.PlPrinc.moveToFront(PnPlano.PlPrinc.PnPropActual);
+                //System.out.println("Se han modificado los objetos del plano");
             }
         }
 

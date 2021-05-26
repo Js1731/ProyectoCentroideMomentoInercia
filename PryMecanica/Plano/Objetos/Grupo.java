@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import PryMecanica.PnPlano;
 import PryMecanica.GUI.ListaOpciones;
 import PryMecanica.GUI.Opcion;
+import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Formas.Forma;
 import PryMecanica.Plano.Objetos.Formas.FrTria;
 
@@ -69,6 +70,29 @@ public class Grupo extends Objeto2D{
         g.drawString( (PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas + X)/Escala+", " +  (-(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas + Y)/Escala),
                       x-3,
                       y-3);
+    }
+
+    public Punto centroide(){
+        float SumaAreas = 0;
+        float SumaAreasPorX = 0;
+        float SumaAreasPorY = 0;
+
+        for (Forma forma : LstForma) {
+            forma.ActualizarCoordenadas();
+            float Area = forma.calcularArea();
+            SumaAreas += Area;
+
+            float CentX = forma.X + forma.centroideX();
+            float CentY = forma.Y + forma.centroideY();
+
+            SumaAreasPorX += CentX*Area;
+            SumaAreasPorY += CentY*Area;
+        }
+
+        int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
+
+        return new Punto(x,y);
     }
 
     public void agregarForma(Forma Fr){

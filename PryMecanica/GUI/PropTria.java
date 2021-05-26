@@ -1,9 +1,14 @@
 package PryMecanica.GUI;
 
+import java.text.DecimalFormat;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Objeto2D;
+import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.Plano.Objetos.Formas.FrTria;
 
 public class PropTria extends PnPropiedades{
 
@@ -99,9 +104,9 @@ public class PropTria extends PnPropiedades{
         Y++;
 
         //PROPIEDADES
-        LbArea.setBounds(10, 40 + Y*Esp, 100, 10);
-        LbCentX.setBounds(10, 70 + Y*Esp, 100, 10);
-        LbCentY.setBounds(10, 100 + Y*Esp, 100, 10);
+        LbArea.setBounds(10, 40 + Y*Esp, 200, 10);
+        LbCentX.setBounds(10, 70 + Y*Esp, 200, 10);
+        LbCentY.setBounds(10, 100 + Y*Esp, 200, 10);
 
         PnCont.add(LbX);
         PnCont.add(TFX);
@@ -132,12 +137,29 @@ public class PropTria extends PnPropiedades{
         PnCont.add(LbArea);
         PnCont.add(LbCentX);
         PnCont.add(LbCentY);
+
+        actualizarDatos();
     }
 
     @Override
     public void actualizarDatos() {
-        // TODO Auto-generated method stub
-        
+        TFX.setText(""+(float)ObjRef.X/Forma.Escala);
+        TFY.setText(""+(float)-ObjRef.Y/Forma.Escala);
+
+        TFX1.setText(""+(float)(((FrTria)ObjRef).Ver1.x  - PnPlano.PtOrigen.x)/Forma.Escala);
+        TFY1.setText(""+(float)-(((FrTria)ObjRef).Ver1.y  - PnPlano.PtOrigen.y)/Forma.Escala);
+
+        TFX2.setText(""+(float)(((FrTria)ObjRef).Ver2.x  - PnPlano.PtOrigen.x)/Forma.Escala);
+        TFY2.setText(""+(float)-(((FrTria)ObjRef).Ver2.y  - PnPlano.PtOrigen.y)/Forma.Escala);
+
+        TFX3.setText(""+(float)(((FrTria)ObjRef).Ver3.x  - PnPlano.PtOrigen.x)/Forma.Escala);
+        TFY3.setText(""+(float)-(((FrTria)ObjRef).Ver3.y  - PnPlano.PtOrigen.y)/Forma.Escala);
+
+        DecimalFormat f = new DecimalFormat("#0.00");
+
+        LbArea.setText("Area:                      "+f.format((float)((FrTria)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
+        LbCentX.setText("Centroide en x:     "+f.format((float)((FrTria)ObjRef).centroideX()/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format(-((float)((FrTria)ObjRef).centroideY() - ((FrTria)ObjRef).getHeight())/Forma.Escala));
     }
     
 }

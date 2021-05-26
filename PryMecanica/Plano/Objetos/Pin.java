@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import PryMecanica.Arrastrable;
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Formas.Forma;
 
 /**Componete Arrastrable para deformar una forma*/
@@ -25,6 +26,8 @@ public class Pin extends Arrastrable {
     @Override
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
+
+        PnPlano.PlPrinc.notificarCambios(1);
 
         if(Fr.Grp != null)
             Fr.Grp.ActualizarBordes();

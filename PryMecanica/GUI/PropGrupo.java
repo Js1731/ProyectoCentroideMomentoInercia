@@ -1,9 +1,15 @@
 package PryMecanica.GUI;
 
+import PryMecanica.Plano.Objetos.Grupo;
+
+import java.text.DecimalFormat;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Objeto2D;
+import PryMecanica.Plano.Objetos.Formas.Forma;
 
 public class PropGrupo extends PnPropiedades{
 
@@ -29,8 +35,8 @@ public class PropGrupo extends PnPropiedades{
         TFY.setBounds(130, 10, 50, 20);
 
         //PROPIEDADES
-        LbCentX.setBounds(10, 60, 100, 10);
-        LbCentY.setBounds(10, 90, 100, 10);
+        LbCentX.setBounds(10, 60, 200, 10);
+        LbCentY.setBounds(10, 90, 200, 10);
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -38,12 +44,20 @@ public class PropGrupo extends PnPropiedades{
         PnCont.add(TFY);
         PnCont.add(LbCentX);
         PnCont.add(LbCentY);
+
+        actualizarDatos();
     }
 
     @Override
     public void actualizarDatos() {
-        // TODO Auto-generated method stub
-        
+        TFX.setText(""+(float)ObjRef.X/Forma.Escala);
+        TFY.setText(""+(float)-ObjRef.Y/Forma.Escala);
+
+        DecimalFormat f = new DecimalFormat("#0.00");
+        Punto Centroide = ((Grupo)ObjRef).centroide();
+
+        LbCentX.setText("Centroide en x:     "+f.format((float)(Centroide.x + ((Grupo)ObjRef).X)/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format(-(float)(Centroide.y + ((Grupo)ObjRef).Y)/Forma.Escala));
     }
     
 }

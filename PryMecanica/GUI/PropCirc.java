@@ -1,9 +1,13 @@
 package PryMecanica.GUI;
 
+import java.text.DecimalFormat;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import PryMecanica.Plano.Objetos.Objeto2D;
+import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.Plano.Objetos.Formas.FrCirc;
 
 public class PropCirc extends PnPropiedades{
     
@@ -36,24 +40,24 @@ public class PropCirc extends PnPropiedades{
         JLabel LbRad = new JLabel("Radio");
         LbRad.setBounds(10, 55, 50, 10);
         
-        TFRadio.setBounds(110, 50, 50, 20);
+        TFRadio.setBounds(110, 50, 80, 20);
 
         //ANGULO INI
         JLabel LbAngIni = new JLabel("Angulo Inicial");
         LbAngIni.setBounds(10, 85, 100, 10);
         
-        TFAngIni.setBounds(110, 80, 50, 20);
+        TFAngIni.setBounds(110, 80, 80, 20);
 
         //Extension
         JLabel LbExt = new JLabel("Extension");
         LbExt.setBounds(10, 115, 100, 10);
         
-        TFExt.setBounds(110, 110, 50, 20);
+        TFExt.setBounds(110, 110, 80, 20);
 
         //PROPIEDADES
-        LbArea.setBounds(10, 160, 100, 10);
-        LbCentX.setBounds(10, 185, 100, 10);
-        LbCentY.setBounds(10, 210, 100, 10);
+        LbArea.setBounds(10, 160, 200, 10);
+        LbCentX.setBounds(10, 185, 200, 10);
+        LbCentY.setBounds(10, 210, 200, 10);
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -68,12 +72,23 @@ public class PropCirc extends PnPropiedades{
         PnCont.add(LbArea);
         PnCont.add(LbCentX);
         PnCont.add(LbCentY);
+
+        actualizarDatos();
     }
 
     @Override
     public void actualizarDatos() {
-        // TODO Auto-generated method stub
+        TFX.setText(""+(float)ObjRef.X/Forma.Escala);
+        TFY.setText(""+(float)-ObjRef.Y/Forma.Escala);
+        TFRadio.setText(""+(float)(((FrCirc)ObjRef).Diametro/2)/Forma.Escala);
         
+        DecimalFormat f = new DecimalFormat("#0.00");
+        TFAngIni.setText(""+f.format(((FrCirc)ObjRef).Sector.start));
+        TFExt.setText(""+f.format(((FrCirc)ObjRef).Sector.extent));
+
+        LbArea.setText("Area:                      "+f.format((float)((FrCirc)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
+        LbCentX.setText("Centroide en x:     "+f.format((float)((FrCirc)ObjRef).centroideX()/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format((float)((FrCirc)ObjRef).centroideY()/Forma.Escala));
     }
     
 }

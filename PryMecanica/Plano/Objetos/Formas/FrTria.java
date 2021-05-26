@@ -186,6 +186,7 @@ public class FrTria extends Forma{
                     Ver1.y = getY();
 
                     ActualizarBordes();
+                    ActualizarCoordenadas();
                 }
             };
 
@@ -201,6 +202,7 @@ public class FrTria extends Forma{
                     Ver2.y = getY();
 
                     ActualizarBordes();
+                    ActualizarCoordenadas();
                 }
             };
 
@@ -216,6 +218,7 @@ public class FrTria extends Forma{
                     Ver3.y = getY();
 
                     ActualizarBordes();
+                    ActualizarCoordenadas();
                     
                 }
             };
@@ -267,6 +270,7 @@ public class FrTria extends Forma{
         moverVertices(DifX, DifY);
 
         ActualizarPines();
+        ActualizarCoordenadas();
         
     }
 }

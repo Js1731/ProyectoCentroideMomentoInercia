@@ -118,6 +118,7 @@ public class FrRect extends Forma{
                     
                     Fr.setBounds(getX() + 15, getY() + 15, Fr.getWidth() - DifX, Fr.getHeight() - DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -134,6 +135,7 @@ public class FrRect extends Forma{
                     
                     Fr.setBounds(getX() + 15, Fr.getY(), Fr.getWidth() - DifX, Fr.getHeight() + DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -150,6 +152,7 @@ public class FrRect extends Forma{
                     
                     Fr.setBounds(Fr.getX(), getY() + 15, Fr.getWidth() + DifX, Fr.getHeight() - DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 
@@ -166,6 +169,7 @@ public class FrRect extends Forma{
                     
                     Fr.setBounds(Fr.getX(), Fr.getY(), Fr.getWidth() + DifX, Fr.getHeight() + DifY);
                     Fr.ActualizarPines();
+                    Fr.ActualizarCoordenadas();
                 }
             };
 

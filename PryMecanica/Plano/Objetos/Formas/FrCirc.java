@@ -210,6 +210,8 @@ public class FrCirc extends Forma{
                     if(Fr.Grp != null)
                         Fr.Grp.ActualizarBordes();
                     ActualizarPines();
+                    ActualizarCoordenadas();
+                    PnPlano.PlPrinc.notificarCambios(1);
                 }
             };
 
@@ -251,6 +253,8 @@ public class FrCirc extends Forma{
                     Sector.start = Math.toDegrees(angInv);
 
                     ActualizarPines();
+                    ActualizarCoordenadas();
+                    PnPlano.PlPrinc.notificarCambios(1);
                     Fr.repaint();
                 }
             };
@@ -287,6 +291,8 @@ public class FrCirc extends Forma{
                     Sector.start = Math.toDegrees(angInv);
 
                     ActualizarPines();
+                    ActualizarCoordenadas();
+                    PnPlano.PlPrinc.notificarCambios(1);
                     Fr.repaint();
                 }
             };

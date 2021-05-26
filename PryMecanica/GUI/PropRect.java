@@ -1,10 +1,13 @@
 package PryMecanica.GUI;
 
+import java.text.DecimalFormat;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import PryMecanica.Plano.Objetos.Objeto2D;
 import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.Plano.Objetos.Formas.FrRect;
 
 public class PropRect extends PnPropiedades{
 
@@ -45,9 +48,9 @@ public class PropRect extends PnPropiedades{
         TFAl.setBounds(60, 80, 50, 20);
 
         //PROPIEDADES
-        LbArea.setBounds(10, 130, 100, 10);
-        LbCentX.setBounds(10, 155, 100, 10);
-        LbCentY.setBounds(10, 180, 100, 10);
+        LbArea.setBounds(10, 130, 200, 10);
+        LbCentX.setBounds(10, 155, 200, 10);
+        LbCentY.setBounds(10, 180, 200, 10);
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -67,6 +70,15 @@ public class PropRect extends PnPropiedades{
     @Override
     public void actualizarDatos() {
         TFX.setText(""+(float)ObjRef.X/Forma.Escala);
+        TFY.setText(""+(float)-ObjRef.Y/Forma.Escala);
+        TFAn.setText(""+(float)((FrRect)ObjRef).Ancho/Forma.Escala);
+        TFAl.setText(""+(float)((FrRect)ObjRef).Alto/Forma.Escala);
+
+        DecimalFormat f = new DecimalFormat("#0.00");
+
+        LbArea.setText("Area:                      "+f.format((float)((FrRect)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
+        LbCentX.setText("Centroide en x:     "+f.format((float)((FrRect)ObjRef).centroideX()/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format((float)((FrRect)ObjRef).centroideY()/Forma.Escala));
     }
     
 }

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
@@ -22,6 +23,8 @@ public class PnPrincipal extends JPanel{
     public PnPrincipal(){
 
         PanelPrinc = this;
+
+        setBackground(Color.WHITE);
 
         SpringLayout Ly = new SpringLayout();
         setLayout(Ly);
@@ -42,21 +45,21 @@ public class PnPrincipal extends JPanel{
         BtRect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrRect());
+                PrimerPlano.add(new FrRect(), JLayeredPane.DRAG_LAYER);
             }
         });
 
         BtCirc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrCirc());
+                PrimerPlano.add(new FrCirc(), JLayeredPane.DRAG_LAYER);
             }
         });
 
         BtTria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrTria());
+                PrimerPlano.add(new FrTria(), JLayeredPane.DRAG_LAYER);
             }
         });
 

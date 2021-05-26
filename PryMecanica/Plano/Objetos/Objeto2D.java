@@ -18,6 +18,8 @@ public abstract class Objeto2D extends Arrastrable{
     /**Coordenada Y relativa al origen */
     public int Y = 0;
 
+    public String Nombre = "Nuebo";
+
     public static int Escala = 40;
 
     public int snap(int c, ArrayList<Integer> lst){
@@ -66,5 +68,7 @@ public abstract class Objeto2D extends Arrastrable{
         setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
         setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
                     snap(getY() + getHeight(), SnapYs) - getHeight());
+
+        PnPlano.PlPrinc.notificarCambios(1);
     }
 }

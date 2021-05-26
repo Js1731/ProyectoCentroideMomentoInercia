@@ -1,18 +1,25 @@
 package PryMecanica.GUI;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.Graphics;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
 
+import PryMecanica.PnPlano;
 import PryMecanica.Plano.Objetos.Grupo;
 import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.Plano.Objetos.Formas.FrCirc;
+import PryMecanica.Plano.Objetos.Formas.FrRect;
+import PryMecanica.Plano.Objetos.Formas.FrTria;
 import PryMecanica.Plano.Objetos.Objeto2D;
 
 
 public class ArbolObjetos extends JPanel{
     
     ArrayList<Objeto2D> LstObj = new ArrayList<Objeto2D>();
+    ArrayList<PnNodo> LstPaneles = new ArrayList<PnNodo>();
     Nodo Arbol = new Nodo();
     
     public ArbolObjetos(ArrayList<Objeto2D> lst){
@@ -20,14 +27,17 @@ public class ArbolObjetos extends JPanel{
 
         LstObj = lst;
 
+        setOpaque(false);
+
         setBackground(Color.GRAY);
         setBounds(20, 20, 200,300);
 
-        generarArbol();
-        actualizarVisualizacion();
     }
 
-    public void actualizarVisualizacion(){
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         ArrayList<Nodo> LstSinVisitar = new ArrayList<Nodo>();
         LstSinVisitar.add(Arbol);
         Arbol.Altura = 0;
@@ -37,7 +47,38 @@ public class ArbolObjetos extends JPanel{
             Nodo NodoVis = LstSinVisitar.get(0);
             LstSinVisitar.remove(NodoVis);
 
-            add(new PnNodo(NodoVis.Altura, i));
+            if(i != 0){
+                g.drawLine(35 + (NodoVis.Altura - 1)*30, 40 + (i - 1)*30, 35 + (NodoVis.Altura - 1)*30, 40 + i*30);          
+                g.drawLine(35 + (NodoVis.Altura - 1)*30, 40 + i*30, 45 + (NodoVis.Altura - 1)*30, 40 + i*30);       
+            }   
+
+            for (Nodo nodo : NodoVis.Hijos){
+                nodo.Altura = NodoVis.Altura + 1;
+                LstSinVisitar.add(0,nodo);
+            }
+            i++;
+        }
+    }
+
+    public void actualizarVisualizacion(){
+        ArrayList<Nodo> LstSinVisitar = new ArrayList<Nodo>();
+        LstSinVisitar.add(Arbol);
+        Arbol.Altura = 0;
+
+        for (PnNodo nd : LstPaneles) {
+            remove(nd);
+        }
+        LstPaneles.clear();
+
+        int i = 0;
+        while(LstSinVisitar.size() > 0){
+            Nodo NodoVis = LstSinVisitar.get(0);
+            LstSinVisitar.remove(NodoVis);
+
+            PnNodo Nd = new PnNodo(NodoVis.Altura, i, NodoVis); 
+            add(Nd);
+            LstPaneles.add(Nd);
+            
 
             for (Nodo nodo : NodoVis.Hijos){
                 nodo.Altura = NodoVis.Altura + 1;
@@ -46,6 +87,7 @@ public class ArbolObjetos extends JPanel{
             i++;
         }
 
+        revalidate();
         repaint();
     }
 
@@ -55,8 +97,9 @@ public class ArbolObjetos extends JPanel{
 
         for (Objeto2D objeto2d : LstObj) {
             if(objeto2d instanceof Grupo){
-                if(Nodo.buscarObjeto(Arbol, objeto2d) == null)
-                    Arbol.Hijos.add(new Nodo(objeto2d));
+                if(!((Grupo)objeto2d).GrupoTemporal)
+                    if(Nodo.buscarObjeto(Arbol, objeto2d) == null)
+                        Arbol.Hijos.add(new Nodo(objeto2d));
             }else{
                 if(((Forma)objeto2d).Grp == null){
                     Arbol.Hijos.add(new Nodo(objeto2d));
@@ -74,11 +117,74 @@ public class ArbolObjetos extends JPanel{
     }
 }
 
-class PnNodo extends JPanel{
-    public PnNodo(int Alt, int Pos){
-        setBackground(Color.DARK_GRAY);
-        setBounds(20 + 20*Alt,30 + Pos*30, 100, 20);
+class PnNodo extends JPanel implements MouseListener{
+    
+    Nodo Nd;
+    
+    public PnNodo(int Alt, int Pos, Nodo nd){
+
+        if(nd.Objeto == null){
+            setBackground(Color.lightGray);
+            setBounds(20,10, 200, 40);
+        }else{
+            setBackground(Color.WHITE);
+            setBounds(20 + 30*Alt,30 + Pos*30, 100, 20);
+        }
+        
+        addMouseListener(this);
+
+        Nd = nd;
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        if(Nd.Objeto instanceof FrRect){
+            g.fillRect(2,2, 16, 16);
+        }else if(Nd.Objeto instanceof FrCirc){
+            g.fillOval(2,2,16,16);
+        }else if(Nd.Objeto instanceof FrTria){
+            int[] xs = {2,10,17};
+            int[] ys = {16,2,16};
+
+            g.fillPolygon(xs, ys, 3);
+        }
+
+        if(Nd.Objeto != null)
+            if(Nd.Objeto instanceof Forma)
+                g.drawString(Nd.Objeto.Nombre,25,15);
+            else
+                g.drawString(Nd.Objeto.Nombre,5,15);
+        else
+            g.drawString("Objetos",10,15);
+    }
+
+    public void mousePressed(MouseEvent e) {
+        if(Nd.Objeto != null){
+        
+            if(PnPlano.PlPrinc.PnPropActual != null){
+                PnPlano.PlPrinc.remove(PnPlano.PlPrinc.PnPropActual);
+                PnPlano.PlPrinc.PnPropActual = null;
+                PnPlano.PlPrinc.repaint();
+            }
+        
+            if(Nd.Objeto instanceof FrRect){
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropRect(Nd.Objeto));
+            }else if(Nd.Objeto instanceof FrCirc){
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropCirc(Nd.Objeto));
+            }else if(Nd.Objeto instanceof FrTria){
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropTria(Nd.Objeto));
+            }else if(Nd.Objeto instanceof Grupo){
+                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropGrupo(Nd.Objeto));
+            }
+        }
+    }
+
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 }
 
 class Nodo{

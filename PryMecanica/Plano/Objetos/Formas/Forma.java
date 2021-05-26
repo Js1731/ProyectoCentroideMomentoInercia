@@ -21,9 +21,6 @@ public abstract class Forma extends Objeto2D{
     public Forma(){
         PnPlano.PlPrinc.LstObjetos.add(this);
 
-        PnPlano.PlPrinc.AB.generarArbol();
-        PnPlano.PlPrinc.AB.actualizarVisualizacion();
-        
         setBackground(Color.LIGHT_GRAY);
     }
 

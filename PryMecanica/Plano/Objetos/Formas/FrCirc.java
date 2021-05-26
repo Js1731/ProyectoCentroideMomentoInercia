@@ -42,6 +42,11 @@ public class FrCirc extends Forma{
      */
     public FrCirc(float X, float Y, float dia, int AngIni, int Ext){
         setOpaque(false);
+
+        Nombre = "Circulo";
+
+        PnPlano.PlPrinc.notificarCambios(0);
+
         Pines = new Pin[3];
         Diametro = Math.round(dia*Escala);
         setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPlano.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);

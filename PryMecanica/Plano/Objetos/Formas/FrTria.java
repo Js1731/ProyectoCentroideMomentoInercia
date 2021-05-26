@@ -49,6 +49,9 @@ public class FrTria extends Forma{
 
         Pines = new Pin[3];
 
+        Nombre = "Triangulo";
+        PnPlano.PlPrinc.notificarCambios(0);
+
         Ver1.x = Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);
         Ver1.y = Math.round(PnPlano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y1*Escala);
 
@@ -231,6 +234,9 @@ public class FrTria extends Forma{
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
+        PnPlano.PlPrinc.notificarCambios(1);
+
         Point Pos = e.getLocationOnScreen();
         SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
 

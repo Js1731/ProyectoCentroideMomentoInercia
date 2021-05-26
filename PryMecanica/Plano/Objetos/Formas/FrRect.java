@@ -37,6 +37,9 @@ public class FrRect extends Forma{
         Ancho = Math.round(an*Escala);
         Alto = Math.round(al*Escala);
 
+        Nombre = "Rectangulo";
+        PnPlano.PlPrinc.notificarCambios(0);
+
         Pines = new Pin[4];
 
         setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(x*Escala), Math.round(PnPlano.PtOrigen.y) + Math.round(y*Escala), Ancho, Alto);

@@ -30,6 +30,7 @@ public class Grupo extends Objeto2D{
     /**Crea un nuevo grupo vacio en el origen*/
     public Grupo(){
         setOpaque(false);
+        Nombre = "Grupo";
         repaint();
     }
 
@@ -189,7 +190,9 @@ public class Grupo extends Objeto2D{
                     if(Gp.GrupoTemporal){
                         Gp.eliminarGrupo();
                     }
-
+                        
+                    PnPlano.PlPrinc.notificarCambios(0);
+                
                     PnPlano.PlPrinc.remove(Lo);
                 }
             };
@@ -223,6 +226,9 @@ public class Grupo extends Objeto2D{
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
+        PnPlano.PlPrinc.notificarCambios(1);
+
         //ARRASTRAR OBJETO
         Point Pos = e.getLocationOnScreen();
         SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);

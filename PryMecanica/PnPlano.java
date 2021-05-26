@@ -12,6 +12,7 @@ import javax.swing.event.MouseInputListener;
 
 import PryMecanica.GUI.ArbolObjetos;
 import PryMecanica.GUI.ListaOpciones;
+import PryMecanica.GUI.PnPropiedades;
 import PryMecanica.Plano.Punto;
 import PryMecanica.Plano.Objetos.Grupo;
 import PryMecanica.Plano.Objetos.Objeto2D;
@@ -55,7 +56,9 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     private Point PtOffset = new Point(0,0);
 
-    public ArbolObjetos AB = new ArbolObjetos(LstObjetos);
+    public ArbolObjetos AB;
+
+    public PnPropiedades PnPropActual = null;
 
     public PnPlano(){
         setLayout(null);
@@ -63,7 +66,11 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         addMouseMotionListener(this);
         addMouseListener(this);
 
+        
+
         PlPrinc = this;
+
+        AB = new ArbolObjetos(LstObjetos);
         
         LOP.setVisible(false);;
         add(LOP, JLayeredPane.DRAG_LAYER);
@@ -83,6 +90,8 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+
+        
         g.setColor(Color.DARK_GRAY);
 
         g.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
@@ -126,6 +135,41 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         }
 
     }
+
+
+    /** 
+    * Notifica al Panel los eventos que suceden
+    * <p><b>Tipos de ventos</b>
+    * <PRE>
+    *    <b   >id           </b   >   <b>Evento   </b>
+    *    <code>0</code>:  <code>Se ha agregado o eliminado un objeto</code>
+    *    <code>1</code>:  <code>Se ha movido o modificado algun objeto</code>
+
+    * </PRE>
+    *
+     * @param tipo de evento
+     */
+    public void notificarCambios(int tipo){
+        
+
+        switch(tipo){
+            case 0:{
+                AB.generarArbol();
+                AB.actualizarVisualizacion();
+                System.out.println("Se ha agregado/ Eliminado un objeto");
+            }
+
+            case 1:{
+                if(PnPropActual != null)
+                    PnPropActual.actualizarDatos();
+                System.out.println("Se han modificado los objetos del plano");
+            }
+        }
+
+
+    }
+
+
 
     public void mousePressed(MouseEvent e) {
 
@@ -213,6 +257,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     }
 
     public void mouseReleased(MouseEvent e) {
+
+        if(!Seleccinando)
+            return;
+        
         Seleccinando = false;
 
         Grupo NuevoGrupo = null;
@@ -234,7 +282,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         }
 
         //AGRUPAR TODAS LAS FORMAS DENTRO DEL AREA DE SELECCION
-        for (Objeto2D objeto2d : LstObjetos) {
+        for(int i = 0; i < LstObjetos.size(); i++){
+            
+            Objeto2D objeto2d = LstObjetos.get(i);
+
             if(objeto2d instanceof Forma){
 
                 //VERIFICAR SI LA FORMAR ESTA DENTRO DEL AREA DE SELECCION
@@ -262,7 +313,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
 
         if(NuevoGrupo != null){        
-            if(NuevoGrupo.LstForma.size() != 1){
+            if(NuevoGrupo.LstForma.size() > 1){
                 add(NuevoGrupo, JLayeredPane.DRAG_LAYER);
                 moveToFront(NuevoGrupo);
                 LstObjetos.add(NuevoGrupo);

@@ -9,6 +9,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+
+/**Representa una Opcion para el {@link ListaOpciones}*/
 public class Opcion extends JPanel implements MouseListener{
 
     JLabel LbTexto = new JLabel();

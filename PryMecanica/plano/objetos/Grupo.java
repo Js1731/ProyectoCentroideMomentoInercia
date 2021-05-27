@@ -12,12 +12,12 @@ import javax.swing.SwingUtilities;
 import PryMecanica.PnPlano;
 import PryMecanica.gui.ListaOpciones;
 import PryMecanica.gui.Opcion;
-import PryMecanica.plano.Punto;
 import PryMecanica.plano.objetos.formas.Forma;
 import PryMecanica.plano.objetos.formas.FrTria;
 
 /**Define un {@link Objeto2D} que permite agrupar un conjunto de {@link Forma}s.
  * <p> El area de arrastrado del grupo se define por las formas que estan dentro del mismo
+ * <p> Se puede calcular el centroide de todas la formas que estan dentro del grupo
 */
 public class Grupo extends Objeto2D{
 
@@ -44,38 +44,22 @@ public class Grupo extends Objeto2D{
         if(MoviendoFormas)
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-        float SumaAreas = 0;
-        float SumaAreasPorX = 0;
-        float SumaAreasPorY = 0;
-
-        for (Forma forma : LstForma) {
-            forma.ActualizarCoordenadas();
-            float Area = forma.calcularArea();
-            SumaAreas += Area;
-
-            float CentX = forma.X + forma.centroideX();
-            float CentY = forma.Y + forma.centroideY();
-
-            SumaAreasPorX += CentX*Area;
-            SumaAreasPorY += CentY*Area;
-        }
-
-        int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
-        int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
-
         g.setColor(Color.GREEN);
+
+        int x = centroideX();
+        int y = centroideY();
 
         g.fillOval(x-3,y-3,6,6);
         ActualizarCoordenadas();
-        g.drawString( (PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas + X)/Escala+", " +  (-(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas + Y)/Escala),
+        g.drawString( (float)(x + X)/Escala + ", " +  -(float)(y + Y)/Escala,
                       x-3,
                       y-3);
     }
 
-    public Punto centroide(){
+    /**Calcula la posicion X del centroide con respecto al origen */
+    public int centroideX(){
         float SumaAreas = 0;
         float SumaAreasPorX = 0;
-        float SumaAreasPorY = 0;
 
         for (Forma forma : LstForma) {
             forma.ActualizarCoordenadas();
@@ -83,16 +67,33 @@ public class Grupo extends Objeto2D{
             SumaAreas += Area;
 
             float CentX = forma.X + forma.centroideX();
-            float CentY = forma.Y + forma.centroideY();
 
             SumaAreasPorX += CentX*Area;
-            SumaAreasPorY += CentY*Area;
         }
 
         int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+
+        return x;
+    }
+
+    /**Calcula la posicion Y del centroide con respecto al origen */
+    public int centroideY(){
+        float SumaAreas = 0;
+        float SumaAreasPorY = 0;
+
+        for (Forma forma : LstForma) {
+            forma.ActualizarCoordenadas();
+            float Area = forma.calcularArea();
+            SumaAreas += Area;
+
+            float CentY = forma.Y + forma.centroideY();
+
+            SumaAreasPorY += CentY*Area;
+        }
+
         int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
 
-        return new Punto(x,y);
+        return y;
     }
 
     public void agregarForma(Forma Fr){

@@ -7,13 +7,17 @@ import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**Boton personalizable, se le puede agregar un {@link ActionListener} como un JButton*/
 public abstract class BotonGenerico extends JPanel implements MouseListener {
 
+    /**Indica si el mouse esta encima del boton */
     protected boolean MouseEncima = false;
-    protected boolean Presionado = false;
-    protected ActionListener List;
 
-    protected int Sec[] = new int[10];
+    /**Indica si el boton esta siendo presionado */
+    protected boolean Presionado = false;
+
+    /**Listener para escuchar si se presiona el boton */
+    protected ActionListener List;
 
     public BotonGenerico() {
         addMouseListener(this);
@@ -30,6 +34,7 @@ public abstract class BotonGenerico extends JPanel implements MouseListener {
     public void mousePressed(MouseEvent e) {
         Presionado = true;
         
+        //NOTIFICAR EVENTO
         if(List != null)
             List.actionPerformed(new ActionEvent(this, 0, "Hola soi nuebo"));
 

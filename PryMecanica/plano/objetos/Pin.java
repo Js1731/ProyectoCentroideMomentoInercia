@@ -11,17 +11,11 @@ import PryMecanica.plano.objetos.formas.Forma;
 public class Pin extends Arrastrable {
     public Forma Fr;
 
-
-
-
     public Pin(Forma fr, int x, int y){
         Fr = fr;
         setBackground(Color.BLUE);
         setBounds(x,y,10,10);
     }
-
-
-
 
     @Override
     public void mouseDragged(MouseEvent e) {

@@ -19,7 +19,7 @@ import PryMecanica.plano.objetos.Objeto2D;
 import PryMecanica.plano.objetos.formas.Forma;
 import PryMecanica.plano.objetos.formas.FrTria;
 
-/**Area de trabajo, aqui se colocan todos los {@link Objeto2D} y los {@link PnPropiedades}*/
+/**Area de trabajo, aqui se colocan todas las formas */
 public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     public static PnPlano PlPrinc;
@@ -31,18 +31,16 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     public static Punto PtOrigen = new Punto(500,500);
 
     /**Posicion inicial de la seleccion */
-    private Punto PtInicioSel = new Punto();
+    Punto PtInicioSel = new Punto();
 
     /**Posicion final de la seleccion s*/
-    private Punto PtFinSel = new Punto();
-
-    /**Distancia entre la esquina superior izquierda del componente al punto en el que el mouse esta arrastrando */
-    private Point PtOffset = new Point(0,0);
+    Punto PtFinSel = new Punto();
 
     /**Indica si se esta arrastrando el mouse para hacer una seleccion */
     boolean Seleccinando = false;
 
-
+    /**Indica la forma seleccionada actualmente */
+    public Forma FrSel = null;
 
     /**Lista de todos los objetos dentro del plano */
     public ArrayList<Objeto2D> LstObjetos = new ArrayList<Objeto2D>(); 
@@ -53,17 +51,13 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     /**Indica el grupo seleccionado */
     public static Grupo GrupoSel = null;
 
-    /**Indica la forma seleccionada actualmente */
-    public Forma FrSel = null;
-
-
     /**Menu contextual */
     public ListaOpciones LOP = new ListaOpciones(100, 100);
-    
-    /**Arbol de todos los objetos del plano */
+
+    private Point PtOffset = new Point(0,0);
+
     public ArbolObjetos AB;
 
-    /**Indica el {@link PnPropiedades} activo actualmente */
     public PnPropiedades PnPropActual = null;
 
     public PnPlano(){
@@ -72,10 +66,13 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         addMouseMotionListener(this);
         addMouseListener(this);
 
-        PlPrinc = this;
-        AB = new ArbolObjetos(LstObjetos);        
-        LOP.setVisible(false);;
+        
 
+        PlPrinc = this;
+
+        AB = new ArbolObjetos(LstObjetos);
+        
+        LOP.setVisible(false);;
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
@@ -317,7 +314,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
 
 
-
+        //CREAR UN GRUPO NUEVO SI ESTE TIENE MAS DE UNA FORMA
         if(NuevoGrupo != null){        
             if(NuevoGrupo.LstForma.size() > 1){
                 add(NuevoGrupo, JLayeredPane.DRAG_LAYER);

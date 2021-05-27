@@ -15,8 +15,10 @@ import java.awt.event.MouseEvent;
 import java.awt.AWTEvent;
 import java.awt.event.AWTEventListener;
 
+/**Menu contextual al que se le pueden agregar {@link Opcion}es*/
 public class ListaOpciones extends JPanel{
 
+    /**Cantidad de opciones dentro del Menu */
     public int CantOp = 0;
 
     public ListaOpciones(int X, int Y) {
@@ -26,10 +28,9 @@ public class ListaOpciones extends JPanel{
 
         setBackground(Color.GRAY);
 
+        //SI SE HACE CLICK AFUERA DEL AREA DEL MENU, ENTONCES SE CIERRA
         ListaOpciones LP = this;
-
         AWTEventListener Listener = new AWTEventListener(){
-
             @Override
             public void eventDispatched(AWTEvent event) {
                 if ( event.getID () == MouseEvent.MOUSE_PRESSED ){
@@ -40,7 +41,6 @@ public class ListaOpciones extends JPanel{
                         }
                     }catch(ClassCastException e){}
                 }
-                
             }
         };
 

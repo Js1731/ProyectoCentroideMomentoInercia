@@ -12,16 +12,25 @@ public abstract class Objeto2D extends Arrastrable{
     /**Coordenada X relativa al origen */
     public int X = 0;
 
-    public ArrayList<Integer> SnapXs = new ArrayList<Integer>(); 
-    public ArrayList<Integer> SnapYs = new ArrayList<Integer>(); 
-
     /**Coordenada Y relativa al origen */
     public int Y = 0;
 
+    /**Lista de las coordenadas X a las que la figura puede ajustarse */
+    public ArrayList<Integer> SnapXs = new ArrayList<Integer>(); 
+    
+    /**Lista de las coordenadas Y a las que la figura puede ajustarse */
+    public ArrayList<Integer> SnapYs = new ArrayList<Integer>(); 
+
     public String Nombre = "Nuebo";
 
+    /**Escala de unidad : Pixel */
     public static int Escala = 40;
 
+    /**Ajustar argumento al valor mas cercano dentro de la lista de valores 
+     * @param c Valor
+     * @param lst Lista de Valores
+     * @return Valor Ajustado
+     */
     public int snap(int c, ArrayList<Integer> lst){
         for (int snap : lst) {
             if(Math.abs(c - snap) < 30){
@@ -43,7 +52,7 @@ public abstract class Objeto2D extends Arrastrable{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        //BUSCAR X PARA AJUSTARSE
+        //BUSCAR COORDENADAS PARA AJUSTARSE
         SnapXs.removeAll(SnapXs);
         SnapYs.removeAll(SnapYs);
 

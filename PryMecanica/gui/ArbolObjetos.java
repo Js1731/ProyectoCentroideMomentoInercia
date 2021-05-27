@@ -10,22 +10,25 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import PryMecanica.PnPlano;
-import PryMecanica.gui.propiedades.PropCirc;
-import PryMecanica.gui.propiedades.PropGrupo;
-import PryMecanica.gui.propiedades.PropRect;
-import PryMecanica.gui.propiedades.PropTria;
 import PryMecanica.plano.objetos.Grupo;
-import PryMecanica.plano.objetos.Objeto2D;
 import PryMecanica.plano.objetos.formas.Forma;
 import PryMecanica.plano.objetos.formas.FrCirc;
 import PryMecanica.plano.objetos.formas.FrRect;
 import PryMecanica.plano.objetos.formas.FrTria;
+import PryMecanica.plano.objetos.Objeto2D;
 
+import PryMecanica.gui.propiedades.*;
 
+/**Arbol usado para representar todos los {@link Objeto2D} que estan dentro de un plano*/
 public class ArbolObjetos extends JPanel{
     
+    /**Lista de los objetos que el arbol debe representar */
     ArrayList<Objeto2D> LstObj = new ArrayList<Objeto2D>();
+
+    /**Lista de todos los {@link PnNodo} presentes en el arbol*/
     ArrayList<PnNodo> LstPaneles = new ArrayList<PnNodo>();
+
+    /**Estructura de datos de los objetos*/
     Nodo Arbol = new Nodo();
     
     public ArbolObjetos(ArrayList<Objeto2D> lst){
@@ -48,11 +51,13 @@ public class ArbolObjetos extends JPanel{
         LstSinVisitar.add(Arbol);
         Arbol.Altura = 0;
 
+        //DIBUJAR LAS LINEAS DEL ARBOL
         int i = 0;
         while(LstSinVisitar.size() > 0){
             Nodo NodoVis = LstSinVisitar.get(0);
             LstSinVisitar.remove(NodoVis);
 
+            //NO DIBUJAR LA LINEA DE LA RAIZ DEL ARBOL
             if(i != 0){
                 g.drawLine(35 + (NodoVis.Altura - 1)*30, 40 + (i - 1)*30, 35 + (NodoVis.Altura - 1)*30, 40 + i*30);          
                 g.drawLine(35 + (NodoVis.Altura - 1)*30, 40 + i*30, 45 + (NodoVis.Altura - 1)*30, 40 + i*30);       
@@ -66,16 +71,19 @@ public class ArbolObjetos extends JPanel{
         }
     }
 
+    /**Actualiza todos los {@link PnNodo} dentro del panel*/
     public void actualizarVisualizacion(){
         ArrayList<Nodo> LstSinVisitar = new ArrayList<Nodo>();
         LstSinVisitar.add(Arbol);
         Arbol.Altura = 0;
 
+        //ELIMINAR TODOS LOS PANELES DENTRO DEL ARBOL
         for (PnNodo nd : LstPaneles) {
             remove(nd);
         }
         LstPaneles.clear();
 
+        //CREAR TODOS LOS PANELES DEL ARBOL
         int i = 0;
         while(LstSinVisitar.size() > 0){
             Nodo NodoVis = LstSinVisitar.get(0);
@@ -97,16 +105,30 @@ public class ArbolObjetos extends JPanel{
         repaint();
     }
 
+    /**Genera un arbol usando la {@code LstObj} del arbol*/
     public void generarArbol(){
 
         Arbol = new Nodo();
 
         for (Objeto2D objeto2d : LstObj) {
             if(objeto2d instanceof Grupo){
+
+                /** 
+                 * Si el objeto es un grupo:
+                 * Se agrega como hijo de la raiz si no es un grupo temporal 
+                 * y si no esta presente dentro del arbol todavia
+                */
+
                 if(!((Grupo)objeto2d).GrupoTemporal)
                     if(Nodo.buscarObjeto(Arbol, objeto2d) == null)
                         Arbol.Hijos.add(new Nodo(objeto2d));
             }else{
+                /**
+                 * Si el Objeto es una Forma:
+                 * Si el objeto pertenece a un grupo entonces se busca el nodo dentro del arbol
+                 * y se agrega el objeto como nodo hijo del grupo
+                 * Si no pertenece a un grupo entonces se agrega como nodo hijo de la raiz
+                 */
                 if(((Forma)objeto2d).Grp == null){
                     Arbol.Hijos.add(new Nodo(objeto2d));
                 }else{
@@ -123,10 +145,18 @@ public class ArbolObjetos extends JPanel{
     }
 }
 
+/**Panel para la representacion de un nodo del arbol */
 class PnNodo extends JPanel implements MouseListener{
     
+    /**Nodo del arbol */
     Nodo Nd;
     
+    /**
+     * Crea un nuevo panel para representar
+     * @param Alt Altura del nodo dentro del arbol
+     * @param Pos Posicion vertical del nodo
+     * @param nd Nodo que se va a representar
+     */
     public PnNodo(int Alt, int Pos, Nodo nd){
 
         if(nd.Objeto == null){
@@ -146,6 +176,7 @@ class PnNodo extends JPanel implements MouseListener{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        //Dibujar Icono para representar la forma
         if(Nd.Objeto instanceof FrRect){
             g.fillRect(2,2, 16, 16);
         }else if(Nd.Objeto instanceof FrCirc){
@@ -157,6 +188,7 @@ class PnNodo extends JPanel implements MouseListener{
             g.fillPolygon(xs, ys, 3);
         }
 
+        //Representar Grupo
         if(Nd.Objeto != null)
             if(Nd.Objeto instanceof Forma)
                 g.drawString(Nd.Objeto.Nombre,25,15);
@@ -169,12 +201,14 @@ class PnNodo extends JPanel implements MouseListener{
     public void mousePressed(MouseEvent e) {
         if(Nd.Objeto != null){
         
+            //ELIMINAR OTROS PANELES ACTIVOS
             if(PnPlano.PlPrinc.PnPropActual != null){
                 PnPlano.PlPrinc.remove(PnPlano.PlPrinc.PnPropActual);
                 PnPlano.PlPrinc.PnPropActual = null;
                 PnPlano.PlPrinc.repaint();
             }
         
+            //ABRIR EL PANEL DE PROPIEDADES DE LA FORMA
             if(Nd.Objeto instanceof FrRect){
                 PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropRect(Nd.Objeto), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrCirc){

@@ -34,6 +34,7 @@ public abstract class Forma extends Objeto2D{
     /**Calcula la coordenada Y del centroide (Es local a la forma)*/
     public abstract float centroideY();
 
+    /**Calcula el area de esta forma, si la figura esta hueca el area sera negativa */
     public abstract float calcularArea();
 
     /**

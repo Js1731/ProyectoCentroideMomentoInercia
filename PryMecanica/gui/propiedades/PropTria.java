@@ -4,11 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import PryMecanica.Ctrl;
 import PryMecanica.PnPlano;
@@ -16,13 +13,12 @@ import PryMecanica.plano.objetos.Objeto2D;
 import PryMecanica.plano.objetos.formas.Forma;
 import PryMecanica.plano.objetos.formas.FrTria;
 
+/**Panel de propiedades para un Triangulo*/
 public class PropTria extends PnPropiedades{
 
     private JLabel LbArea = new JLabel("Area:");
     private JLabel LbCentX = new JLabel("Centroide en X:");
     private JLabel LbCentY = new JLabel("Centroide en Y:");
-
-    JCheckBox CBHueco = new JCheckBox("Hueco");
 
     private JTextField TFX = new JTextField();
     private JTextField TFY = new JTextField();
@@ -48,23 +44,23 @@ public class PropTria extends PnPropiedades{
         }
 
         public void keyReleased(KeyEvent e) {
-            
+
             JTextField JTF = (JTextField)e.getSource();
-            
+
 
             if(!Character.isDigit(e.getKeyChar()) && e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_BACK_SPACE)
             try{
-                JTF.setText(""+Ctrl.Utils.eliminarNumeros(JTF.getText()));
+                JTF.setText(""+Ctrl.Utils.eliminarLetras(JTF.getText()));
                 Float.parseFloat(JTF.getText());
-                
+
             }catch(NumberFormatException ex){
                 if(!JTF.getText().equals("-"))
                     JTF.setText(TextoPrev);
             }
-            
+
             actualizarPosTriangulo();
         }
-        
+
         public void keyPressed(KeyEvent e) {}
     };
 
@@ -79,15 +75,15 @@ public class PropTria extends PnPropiedades{
         //POSICION X
         JLabel LbX = new JLabel("X");
         LbX.setBounds(10, 15, 50, 10);
-        
+
         TFX.setBounds(30, 10, 50, 20);
         TFX.addKeyListener(KL2);
-        
+
 
         //POSICION Y
         JLabel LbY = new JLabel("Y");
         LbY.setBounds(100, 15, 50, 10);
-        
+
         TFY.setBounds(130, 10, 50, 20);
         TFY.addKeyListener(KL2);
 
@@ -99,16 +95,16 @@ public class PropTria extends PnPropiedades{
         //POSICION X
         JLabel LbX1 = new JLabel("X");
         LbX1.setBounds(10, 25 + Y*Esp, 50, 10);
-        
+
         TFX1.setBounds(30, 20 + Y*Esp, 50, 20);
-        TFX1.addKeyListener(KL);
+        TFX1.addKeyListener(TextCont);
 
         //POSICION Y
         JLabel LbY1 = new JLabel("Y");
         LbY1.setBounds(100, 25 + Y*Esp, 50, 10);
-        
+
         TFY1.setBounds(130, 20 + Y*Esp, 50, 20);
-        TFY1.addKeyListener(KL);
+        TFY1.addKeyListener(TextCont);
         Y++;
 
         //VERTICE 2
@@ -119,16 +115,16 @@ public class PropTria extends PnPropiedades{
         //POSICION X
         JLabel LbX2 = new JLabel("X");
         LbX2.setBounds(10, 25 + Y*Esp, 50, 10);
-        
+
         TFX2.setBounds(30, 20 + Y*Esp, 50, 20);
-        TFX2.addKeyListener(KL);
+        TFX2.addKeyListener(TextCont);
 
         //POSICION Y
         JLabel LbY2 = new JLabel("Y");
         LbY2.setBounds(100, 25 + Y*Esp, 50, 10);
-        
+
         TFY2.setBounds(130, 20 + Y*Esp, 50, 20);
-        TFY2.addKeyListener(KL);
+        TFY2.addKeyListener(TextCont);
         Y++;
 
         //VERTICE 1
@@ -139,15 +135,15 @@ public class PropTria extends PnPropiedades{
         //POSICION X
         JLabel LbX3 = new JLabel("X");
         LbX3.setBounds(10, 25 + Y*Esp, 50, 10);
-        
+
         TFX3.setBounds(30, 20 + Y*Esp, 50, 20);
-        TFX3.addKeyListener(KL);
+        TFX3.addKeyListener(TextCont);
         //POSICION Y
         JLabel LbY3 = new JLabel("Y");
         LbY3.setBounds(100, 25 + Y*Esp, 50, 10);
-        
+
         TFY3.setBounds(130, 20 + Y*Esp, 50, 20);
-        TFX3.addKeyListener(KL);
+        TFX3.addKeyListener(TextCont);
         Y++;
 
         //PROPIEDADES
@@ -156,17 +152,8 @@ public class PropTria extends PnPropiedades{
         LbCentY.setBounds(10, 100 + Y*Esp, 200, 10);
 
         CBHueco.setBounds(8, 120  + Y*Esp, 120, 30);
-        CBHueco.addChangeListener(new ChangeListener(){
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ((FrTria)ObjRef).Hueco = CBHueco.isSelected();
-                PnPlano.PlPrinc.repaint();
-            }
 
-        });
-
-        
         PnCont.add(LbX);
         PnCont.add(TFX);
         PnCont.add(LbY);
@@ -216,13 +203,13 @@ public class PropTria extends PnPropiedades{
         TFX3.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver3.x  - PnPlano.PtOrigen.x)/Forma.Escala);
         TFY3.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver3.y  - PnPlano.PtOrigen.y)/Forma.Escala);
 
-        CBHueco.setSelected(((Forma)ObjRef).Hueco);
-
         DecimalFormat f = new DecimalFormat("#0.00");
 
         LbArea.setText("Area:                      "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
         LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).centroideX()/Forma.Escala));
         LbCentY.setText("Centroide en Y:     "+f.format(-(PnPlano.Escala*(float)((FrTria)ObjRef).centroideY() - ((FrTria)ObjRef).getHeight())/Forma.Escala));
+
+        CBHueco.setSelected(((Forma)ObjRef).Hueco);
     }
 
     @Override
@@ -237,7 +224,7 @@ public class PropTria extends PnPropiedades{
 
         Tria.Ver3.x = (Float.parseFloat((TFX3.getText().isEmpty() || TFX3.getText().equals("-") ? "0" : TFX3.getText())))*Forma.Escala/PnPlano.Escala  + PnPlano.PtOrigen.x;
         Tria.Ver3.y = -(Float.parseFloat((TFY3.getText().isEmpty() || TFY3.getText().equals("-") ? "0" : TFY3.getText())))*Forma.Escala/PnPlano.Escala  + PnPlano.PtOrigen.y;
-                
+
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.ActualizarCoordenadas();
@@ -247,27 +234,27 @@ public class PropTria extends PnPropiedades{
         PnPlano.PlPrinc.repaint();
     }
 
+    /**Actualiza los vertices en base a la posicion X y Y */
     public void actualizarPosTriangulo() {
         FrTria Tria = (FrTria)ObjRef;
 
         int DifX = Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala)/PnPlano.Escala  - Tria.X;
         int DifY = -Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala)/PnPlano.Escala - Tria.Y;
 
-        Tria.setBounds(Math.round(PnPlano.PtOrigen.x + Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(PnPlano.PtOrigen.y - Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Tria.getWidth(), 
+        Tria.setBounds(Math.round(PnPlano.PtOrigen.x + Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala),
+                      Math.round(PnPlano.PtOrigen.y - Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala),
+                      Tria.getWidth(),
                       Tria.getHeight());
-                      
+
         Tria.moverVertices( DifX, DifY);
 
-        
-                 
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.ActualizarCoordenadas();
         Tria.ActualizarPines();
         PnPlano.PlPrinc.repaint();
 
+        //ACTUALIZAR CAMPOS
         TFX1.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver1.x  - PnPlano.PtOrigen.x)/Forma.Escala);
         TFY1.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver1.y  - PnPlano.PtOrigen.y)/Forma.Escala);
 
@@ -277,5 +264,5 @@ public class PropTria extends PnPropiedades{
         TFX3.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver3.x  - PnPlano.PtOrigen.x)/Forma.Escala);
         TFY3.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver3.y  - PnPlano.PtOrigen.y)/Forma.Escala);
     }
-    
+
 }

@@ -20,8 +20,11 @@ import PryMecanica.plano.objetos.Pin;
 public class FrTria extends Forma{
 
     //VERTICES
+    /**Vertice 1 que es local al origen */
     public Punto Ver1 = new Punto();
+    /**Vertice 2 que es local al origen */
     public Punto Ver2 = new Punto();
+    /**Vertice 3 que es local al origen */
     public Punto Ver3 = new Punto();
 
     //POLIGONO PARA REPRESENTAR EL TRIANGULO
@@ -140,6 +143,11 @@ public class FrTria extends Forma{
         Y = Math.round(getY() - PnPlano.PtOrigen.y);
     }
 
+    /**
+     * Actualiza los vertices del triangulo
+     * @param distx Distancia en X
+     * @param disty Distancia en Y
+     */
     public void moverVertices(int distx, int disty){
         //ACTUALIZAR VERTICES
         Ver1.x += distx;

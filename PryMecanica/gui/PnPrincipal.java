@@ -46,7 +46,6 @@ public class PnPrincipal extends JPanel{
 
         JFormattedTextField JFTScale = new JFormattedTextField(10);
         JFTScale.setBounds(0, 0, 40, 25);
-        JFTScale.setHorizontalAlignment(JFormattedTextField.RIGHT);
         JFTScale.setPreferredSize(new Dimension(40, 25));
         JFTScale.getDocument().addDocumentListener(new DocumentListener(){
 

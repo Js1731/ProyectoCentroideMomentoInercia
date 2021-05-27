@@ -2,7 +2,6 @@ package PryMecanica.gui.propiedades;
 
 import java.text.DecimalFormat;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -11,17 +10,13 @@ import PryMecanica.plano.objetos.Objeto2D;
 import PryMecanica.plano.objetos.formas.Forma;
 import PryMecanica.plano.objetos.formas.FrRect;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+/**Panel de propiedades para un Rectangulo*/
 public class PropRect extends PnPropiedades{
 
     private JTextField TFX = new JTextField();
     private JTextField TFY = new JTextField();
     private JTextField TFAn = new JTextField();
     private JTextField TFAl = new JTextField();
-
-    JCheckBox CBHueco = new JCheckBox("Hueco");
 
     private JLabel LbArea = new JLabel("Area:");
     private JLabel LbCentX = new JLabel("Centroide en X:");
@@ -30,14 +25,12 @@ public class PropRect extends PnPropiedades{
     public PropRect(Objeto2D obj) {
         super(obj);
          
-
-
         //POSICION X
         JLabel LbX = new JLabel("X");
         LbX.setBounds(10, 15, 50, 10);
         
         TFX.setBounds(30, 10, 50, 20);
-        TFX.addKeyListener(KL);
+        TFX.addKeyListener(TextCont);
 
         
         //POSICION Y
@@ -45,39 +38,28 @@ public class PropRect extends PnPropiedades{
         LbY.setBounds(100, 15, 50, 10);
         
         TFY.setBounds(130, 10, 50, 20);
-        TFY.addKeyListener(KL);
+        TFY.addKeyListener(TextCont);
 
         //ANCHO
         JLabel LbAn = new JLabel("Ancho");
         LbAn.setBounds(10, 55, 50, 10);
         
         TFAn.setBounds(60, 50, 50, 20);
-        TFAn.addKeyListener(KL);
+        TFAn.addKeyListener(TextCont);
 
         //ALTO
         JLabel LbAl = new JLabel("Alto");
         LbAl.setBounds(10, 85, 50, 10);
         
         TFAl.setBounds(60, 80, 50, 20);
-        TFAl.addKeyListener(KL);
+        TFAl.addKeyListener(TextCont);
         
         //PROPIEDADES
         LbArea.setBounds(10, 130, 200, 10);
         LbCentX.setBounds(10, 155, 200, 10);
         LbCentY.setBounds(10, 180, 200, 10);
 
-        
         CBHueco.setBounds(8, 220, 200, 30);
-        CBHueco.addChangeListener(new ChangeListener(){
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ((FrRect)ObjRef).Hueco = CBHueco.isSelected();
-                PnPlano.PlPrinc.repaint();
-            }
-
-        });
-
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -93,7 +75,6 @@ public class PropRect extends PnPropiedades{
         PnCont.add(CBHueco);
 
         
-
         actualizarDatos();
     }
 
@@ -104,20 +85,18 @@ public class PropRect extends PnPropiedades{
         TFAn.setText(""+PnPlano.Escala*(float)((FrRect)ObjRef).Ancho/Forma.Escala);
         TFAl.setText(""+PnPlano.Escala*(float)((FrRect)ObjRef).Alto/Forma.Escala);
 
-        CBHueco.setSelected(((Forma)ObjRef).Hueco);
-
         DecimalFormat f = new DecimalFormat("#0.00");
-
+        
         LbArea.setText("Area:                      "+f.format(PnPlano.Escala*PnPlano.Escala*(float)((FrRect)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
         LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrRect)ObjRef).centroideX()/Forma.Escala));
         LbCentY.setText("Centroide en Y:     "+f.format(PnPlano.Escala*(float)((FrRect)ObjRef).centroideY()/Forma.Escala));
+        
+        CBHueco.setSelected(((Forma)ObjRef).Hueco);
     }
 
     @Override
     public void actualizarForma() {
         FrRect Rec = (FrRect)ObjRef;
-
-        int a = Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala);
 
         Rec.setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
                       Math.round(PnPlano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 

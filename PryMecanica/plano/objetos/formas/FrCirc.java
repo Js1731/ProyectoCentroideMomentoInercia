@@ -17,13 +17,15 @@ import PryMecanica.plano.objetos.Pin;
 
 /**
  * Circulo que con diametro deformable y que se puede moficiar el arco
+ * <p> El circulo esta dividido en 3, {@code Sector Principal} que mide como maximo 180 grados
+ * y dos {@code Sectores Secundarios} que aparecen cuando el {@code Sector Principal} mide mas de 180 grados
+ * <p>Para calcular el centroide del circulo, se utilizan estos tres sectores
  */
 public class FrCirc extends Forma{
 
     public Arc2D.Double Sector;
 
     public int Diametro = 5;
-
 
 
     /**
@@ -122,13 +124,25 @@ public class FrCirc extends Forma{
 
     @Override
     public float calcularArea() {
-        return (Hueco ? -1 : 1)*(float)(Diametro*Diametro*Math.toRadians(Sector.extent))/8;
+        return (Hueco ? -1 : 1)*areaSector(Diametro/2f, (float)Math.toRadians(Sector.extent));
     }
 
+    /**
+     * Calcula el area de un sector
+     * @param r Radio
+     * @param a Amplitud del sector
+     * @return Area del sector
+     */
     private float areaSector(float r, float a){
         return r*r*a;
     }
 
+    /**
+     * Calcula la distancia deste el centro del circulo hasta el centroide del sector
+     * @param r Radio
+     * @param a Amplitud del sector
+     * @return Distancia
+     */
     private float distSect(float r, float a){
         if(a != 0)
             return (float)(2*r*Math.sin(a))/(3*a);
@@ -142,21 +156,25 @@ public class FrCirc extends Forma{
 
         float Radio = Diametro/2;
 
-        //ANGULO a DEL SECTOR PRINCIPAL
+        //AMPLITUD DEL SECTOR PRINCIPAL
         float a = (float)Math.toRadians(Ctrl.Utils.clamp((float)Sector.extent, 0f, 180f)/2);
-        //ANGULO a DEL SECTOR SECUNDARIO
+        //AMPLITUD DEL SECTOR SECUNDARIO
         float a2 = (float)Math.toRadians(Ctrl.Utils.clamp((float)(Sector.extent - 180)/2, 0f, 180f)/2);
 
+        //DISTANCIA DE LOS CENTROIDES DEL SECTOR
         float DistP = distSect(Radio, a);
         float DistS = distSect(Radio, a2);
 
+        //POSICION X DE LOS TRES SECTORES
         float xP = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start)) * DistP;
         float xS1 = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start) - Math.PI/2 - a2) * DistS;
         float xS2 = (float)Math.cos(Math.toRadians(Sector.extent/2 + Sector.start) + Math.PI/2 + a2) * DistS;
 
+        //AREA DE LOS TRES SECTORES
         float AreaP = areaSector(Radio, a);
         float AreaS = areaSector(Radio, a2);
 
+        //CALCULAR AX
         float Axp = AreaP*xP;
         float AxS1 = AreaS*xS1;
         float AxS2 = AreaS*xS2;
@@ -171,21 +189,25 @@ public class FrCirc extends Forma{
     public float centroideY() {
         float Radio = Diametro/2;
 
-        //ANGULO a DEL SECTOR PRINCIPAL
+        //AMPLITUD DEL SECTOR PRINCIPAL
         float a = (float)Math.toRadians(Ctrl.Utils.clamp((float)Sector.extent, 0, 180)/2);
-        //ANGULO a DEL SECTOR SECUNDARIO
+        //AMPLITUD DEL SECTOR SECUNDARIO
         float a2 = (float)Math.toRadians(Ctrl.Utils.clamp((float)(Sector.extent - 180)/2, 0, 180)/2);
 
+        //DISTANCIA DE LOS CENTROIDES DEL SECTOR
         float DistP = distSect(Radio, a);
         float DistS = distSect(Radio, a2);
 
+        //POSICION Y DE LOS TRES SECTORES
         float yP = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start)) * DistP;
         float yS1 = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start) - Math.PI/2 - a2) * DistS;
         float yS2 = (float)Math.sin(Math.toRadians(Sector.extent/2 + Sector.start) + Math.PI/2 + a2) * DistS;
 
+        //AREA DE LOS TRES SECTORES
         float AreaP = areaSector(Radio, a);
         float AreaS = areaSector(Radio, a2);
 
+        //CALCULAR AY
         float Ayp = AreaP*yP;
         float AyS1 = AreaS*yS1;
         float AyS2 = AreaS*yS2;
@@ -227,7 +249,7 @@ public class FrCirc extends Forma{
                 }
             };
 
-            //PIN PARA MODIFICAR SECTOR
+            //PIN PARA MODIFICAR LA AMPLITUD DEL SECTOR
             PinX = getX() + getWidth()/2 + Math.round((float)(Diametro/4*Math.cos(Sector.start)));
 
             Pines[1] = new Pin(this, PinX, PinY){
@@ -256,8 +278,7 @@ public class FrCirc extends Forma{
                     */
                     float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
 
-                    /* Restar el area del sector del circulo cuando se ajuste el arco
-                     * EXTFIN = EXTACT - EL DOBLE DEL AREA SOMBREADA REMOVIDA
+                    /* ACTUALIZAR LA AMPLITUD DEL SECTOR
                      */
                     Sector.extent = Sector.extent - 2*(Math.toDegrees(angInv) - Sector.start);
 
@@ -272,7 +293,7 @@ public class FrCirc extends Forma{
             };
 
 
-            //PIN PARA AJUSTAR LA ROTACION DEL CIRCULO
+            //PIN PARA AJUSTAR EL ANGULO INCIAL
             Pines[2] = new Pin(this, PinX, PinY){
                 @Override
                 public void mouseDragged(MouseEvent e) {

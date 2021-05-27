@@ -123,12 +123,13 @@ public class FrRect extends Forma{
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){
 
-            //REDIM ESQUINA SUPERIOR IZQUIERDA
+            //PIN PARA LA ESQUINA SUPERIOR IZQUIERDA
             Pines[0] = new Pin(this, getX() - 15, getY() - 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    //AJUSTAR A OTROS OBJETOS
                     setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
 
                     int DifX = getX() + 15 - Fr.getX();
@@ -140,12 +141,13 @@ public class FrRect extends Forma{
                 }
             };
 
-            //REDIM ESQUINA INFERIOR IZQUIERDA
+            //PIN PARA LA ESQUINA INFERIOR IZQUIERDA
             Pines[1] = new Pin(this, getX() - 15, getY() + getHeight() + 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    //AJUSTAR A OTROS OBJETOS
                     setLocation(snap(getX() + 15, SnapXs) - 15, snap(getY() + 15, SnapYs) - 15);
 
                     int DifX = getX() + 15 - Fr.getX();
@@ -157,12 +159,13 @@ public class FrRect extends Forma{
                 }
             };
 
-            //REDIM ESQUINA SUPERIOR DERECHA
+            //PIN PARA LA ESQUINA SUPERIOR DERECHA
             Pines[2] = new Pin(this, getX() + getWidth() + 15, getY() - 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    //AJUSTAR A OTROS OBJETOS
                     setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
 
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());
@@ -174,12 +177,13 @@ public class FrRect extends Forma{
                 }
             };
 
-            //REDIM ESQUINA INFERIOR DERECHA
+            //PIN PARA LA ESQUINA INFERIOR DERECHA
             Pines[3] = new Pin(this, getX() + getWidth() + 15, getY() + getHeight() + 15){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
+                    //AJUSTAR A OTROS OBJETOS
                     setLocation(snap(getX() - 15, SnapXs) + 15, snap(getY() - 15, SnapYs) + 15);
 
                     int DifX = (getX() - 15) - (Fr.getX() + Fr.getWidth());

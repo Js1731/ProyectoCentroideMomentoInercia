@@ -17,7 +17,7 @@ public class FrRect extends Forma{
     public int Ancho = 50;
     public int Alto = 50;
 
-
+    public static int ID = 0;
 
     /**
      * Crea un rectangulo de 50x50 en el origen {@code (0, 0)}
@@ -37,7 +37,7 @@ public class FrRect extends Forma{
         Ancho = Math.round(an*Escala);
         Alto = Math.round(al*Escala);
 
-        Nombre = "Rectangulo";
+        Nombre = "Rectangulo " + (ID++);
         PnPlano.PlPrinc.notificarCambios(0);
 
         Pines = new Pin[4];

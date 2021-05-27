@@ -4,6 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
+
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,6 +22,10 @@ public abstract class BotonGenerico extends JPanel implements MouseListener {
     protected ActionListener List;
 
     public BotonGenerico() {
+
+        setBounds(0, 0, 20, 20);
+        setBackground(Color.GRAY);
+
         addMouseListener(this);
     }
 

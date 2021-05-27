@@ -28,10 +28,12 @@ public class Grupo extends Objeto2D{
 
     public boolean GrupoTemporal = true;
 
+    public static int ID = 1;
+
     /**Crea un nuevo grupo vacio en el origen*/
     public Grupo(){
         setOpaque(false);
-        Nombre = "Grupo";
+        Nombre = "Grupo " + (ID++);
         repaint();
     }
 
@@ -196,8 +198,6 @@ public class Grupo extends Objeto2D{
         //SELECCIONA GRUPO
         PnPlano.GrupoSel = this;
 
-
-
         if(e.getClickCount() > 1){
             MoviendoFormas = true;
             PnPlano.PlPrinc.moveToBack(this);
@@ -221,7 +221,22 @@ public class Grupo extends Objeto2D{
                     PnPlano.PlPrinc.remove(Lo);
                 }
             };
+
+            Opcion Op = new Opcion("Eliminar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    for (Forma fr : LstForma) {
+                        PnPlano.PlPrinc.eliminarForma(fr);
+                    }
+                    PnPlano.PlPrinc.remove(Lo);
+                }
+            };
+
+
             Lo.agregarOpcion(Agrupar);
+            Lo.agregarOpcion(Op);
 
             PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
             PnPlano.PlPrinc.moveToFront(Lo);

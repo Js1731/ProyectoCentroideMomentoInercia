@@ -1,7 +1,18 @@
 package PryMecanica;
 
+import java.awt.Font;
+import java.awt.Color;
+
 public class Ctrl {
     
+    public static Font Fnt0 = new Font("Roboto", Font.PLAIN, 9);
+    public static Font Fnt1 = new Font("Roboto", Font.PLAIN, 12);
+    public static Font Fnt2 = new Font("Roboto", Font.PLAIN, 20);
+
+    public static Color ClGrisClaro = new Color(196, 196, 196);
+    public static Color ClGrisClaro2 = new Color(220, 220, 220);
+    public static Color ClGris = new Color(136, 136, 136);
+
     public static class Utils{
         /**Ajustar un valor entre un minimo y un maximo 
          * 

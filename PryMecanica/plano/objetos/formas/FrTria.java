@@ -30,6 +30,8 @@ public class FrTria extends Forma{
     //POLIGONO PARA REPRESENTAR EL TRIANGULO
     private Polygon Poligono = new Polygon();
 
+    public static int ID = 1;
+
     /**
      * Crea un tringulo en el origen de 50x50
      */
@@ -52,7 +54,7 @@ public class FrTria extends Forma{
 
         Pines = new Pin[3];
 
-        Nombre = "Triangulo";
+        Nombre = "Triangulo " + (ID++);
         PnPlano.PlPrinc.notificarCambios(0);
 
         Ver1.x = Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);

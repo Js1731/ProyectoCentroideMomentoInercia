@@ -2,7 +2,9 @@ package PryMecanica;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -73,45 +75,50 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         AB = new ArbolObjetos(LstObjetos);
         
         LOP.setVisible(false);;
+
+        notificarCambios(0);
+
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
-
-    public void seleccionarForma(Forma Fr){
-        if(FrSel != null){
-            FrSel.eliminarPines();
-        }
-
-        FrSel = Fr;
-    }
-    
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
 
-        
-        g.setColor(Color.DARK_GRAY);
+        Graphics2D g2 = (Graphics2D)g;
 
-        g.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
-        g.drawLine(Math.round(PtOrigen.x), 0,Math.round(PtOrigen.x), getHeight());
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);        
+        g2.setColor(Color.DARK_GRAY);
+
+        g2.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
+        g2.drawLine(Math.round(PtOrigen.x), 0,Math.round(PtOrigen.x), getHeight());
+        g2.setFont(Ctrl.Fnt0);
 
         //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
-            g.drawLine(Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y - 5), Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 5));
-            g.drawString(""+(ux),Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 20));
+            g2.setColor(Color.DARK_GRAY);
+            g2.drawLine(Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 2));
+            g2.setColor(Ctrl.ClGris);
+            if(ux != 0)
+                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 20));
         }
 
         //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
-            g.drawLine(Math.round(PtOrigen.x - 5),Math.round(PtOrigen.y + uy*Forma.Escala), Math.round(PtOrigen.x + 5), Math.round(PtOrigen.y + uy*Forma.Escala));
-            g.drawString(""+(-uy),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*Forma.Escala));
+            g2.setColor(Color.DARK_GRAY);
+            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*Forma.Escala), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*Forma.Escala));
+            g2.setColor(Ctrl.ClGris);
+            if(uy != 0)
+                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*Forma.Escala));
         }
+
+        g2.drawString("0",Math.round(PtOrigen.x - 18),Math.round(PtOrigen.y + 20));
 
         //DIBUJAR AREA DE SELECCION
         if(Seleccinando){
-            g.setColor(ColSel);
+            g2.setColor(ColSel);
 
             float xIni = PtInicioSel.x;
             float xFin = PtFinSel.x;
@@ -128,7 +135,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 xFin = PtInicioSel.x;
             }
 
-            g.fillRect(Math.round(xIni), 
+            g2.fillRect(Math.round(xIni), 
                        Math.round(yIni),
                        Math.round((float)Math.abs(xFin - xIni)),
                        Math.round((float)Math.abs(yFin- yIni)));
@@ -156,7 +163,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             case 0:{
                 AB.generarArbol();
                 AB.actualizarVisualizacion();
-                //System.out.println("Se ha agregado/ Eliminado un objeto");
+                
             }
 
             case 1:{
@@ -165,13 +172,42 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
                 if(PnPropActual != null)
                     PnPlano.PlPrinc.moveToFront(PnPlano.PlPrinc.PnPropActual);
-                //System.out.println("Se han modificado los objetos del plano");
             }
         }
 
 
     }
 
+
+    public void seleccionarForma(Forma Fr){
+        if(FrSel != null){
+            FrSel.eliminarPines();
+        }
+
+        FrSel = Fr;
+    }
+    
+    /**
+     * Elimina una forma de los objetos actuales
+     * <p> si la forma esta en un grupo, entonces el grupo se elimina
+     * @param Fr
+     */
+    public void eliminarForma(Forma Fr){
+        if(Fr.Grp != null){
+            Fr.Grp.eliminarGrupo();
+        }
+
+        Fr.eliminarPines();
+
+        if(PnPropActual != null)
+            if(PnPropActual.ObjRef == Fr)
+                remove(PnPropActual);
+
+        LstObjetos.remove(Fr);
+        remove(Fr);
+
+        notificarCambios(0);
+    }
 
 
     public void mousePressed(MouseEvent e) {

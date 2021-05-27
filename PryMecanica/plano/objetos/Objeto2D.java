@@ -24,7 +24,7 @@ public abstract class Objeto2D extends Arrastrable{
     public String Nombre = "Nuebo";
 
     /**Escala de unidad : Pixel */
-    public static int Escala = 40;
+    public static int Escala = 50;
 
     /**Ajustar argumento al valor mas cercano dentro de la lista de valores 
      * @param c Valor

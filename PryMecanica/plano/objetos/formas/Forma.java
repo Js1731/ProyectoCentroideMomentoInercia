@@ -3,6 +3,11 @@ package PryMecanica.plano.objetos.formas;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JLayeredPane;
+import javax.swing.SwingUtilities;
+
+import PryMecanica.gui.ListaOpciones;
+import PryMecanica.gui.Opcion;
 import PryMecanica.PnPlano;
 import PryMecanica.plano.objetos.Grupo;
 import PryMecanica.plano.objetos.Objeto2D;
@@ -74,6 +79,27 @@ public abstract class Forma extends Objeto2D{
 
         if(PnPlano.PlPrinc.FrSel != this)
             PnPlano.PlPrinc.seleccionarForma(this);
+
+        if(SwingUtilities.isRightMouseButton(e)){
+            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY());
+
+            Forma Fr = this;
+            Opcion Op = new Opcion("Eliminar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    PnPlano.PlPrinc.eliminarForma(Fr);
+                    PnPlano.PlPrinc.remove(Lo);
+                }
+            };
+
+            Lo.agregarOpcion(Op);
+
+            PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
+            PnPlano.PlPrinc.moveToFront(Lo);
+            Lo.repaint();
+        }
     }
 
     @Override

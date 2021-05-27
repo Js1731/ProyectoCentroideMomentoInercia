@@ -27,6 +27,7 @@ public class FrCirc extends Forma{
 
     public int Diametro = 5;
 
+    public static int ID = 1;
 
     /**
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
@@ -43,9 +44,11 @@ public class FrCirc extends Forma{
      * @param Ext Angulo del sector
      */
     public FrCirc(float X, float Y, float dia, int AngIni, int Ext){
+
+        
         setOpaque(false);
 
-        Nombre = "Circulo";
+        Nombre = "Circulo " + (ID++);
 
         PnPlano.PlPrinc.notificarCambios(0);
 

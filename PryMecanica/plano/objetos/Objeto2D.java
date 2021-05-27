@@ -1,4 +1,4 @@
-package PryMecanica.Plano.Objetos;
+package PryMecanica.plano.objetos;
 
 import PryMecanica.Arrastrable;
 import PryMecanica.PnPlano;

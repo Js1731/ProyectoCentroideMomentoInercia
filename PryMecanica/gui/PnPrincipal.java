@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,14 +7,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Formas.FrCirc;
-import PryMecanica.Plano.Objetos.Formas.FrRect;
-import PryMecanica.Plano.Objetos.Formas.FrTria;
+import PryMecanica.plano.objetos.formas.FrCirc;
+import PryMecanica.plano.objetos.formas.FrRect;
+import PryMecanica.plano.objetos.formas.FrTria;
 
 public class PnPrincipal extends JPanel{
 
@@ -41,6 +44,31 @@ public class PnPrincipal extends JPanel{
         JButton BtCirc = new JButton("Circulo");
         JButton BtTria = new JButton("Triangulo");
 
+        JFormattedTextField JFTScale = new JFormattedTextField(10);
+        JFTScale.setBounds(0, 0, 40, 25);
+        JFTScale.setHorizontalAlignment(JFormattedTextField.RIGHT);
+        JFTScale.setPreferredSize(new Dimension(40, 25));
+        JFTScale.getDocument().addDocumentListener(new DocumentListener(){
+
+            private void actualizarEscala(){
+                PnPlano.Escala = (int)JFTScale.getValue();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                actualizarEscala();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                actualizarEscala();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                actualizarEscala();
+            }
+        });
 
         BtRect.addActionListener(new ActionListener() {
             @Override
@@ -66,6 +94,7 @@ public class PnPrincipal extends JPanel{
         PnBarraSup.add(BtRect);
         PnBarraSup.add(BtCirc);
         PnBarraSup.add(BtTria);
+        PnBarraSup.add(JFTScale);
 
         Ly.putConstraint(SpringLayout.WEST, PrimerPlano, 0, SpringLayout.WEST, this);
         Ly.putConstraint(SpringLayout.NORTH, PrimerPlano, 0, SpringLayout.SOUTH, PnBarraSup);

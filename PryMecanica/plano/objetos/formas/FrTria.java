@@ -1,4 +1,4 @@
-package PryMecanica.Plano.Objetos.Formas;
+package PryMecanica.plano.objetos.formas;
 
 import java.awt.Graphics;
 import java.awt.Point;
@@ -11,8 +11,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Punto;
-import PryMecanica.Plano.Objetos.Pin;
+import PryMecanica.plano.Punto;
+import PryMecanica.plano.objetos.Pin;
 
 /**
  * Triangulo definido por tres vertices representados por {@link Punto}.

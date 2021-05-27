@@ -1,4 +1,4 @@
-package PryMecanica.Plano;
+package PryMecanica.plano;
 
 /** 
  * Define un punto usando numeros flotantes

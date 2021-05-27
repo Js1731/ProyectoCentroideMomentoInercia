@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui.propiedades;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,7 +19,8 @@ import javax.swing.JTextField;
 
 import PryMecanica.Ctrl;
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Objeto2D;
+import PryMecanica.gui.BotonGenerico;
+import PryMecanica.plano.objetos.Objeto2D;
 
 public abstract class PnPropiedades extends JPanel implements MouseListener{
     public JLabel LbNombre = new JLabel("Nombre");

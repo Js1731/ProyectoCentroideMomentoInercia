@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -10,12 +10,16 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Grupo;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrCirc;
-import PryMecanica.Plano.Objetos.Formas.FrRect;
-import PryMecanica.Plano.Objetos.Formas.FrTria;
-import PryMecanica.Plano.Objetos.Objeto2D;
+import PryMecanica.gui.propiedades.PropCirc;
+import PryMecanica.gui.propiedades.PropGrupo;
+import PryMecanica.gui.propiedades.PropRect;
+import PryMecanica.gui.propiedades.PropTria;
+import PryMecanica.plano.objetos.Grupo;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrCirc;
+import PryMecanica.plano.objetos.formas.FrRect;
+import PryMecanica.plano.objetos.formas.FrTria;
 
 
 public class ArbolObjetos extends JPanel{

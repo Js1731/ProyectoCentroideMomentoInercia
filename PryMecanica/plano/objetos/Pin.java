@@ -1,11 +1,11 @@
-package PryMecanica.Plano.Objetos;
+package PryMecanica.plano.objetos;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import PryMecanica.Arrastrable;
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.plano.objetos.formas.Forma;
 
 /**Componete Arrastrable para deformar una forma*/
 public class Pin extends Arrastrable {

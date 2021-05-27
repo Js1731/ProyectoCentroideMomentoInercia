@@ -1,12 +1,12 @@
-package PryMecanica.Plano.Objetos.Formas;
+package PryMecanica.plano.objetos.formas;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Grupo;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Pin;
+import PryMecanica.plano.objetos.Grupo;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.Pin;
 
 /**Define una forma generica que se puede arrastrar y deformar usando un conjuntos de {@link Pin}
 */
@@ -72,7 +72,7 @@ public abstract class Forma extends Objeto2D{
         }
 
         if(PnPlano.PlPrinc.FrSel != this)
-            PnPlano.PlPrinc.SelForma(this);
+            PnPlano.PlPrinc.seleccionarForma(this);
     }
 
     @Override

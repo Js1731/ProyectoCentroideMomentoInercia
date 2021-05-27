@@ -10,16 +10,16 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-import PryMecanica.GUI.ArbolObjetos;
-import PryMecanica.GUI.ListaOpciones;
-import PryMecanica.GUI.PnPropiedades;
-import PryMecanica.Plano.Punto;
-import PryMecanica.Plano.Objetos.Grupo;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrTria;
+import PryMecanica.gui.ArbolObjetos;
+import PryMecanica.gui.ListaOpciones;
+import PryMecanica.gui.propiedades.PnPropiedades;
+import PryMecanica.plano.Punto;
+import PryMecanica.plano.objetos.Grupo;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrTria;
 
-/**Area de trabajo, aqui se colocan todas las formas */
+/**Area de trabajo, aqui se colocan todos los {@link Objeto2D} y los {@link PnPropiedades}*/
 public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     public static PnPlano PlPrinc;
@@ -31,16 +31,18 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     public static Punto PtOrigen = new Punto(500,500);
 
     /**Posicion inicial de la seleccion */
-    Punto PtInicioSel = new Punto();
+    private Punto PtInicioSel = new Punto();
 
     /**Posicion final de la seleccion s*/
-    Punto PtFinSel = new Punto();
+    private Punto PtFinSel = new Punto();
+
+    /**Distancia entre la esquina superior izquierda del componente al punto en el que el mouse esta arrastrando */
+    private Point PtOffset = new Point(0,0);
 
     /**Indica si se esta arrastrando el mouse para hacer una seleccion */
     boolean Seleccinando = false;
 
-    /**Indica la forma seleccionada actualmente */
-    public Forma FrSel = null;
+
 
     /**Lista de todos los objetos dentro del plano */
     public ArrayList<Objeto2D> LstObjetos = new ArrayList<Objeto2D>(); 
@@ -51,13 +53,17 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     /**Indica el grupo seleccionado */
     public static Grupo GrupoSel = null;
 
+    /**Indica la forma seleccionada actualmente */
+    public Forma FrSel = null;
+
+
     /**Menu contextual */
     public ListaOpciones LOP = new ListaOpciones(100, 100);
-
-    private Point PtOffset = new Point(0,0);
-
+    
+    /**Arbol de todos los objetos del plano */
     public ArbolObjetos AB;
 
+    /**Indica el {@link PnPropiedades} activo actualmente */
     public PnPropiedades PnPropActual = null;
 
     public PnPlano(){
@@ -66,18 +72,15 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         addMouseMotionListener(this);
         addMouseListener(this);
 
-        
-
         PlPrinc = this;
-
-        AB = new ArbolObjetos(LstObjetos);
-        
+        AB = new ArbolObjetos(LstObjetos);        
         LOP.setVisible(false);;
+
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
 
-    public void SelForma(Forma Fr){
+    public void seleccionarForma(Forma Fr){
         if(FrSel != null){
             FrSel.eliminarPines();
         }
@@ -195,7 +198,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 GrupoSel = null;
             }
 
-            SelForma(null);
+            seleccionarForma(null);
 
             Pos = e.getLocationOnScreen();
             SwingUtilities.convertPointFromScreen(Pos, this);
@@ -232,7 +235,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             Point Pos = e.getLocationOnScreen();
             SwingUtilities.convertPointFromScreen(Pos, this);
 
-            SelForma(null);
+            seleccionarForma(null);
 
             int DifX = Math.round(Pos.x  - PtOrigen.x + PtOffset.x);
             int DifY = Math.round(Pos.y  - PtOrigen.y + PtOffset.y);

@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui.propiedades;
 
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -10,9 +10,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrCirc;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrCirc;
 
 public class PropCirc extends PnPropiedades{
     

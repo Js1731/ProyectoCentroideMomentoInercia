@@ -1,4 +1,4 @@
-package PryMecanica.Plano.Objetos.Formas;
+package PryMecanica.plano.objetos.formas;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Pin;
+import PryMecanica.plano.objetos.Pin;
 
 /**
  * Rectangulo al que se le puede editar su ancho y altura

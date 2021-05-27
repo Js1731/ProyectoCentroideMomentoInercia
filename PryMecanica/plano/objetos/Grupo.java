@@ -1,4 +1,4 @@
-package PryMecanica.Plano.Objetos;
+package PryMecanica.plano.objetos;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,11 +10,11 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import PryMecanica.PnPlano;
-import PryMecanica.GUI.ListaOpciones;
-import PryMecanica.GUI.Opcion;
-import PryMecanica.Plano.Punto;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrTria;
+import PryMecanica.gui.ListaOpciones;
+import PryMecanica.gui.Opcion;
+import PryMecanica.plano.Punto;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrTria;
 
 /**Define un {@link Objeto2D} que permite agrupar un conjunto de {@link Forma}s.
  * <p> El area de arrastrado del grupo se define por las formas que estan dentro del mismo
@@ -228,7 +228,7 @@ public class Grupo extends Objeto2D{
         }
 
         //DESELECCIONAR FIGURA ACTUAL
-        PnPlano.PlPrinc.SelForma(null);
+        PnPlano.PlPrinc.seleccionarForma(null);
 
         //BUSCAR X PARA AJUSTARSE
         SnapXs.removeAll(SnapXs);

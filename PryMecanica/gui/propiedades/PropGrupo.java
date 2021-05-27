@@ -1,15 +1,14 @@
-package PryMecanica.GUI;
-
-import PryMecanica.Plano.Objetos.Grupo;
+package PryMecanica.gui.propiedades;
 
 import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import PryMecanica.Plano.Punto;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Formas.Forma;
+import PryMecanica.plano.Punto;
+import PryMecanica.plano.objetos.Grupo;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
 
 public class PropGrupo extends PnPropiedades{
 

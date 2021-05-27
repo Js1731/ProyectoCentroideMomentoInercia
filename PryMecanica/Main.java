@@ -1,7 +1,7 @@
 package PryMecanica;
 import javax.swing.JFrame;
 
-import PryMecanica.GUI.PnPrincipal;
+import PryMecanica.gui.PnPrincipal;
 
 public class Main {
 

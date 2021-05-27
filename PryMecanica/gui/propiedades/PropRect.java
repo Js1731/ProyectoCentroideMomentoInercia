@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui.propiedades;
 
 import java.text.DecimalFormat;
 
@@ -7,9 +7,10 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrRect;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrRect;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 

@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui.propiedades;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -12,9 +12,9 @@ import javax.swing.event.ChangeListener;
 
 import PryMecanica.Ctrl;
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Objetos.Objeto2D;
-import PryMecanica.Plano.Objetos.Formas.Forma;
-import PryMecanica.Plano.Objetos.Formas.FrTria;
+import PryMecanica.plano.objetos.Objeto2D;
+import PryMecanica.plano.objetos.formas.Forma;
+import PryMecanica.plano.objetos.formas.FrTria;
 
 public class PropTria extends PnPropiedades{
 

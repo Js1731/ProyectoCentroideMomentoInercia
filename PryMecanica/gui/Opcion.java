@@ -1,4 +1,4 @@
-package PryMecanica.GUI;
+package PryMecanica.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;

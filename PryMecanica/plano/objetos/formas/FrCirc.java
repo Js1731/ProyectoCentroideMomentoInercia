@@ -1,4 +1,4 @@
-package PryMecanica.Plano.Objetos.Formas;
+package PryMecanica.plano.objetos.formas;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,8 +12,8 @@ import javax.swing.SwingUtilities;
 
 import PryMecanica.Ctrl;
 import PryMecanica.PnPlano;
-import PryMecanica.Plano.Punto;
-import PryMecanica.Plano.Objetos.Pin;
+import PryMecanica.plano.Punto;
+import PryMecanica.plano.objetos.Pin;
 
 /**
  * Circulo que con diametro deformable y que se puede moficiar el arco

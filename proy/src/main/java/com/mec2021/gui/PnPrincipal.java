@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.FlowLayout;
+import java.awt.CardLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
@@ -18,40 +21,129 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
+import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 import com.mec2021.Ctrl;
-import com.mec2021.PnPlano;
 
 public class PnPrincipal extends JPanel{
 
+    public CardLayout Expositor = new CardLayout(); 
+
     public static PnPrincipal PanelPrinc;
+    public JPanel PnBarraSup = new JPanel();
+    public JPanel BarraTabs = new JPanel();
+    public PnPlano PlanoActual;
+    public JPanel PnAreaTrabajo = new JPanel();
+
+    public static int TabsCount = 1;
+
+    public static Tab TabSel;
 
     public PnPrincipal(){
 
         PanelPrinc = this;
 
-        setBackground(Color.WHITE);
+        setBackground(Ctrl.ClGris2);
 
+        //INICIAR BARRA SUPERIOR
+        iniciarBarraSuperior();
+
+        //INICIAR BARRA PARA TABS
+        BarraTabs.setBackground(Ctrl.ClGris2);
+        BarraTabs.setPreferredSize(new Dimension(getWidth(), 30));
+        BarraTabs.setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
+
+        PnAreaTrabajo.setLayout(Expositor);
+
+        agregarTab();
+
+        BotonGenerico BtAgregarTab = new BotonGenerico(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                if(MouseEncima){
+                    g.setColor(Ctrl.ClGrisClaro);
+                }else{
+                    g.setColor(Ctrl.ClGris2);
+                }
+
+                g.fillRect(2, 2, 26,26);
+
+                g.setColor(Ctrl.ClGrisClaro3);
+                g.drawLine(15, 8, 15, 22);
+                g.drawLine(8, 15, 22, 15);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                agregarTab();
+                BarraTabs.setComponentZOrder(this, BarraTabs.getComponentCount()-1);
+            }
+        };
+        BtAgregarTab.setPreferredSize(new Dimension(30,30));
+        BtAgregarTab.setOpaque(false);
+
+        BarraTabs.add(BtAgregarTab);
+
+        //ORDENAR COMPONENTES DE LA GUI
         SpringLayout Ly = new SpringLayout();
         setLayout(Ly);
 
-        PnPlano PrimerPlano = new PnPlano();
-        
+        Ly.putConstraint(SpringLayout.NORTH, PnBarraSup, 0, SpringLayout.NORTH, this);
+        Ly.putConstraint(SpringLayout.WEST, PnBarraSup, 0, SpringLayout.WEST, this);
+        Ly.putConstraint(SpringLayout.EAST, PnBarraSup, 0, SpringLayout.EAST, this);
 
+        Ly.putConstraint(SpringLayout.WEST, BarraTabs, 20, SpringLayout.WEST, this);
+        Ly.putConstraint(SpringLayout.NORTH, BarraTabs, 0, SpringLayout.SOUTH, PnBarraSup);
+        Ly.putConstraint(SpringLayout.EAST, BarraTabs, -20, SpringLayout.EAST, this);
+
+        Ly.putConstraint(SpringLayout.WEST, PnAreaTrabajo, 0, SpringLayout.WEST, this);
+        Ly.putConstraint(SpringLayout.NORTH, PnAreaTrabajo, 0, SpringLayout.SOUTH, BarraTabs);
+        Ly.putConstraint(SpringLayout.SOUTH, PnAreaTrabajo, 0, SpringLayout.SOUTH, this);
+        Ly.putConstraint(SpringLayout.EAST, PnAreaTrabajo, 0, SpringLayout.EAST, this);
+
+        add(PnBarraSup);
+        add(BarraTabs);
+        add(PnAreaTrabajo);
+
+        Expositor.show(PnAreaTrabajo, "Figura 1");
+        PnAreaTrabajo.repaint();
+    }
+    
+    public static Tab agregarTab(){
+
+        String Nom = "Figura " + TabsCount;
+
+        PnPlano Plano = new PnPlano();
+        PnPrincipal.PanelPrinc.PnAreaTrabajo.add(Nom, Plano);
+
+        if(TabsCount == 1){
+            PnPrincipal.PanelPrinc.PlanoActual = Plano;
+        }
+        
+        Tab tab = new Tab(Nom, Plano);
+        PnPrincipal.PanelPrinc.BarraTabs.add(tab);        
+        
+        TabsCount ++;
+
+        return tab;
+    }
+
+    public void iniciarBarraSuperior(){
         SpringLayout Ly2 = new SpringLayout();
-        JPanel PnBarraSup = new JPanel();
+
         PnBarraSup.setLayout(Ly2);
         PnBarraSup.setBackground(Color.gray);
         PnBarraSup.setPreferredSize(new Dimension(getWidth(), 40));
         PnBarraSup.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
-        
-
+    
         BotonGenerico BtRect = new BotonGenerico(){
             @Override
             protected void paintComponent(Graphics g) {
@@ -160,21 +252,27 @@ public class PnPrincipal extends JPanel{
         BtRect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrRect(), JLayeredPane.DRAG_LAYER);
+                Forma Fr = new FrRect(PlanoActual);
+                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(Fr);
             }
         });
 
         BtCirc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrCirc(), JLayeredPane.DRAG_LAYER);
+                Forma Fr = new FrCirc(PlanoActual);
+                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(Fr);
             }
         });
 
         BtTria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PrimerPlano.add(new FrTria(), JLayeredPane.DRAG_LAYER);
+                Forma Fr = new FrTria(PlanoActual);
+                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(Fr);
             }
         });
 
@@ -186,7 +284,7 @@ public class PnPrincipal extends JPanel{
         LbEscala.setFont(Ctrl.Fnt1);
         LbEscala.setForeground(Color.WHITE);
 
-        JLabel LbTitulo = new JLabel("Titulo");
+        JLabel LbTitulo = new JLabel("Centroide y Momento de Inercia");
         LbTitulo.setFont(Ctrl.Fnt2);
         LbTitulo.setForeground(Color.WHITE);
         LbTitulo.setHorizontalAlignment(JLabel.CENTER);
@@ -220,9 +318,6 @@ public class PnPrincipal extends JPanel{
         Ly2.putConstraint(SpringLayout.NORTH, JFTScale, 10, SpringLayout.NORTH, PnBarraSup);
         Ly2.putConstraint(SpringLayout.SOUTH, JFTScale, -10, SpringLayout.SOUTH, PnBarraSup);
 
-
-
-
         PnBarraSup.add(BtRect);
         PnBarraSup.add(BtCirc);
         PnBarraSup.add(BtTria);
@@ -230,20 +325,5 @@ public class PnPrincipal extends JPanel{
         PnBarraSup.add(JFTScale);
         PnBarraSup.add(LbEscala);
         PnBarraSup.add(LbTitulo);
-
-        Ly.putConstraint(SpringLayout.WEST, PrimerPlano, 0, SpringLayout.WEST, this);
-        Ly.putConstraint(SpringLayout.NORTH, PrimerPlano, 0, SpringLayout.SOUTH, PnBarraSup);
-        Ly.putConstraint(SpringLayout.SOUTH, PrimerPlano, 0, SpringLayout.SOUTH, this);
-        Ly.putConstraint(SpringLayout.EAST, PrimerPlano, 0, SpringLayout.EAST, this);
-        
-        
-        Ly.putConstraint(SpringLayout.NORTH, PnBarraSup, 0, SpringLayout.NORTH, this);
-        Ly.putConstraint(SpringLayout.WEST, PnBarraSup, 0, SpringLayout.WEST, this);
-        Ly.putConstraint(SpringLayout.EAST, PnBarraSup, 0, SpringLayout.EAST, this);
-        
-
-        add(PnBarraSup);
-        add(PrimerPlano);
     }
-    
 }

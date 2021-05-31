@@ -2,17 +2,16 @@ package com.mec2021.plano.objetos.formas;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.Pin;
-import com.mec2021.PnPlano;
 
 /**Define una forma generica que se puede arrastrar y deformar usando un conjuntos de {@link Pin}
 */
@@ -28,13 +27,20 @@ public abstract class Forma extends Objeto2D{
 
     public boolean Hueco = false;
 
-    public Forma(){
-        int Val = 220 - (new Random()).nextInt(90);
+    public static int FrCount = 0;
+
+    public Forma(PnPlano plano){
+        super(plano);
+
+        Plano = plano;
+        FrCount++;
+
+        int Val = 230 - Math.round((float)(80*(Math.cos(Math.toRadians(FrCount*30)) + 1)/2));
         ColFig = new Color(Val, Val, Val);
 
-        PnPlano.PlPrinc.LstObjetos.add(this);
+        Plano.LstObjetos.add(this);
 
-        setBackground(Color.LIGHT_GRAY);
+        
     }
 
 
@@ -59,11 +65,11 @@ public abstract class Forma extends Objeto2D{
     public void eliminarPines(){
         if(Pines[0] != null){
             for (int i = 0; i < Pines.length; i++) {
-                PnPlano.PlPrinc.remove(Pines[i]);
+                Plano.remove(Pines[i]);
                 Pines[i] = null;
                 
             }
-            PnPlano.PlPrinc.repaint();
+            Plano.repaint();
         }
     }
 
@@ -76,18 +82,18 @@ public abstract class Forma extends Objeto2D{
         requestFocus();
 
         //SELECCIONA LA FORMA
-        PnPlano.PlPrinc.moveToFront(this);
+        Plano.moveToFront(this);
 
         if(Pines[0] != null){
             for (Pin pin : Pines) 
-                PnPlano.PlPrinc.moveToFront(pin);
+            Plano.moveToFront(pin);
         }
 
-        if(PnPlano.PlPrinc.FrSel != this)
-            PnPlano.PlPrinc.seleccionarForma(this);
+        if(Plano.FrSel != this)
+            Plano.seleccionarForma(this);
 
         if(SwingUtilities.isRightMouseButton(e)){
-            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY());
+            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
 
             Forma Fr = this;
             Opcion Op = new Opcion("Eliminar"){
@@ -95,15 +101,15 @@ public abstract class Forma extends Objeto2D{
                 public void mousePressed(MouseEvent e) {
                     super.mousePressed(e);
 
-                    PnPlano.PlPrinc.eliminarForma(Fr);
-                    PnPlano.PlPrinc.remove(Lo);
+                    Plano.eliminarForma(Fr);
+                    Plano.remove(Lo);
                 }
             };
 
             Lo.agregarOpcion(Op);
 
-            PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
-            PnPlano.PlPrinc.moveToFront(Lo);
+            Plano.add(Lo, JLayeredPane.DRAG_LAYER);
+            Plano.moveToFront(Lo);
             Lo.repaint();
         }
     }

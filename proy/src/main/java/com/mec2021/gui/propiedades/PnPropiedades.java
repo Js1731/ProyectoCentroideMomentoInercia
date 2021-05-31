@@ -3,12 +3,14 @@ package com.mec2021.gui.propiedades;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.RenderingHints;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,8 +21,8 @@ import javax.swing.event.ChangeListener;
 
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.Ctrl;
-import com.mec2021.PnPlano;
 import com.mec2021.gui.BotonGenerico;
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Objeto2D;
 
 /**Panel generico para mostrar las propiedades de un {@link Objeto2D} */
@@ -35,6 +37,8 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
 
     /**Indica si la forma esta hueca */
     JCheckBox CBHueco = new JCheckBox("Hueco");
+
+    PnPlano Plano;
 
     /**Controlador para manejar la entrada, se encarga de eliminar caracteres invalidos y notificar los cambios en un JTextField*/
     KeyListener TextCont = new KeyListener(){
@@ -74,13 +78,16 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
 
 
 
-    public PnPropiedades(Objeto2D obj) {
+    public PnPropiedades(Objeto2D obj, PnPlano plano) {
         setLayout(new BorderLayout());
+
+        Plano = plano;
 
         addMouseListener(this);
         PnCont.setLayout(null);
 
 
+        setBackground(Ctrl.ClGrisClaro3);
         setBounds(250, 50, 200, 300);
 
         ObjRef = obj;
@@ -99,7 +106,9 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
             }
         };
         PnSup.setLayout(null);
+        PnSup.setOpaque(false);
 
+        PnCont.setOpaque(false);
 
         //BOTON PARA CERRAR EL PANEL
         PnPropiedades PP = this;
@@ -107,7 +116,17 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                
+
+                Graphics2D g2 = (Graphics2D)g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+                if(MouseEncima){
+                    setBackground(Ctrl.ClGrisClaro2);
+                }else{
+                    setBackground(Ctrl.ClGrisClaro3);
+                }
+
+
                 g.drawLine(4, 4, 16, 16);
                 g.drawLine(16, 4, 4, 16);
             }
@@ -119,8 +138,8 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                PnPlano.PlPrinc.remove(PP);
-                PnPlano.PlPrinc.repaint();
+                Plano.remove(PP);
+                Plano.repaint();
             }
             
         });
@@ -131,7 +150,7 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
             @Override
             public void stateChanged(ChangeEvent e) {
                 ((Forma)ObjRef).Hueco = CBHueco.isSelected();
-                PnPlano.PlPrinc.repaint();
+                Plano.repaint();
             }
 
         });        
@@ -154,7 +173,7 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        PnPlano.PlPrinc.moveToFront(this);
+        Plano.moveToFront(this);
         
     }
 

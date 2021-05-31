@@ -1,5 +1,6 @@
 package com.mec2021.gui.propiedades;
 
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Grupo;
 
 import java.text.DecimalFormat;
@@ -12,7 +13,6 @@ import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
-import com.mec2021.PnPlano;
 
 /**Panel de propiedades para un Grupo*/
 public class PropGrupo extends PnPropiedades{
@@ -23,8 +23,8 @@ public class PropGrupo extends PnPropiedades{
     private JLabel LbCentX = new JLabel("Centroide en X:");
     private JLabel LbCentY = new JLabel("Centroide en Y:");
 
-    public PropGrupo(Objeto2D obj) {
-        super(obj);
+    public PropGrupo(Objeto2D obj, PnPlano plano) {
+        super(obj, plano);
 
         //POSICION X
         JLabel LbX = new JLabel("X");
@@ -68,11 +68,11 @@ public class PropGrupo extends PnPropiedades{
     @Override
     public void actualizarForma() {
 
-        int ValX = Math.round(PnPlano.PtOrigen.x) +  Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala)/PnPlano.Escala;
-        int ValY = Math.round(PnPlano.PtOrigen.y) -  Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala)/PnPlano.Escala;
+        int ValX = Math.round(Plano.PtOrigen.x) +  Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala)/PnPlano.Escala;
+        int ValY = Math.round(Plano.PtOrigen.y) -  Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala)/PnPlano.Escala;
 
-        int DifX = ValX - Math.round(PnPlano.PtOrigen.x) - ObjRef.X;
-        int DifY = ValY - Math.round(PnPlano.PtOrigen.y) - ObjRef.Y;
+        int DifX = ValX - Math.round(Plano.PtOrigen.x) - ObjRef.X;
+        int DifY = ValY - Math.round(Plano.PtOrigen.y) - ObjRef.Y;
 
         ObjRef.setBounds(ValX, ValY, ObjRef.getWidth(), ObjRef.getHeight());
 
@@ -114,7 +114,7 @@ public class PropGrupo extends PnPropiedades{
                 Tria.ActualizarCoordenadas();
                 Tria.ActualizarPines();
             }
-            PnPlano.PlPrinc.repaint();
+            Plano.repaint();
         }
 
 

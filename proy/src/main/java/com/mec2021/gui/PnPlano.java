@@ -1,4 +1,4 @@
-package com.mec2021;
+package com.mec2021.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,13 +7,13 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.awt.BasicStroke;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
-import com.mec2021.gui.ArbolObjetos;
-import com.mec2021.gui.ListaOpciones;
+import com.mec2021.Ctrl;
 import com.mec2021.gui.propiedades.PnPropiedades;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
@@ -25,13 +25,11 @@ import com.mec2021.plano.objetos.formas.FrTria;
 /**Area de trabajo, aqui se colocan todas las formas */
 public class PnPlano extends JLayeredPane implements MouseInputListener{
 
-    public static PnPlano PlPrinc;
-
     /**Escala de las coordenadas del plano */
     public static int Escala = 1;
 
     /**Posicion del origen dentro del Panel del plano */
-    public static Punto PtOrigen = new Punto(500,500);
+    public Punto PtOrigen = new Punto(500,500);
 
     /**Posicion inicial de la seleccion */
     Punto PtInicioSel = new Punto();
@@ -52,10 +50,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     Color ColSel = new Color(200, 200, 200, 100);
 
     /**Indica el grupo seleccionado */
-    public static Grupo GrupoSel = null;
+    public Grupo GrupoSel = null;
 
     /**Menu contextual */
-    public ListaOpciones LOP = new ListaOpciones(100, 100);
+    public ListaOpciones LOP = new ListaOpciones(100, 100, this);
 
     private Point PtOffset = new Point(0,0);
 
@@ -63,19 +61,24 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     public PnPropiedades PnPropActual = null;
 
+    public boolean SnapActivoX = false;
+    public boolean SnapActivoY = false;
+
+    public int SnapX = 0;
+    public int SnapY = 0;
+
     public PnPlano(){
         setLayout(null);
 
         addMouseMotionListener(this);
         addMouseListener(this);
 
-        
+        setBackground(Color.WHITE);
+        setOpaque(true);
 
-        PlPrinc = this;
-
-        AB = new ArbolObjetos(LstObjetos);
+        AB = new ArbolObjetos(LstObjetos, this);
         
-        LOP.setVisible(false);;
+        LOP.setVisible(false);
 
         notificarCambios(0);
 
@@ -141,6 +144,18 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                        Math.round((float)Math.abs(xFin - xIni)),
                        Math.round((float)Math.abs(yFin- yIni)));
         }
+
+        g2.setColor(Color.red);
+        g2.setStroke(new BasicStroke(1.5f));
+        if(SnapActivoY){
+            g2.drawLine(0, SnapY, getWidth(), SnapY);
+            SnapActivoY = false;
+        }
+        if(SnapActivoX){
+            g2.drawLine(SnapX, 0,SnapX, getHeight());
+            SnapActivoX = false;
+        }
+
     }
 
     public void actualizarEscala(int EscalaAnt){
@@ -189,7 +204,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                     PnPropActual.actualizarDatos();
 
                 if(PnPropActual != null)
-                    PnPlano.PlPrinc.moveToFront(PnPlano.PlPrinc.PnPropActual);
+                    moveToFront(PnPropActual);
             }
         }
 
@@ -291,10 +306,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             int DifX = Math.round(Pos.x  - PtOrigen.x + PtOffset.x);
             int DifY = Math.round(Pos.y  - PtOrigen.y + PtOffset.y);
     
-            PnPlano.PtOrigen.x = Pos.x + PtOffset.x;
-            PnPlano.PtOrigen.y = Pos.y + PtOffset.y;
+            PtOrigen.x = Pos.x + PtOffset.x;
+            PtOrigen.y = Pos.y + PtOffset.y;
     
-            for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
+            for (Objeto2D obj : LstObjetos) {
                 obj.setBounds(obj.getX() + DifX, obj.getY() + DifY, obj.getWidth(), obj.getHeight());
                 if(obj instanceof FrTria){
                     //ACTUALIZAR VERTICES
@@ -309,7 +324,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 }
             }
     
-            PnPlano.PlPrinc.repaint();
+            repaint();
         }
     }
 
@@ -353,7 +368,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
                     //CREAR UN NUEVO GRUPO SI NO EXISTE
                     if(NuevoGrupo == null){
-                        NuevoGrupo = new Grupo();
+                        NuevoGrupo = new Grupo(this);
                         NuevoGrupo.MoviendoFormas = true;
                     }
 

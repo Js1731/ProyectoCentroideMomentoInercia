@@ -10,9 +10,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Pin;
-import com.mec2021.PnPlano;
 
 /**
  * Triangulo definido por tres vertices representados por {@link Punto}.
@@ -35,8 +35,8 @@ public class FrTria extends Forma{
     /**
      * Crea un tringulo en el origen de 50x50
      */
-    public FrTria(){
-        this(0,-5,0,5.0f,2.5f,0,5.0f,5.0f);
+    public FrTria(PnPlano plano){
+        this(0,-5,0,5.0f,2.5f,0,5.0f,5.0f, plano);
     }
 
     /**
@@ -50,21 +50,21 @@ public class FrTria extends Forma{
      * @param x3 X del Vertice 3 local al panel
      * @param y3 Y del Vertice 3 local al panel
      */
-    public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3){
-
+    public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3, PnPlano plano){
+        super(plano);
         Pines = new Pin[3];
 
         Nombre = "Triangulo " + (ID++);
-        PnPlano.PlPrinc.notificarCambios(0);
+        Plano.notificarCambios(0);
 
-        Ver1.x = Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);
-        Ver1.y = Math.round(PnPlano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y1*Escala);
+        Ver1.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);
+        Ver1.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y1*Escala);
 
-        Ver2.x = Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x2*Escala);
-        Ver2.y = Math.round(PnPlano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y2*Escala);
+        Ver2.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x2*Escala);
+        Ver2.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y2*Escala);
 
-        Ver3.x = Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x3*Escala);
-        Ver3.y = Math.round(PnPlano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y3*Escala);
+        Ver3.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x3*Escala);
+        Ver3.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y3*Escala);
 
 
         
@@ -81,19 +81,19 @@ public class FrTria extends Forma{
 
         //VERTICE 1
         Point TmpVer1 = new Point(Math.round(Ver1.x), Math.round(Ver1.y));
-        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer1, this);
+        SwingUtilities.convertPoint(Plano, TmpVer1, this);
         
         Poligono.addPoint(TmpVer1.x - getX(), TmpVer1.y - getY());
         
         //VERTICE 2
         Point TmpVer2 = new Point(Math.round(Ver2.x), Math.round(Ver2.y));
-        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer2, this);
+        SwingUtilities.convertPoint(Plano, TmpVer2, this);
         
         Poligono.addPoint(TmpVer2.x - getX(), TmpVer2.y - getY());
         
         //VERTICE 3
         Point TmpVer3 = new Point(Math.round(Ver3.x), Math.round(Ver3.y));
-        SwingUtilities.convertPoint(PnPlano.PlPrinc, TmpVer3, this);
+        SwingUtilities.convertPoint(Plano, TmpVer3, this);
         
         Poligono.addPoint(TmpVer3.x - getX(), TmpVer3.y - getY());
 
@@ -145,8 +145,8 @@ public class FrTria extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPlano.PtOrigen.x);
-        Y = Math.round(getY() - PnPlano.PtOrigen.y);
+        X = Math.round(getX() - Plano.PtOrigen.x);
+        Y = Math.round(getY() - Plano.PtOrigen.y);
     }
 
     /**
@@ -197,12 +197,12 @@ public class FrTria extends Forma{
         if(Pines[0] == null){
 
             //VER1
-            Pines[0] = new Pin(this, getX(), getY() + getHeight()){
+            Pines[0] = new Pin(this, getX(), getY() + getHeight(), Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
-                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+                    setLocation(snapX(getX()), snapY(getY()));
 
                     Ver1.x = getX();
                     Ver1.y = getY();
@@ -213,12 +213,12 @@ public class FrTria extends Forma{
             };
 
             //VER2
-            Pines[1] = new Pin(this, getX() + 25, getY()){
+            Pines[1] = new Pin(this, getX() + 25, getY(), Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
-                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+                    setLocation(snapX(getX()), snapY(getY()));
 
                     Ver2.x = getX();
                     Ver2.y = getY();
@@ -229,12 +229,12 @@ public class FrTria extends Forma{
             };
 
             //VER3
-            Pines[2] = new Pin(this, getX() + getWidth(), getY() + getHeight()){
+            Pines[2] = new Pin(this, getX() + getWidth(), getY() + getHeight(), Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     super.mouseDragged(e);
 
-                    setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
+                    setLocation(snapX(getX()), snapY(getY()));
 
                     Ver3.x = getX();
                     Ver3.y = getY();
@@ -247,23 +247,23 @@ public class FrTria extends Forma{
 
             //AGREGAR PINES AL PANEL PRINCIPAL
             for (Pin pin : Pines) {
-                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPlano.PlPrinc.moveToFront(pin);
+                Plano.add(pin, JLayeredPane.DRAG_LAYER);
+                Plano.moveToFront(pin);
             }
 
             ActualizarPines();
 
-            PnPlano.PlPrinc.repaint();
+            Plano.repaint();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        PnPlano.PlPrinc.notificarCambios(1);
+        Plano.notificarCambios(1);
 
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, Plano);
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         int DifX = Pos.x - (PtOffset.x + getX());
@@ -280,9 +280,9 @@ public class FrTria extends Forma{
         Point PtPrev = getLocation();
 
         //AUTOAJUSTAR A OTRAS FORMAS
-        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
-        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
-                    snap(getY() + getHeight(), SnapYs) - getHeight());
+        setLocation(snapX(getX()), snapY(getY()));
+        setLocation(snapX(getX() + getWidth()) - getWidth(),
+                    snapY(getY() + getHeight()) - getHeight());
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         DifX = getX() - PtPrev.x;
@@ -293,5 +293,6 @@ public class FrTria extends Forma{
 
         ActualizarPines();
         ActualizarCoordenadas();
+        Plano.repaint();
     }
 }

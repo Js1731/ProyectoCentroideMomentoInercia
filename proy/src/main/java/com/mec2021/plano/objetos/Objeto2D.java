@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import com.mec2021.Arrastrable;
-import com.mec2021.PnPlano;
+import com.mec2021.gui.PnPlano;
 
 /**Define un objeto generico con coordenadas relativas al Origen */
 public abstract class Objeto2D extends Arrastrable{
@@ -26,18 +26,53 @@ public abstract class Objeto2D extends Arrastrable{
     /**Escala de unidad : Pixel */
     public static int Escala = 50;
 
+    protected final static int EjeX = 0;
+    protected final static int EjeY = 0;
+
     /**Ajustar argumento al valor mas cercano dentro de la lista de valores 
      * @param c Valor
      * @param lst Lista de Valores
+     * @param Eje Eje donde se va a ajustar (0 : X, 1 : Y)
      * @return Valor Ajustado
      */
-    public int snap(int c, ArrayList<Integer> lst){
+
+    private int snap(int c, ArrayList<Integer> lst){
         for (int snap : lst) {
             if(Math.abs(c - snap) < 30){
                 return snap;
             }
         }
         return c;
+    }
+
+    public int snapX(int c){
+        int snp = snap(c, SnapXs);
+
+        if(snp != c){
+            Plano.SnapActivoX = true;
+            Plano.SnapX = snp;
+            Plano.repaint();
+        }
+        
+        return snp;
+    }
+    
+    
+    public int snapY(int c){
+        int snp = snap(c, SnapYs);
+        
+        if(snp != c){
+            Plano.SnapActivoY = true;
+            Plano.SnapY = snp;
+            Plano.repaint();
+        }
+
+        return snp;
+    }
+
+    public Objeto2D(PnPlano plano){
+        super(plano);
+        Plano = plano;
     }
 
     @Override
@@ -56,10 +91,10 @@ public abstract class Objeto2D extends Arrastrable{
         SnapXs.removeAll(SnapXs);
         SnapYs.removeAll(SnapYs);
 
-        SnapXs.add(Math.round(PnPlano.PtOrigen.x));
-        SnapYs.add(Math.round(PnPlano.PtOrigen.y));
+        SnapXs.add(Math.round(Plano.PtOrigen.x));
+        SnapYs.add(Math.round(Plano.PtOrigen.y));
 
-        for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
+        for (Objeto2D obj : Plano.LstObjetos) {
             if(obj != this){
                 SnapXs.add(obj.getX());
                 SnapXs.add(obj.getX() + obj.getWidth());
@@ -74,10 +109,18 @@ public abstract class Objeto2D extends Arrastrable{
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
 
-        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
-        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
-                    snap(getY() + getHeight(), SnapYs) - getHeight());
+        setLocation(snapX(getX()), snapY(getY()));
+        setLocation(snapX(getX() + getWidth()) - getWidth(),
+                    snapY(getY() + getHeight()) - getHeight());
 
-        PnPlano.PlPrinc.notificarCambios(1);
+        Plano.notificarCambios(1);
+        Plano.repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        super.mouseReleased(e);
+
+        Plano.repaint();
     }
 }

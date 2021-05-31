@@ -8,8 +8,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.mec2021.PnPlano;
-
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.AWTEvent;
@@ -21,7 +19,7 @@ public class ListaOpciones extends JPanel{
     /**Cantidad de opciones dentro del Menu */
     public int CantOp = 0;
 
-    public ListaOpciones(int X, int Y) {
+    public ListaOpciones(int X, int Y, PnPlano plano) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         setBounds(X, Y, 130, 200);
@@ -37,7 +35,7 @@ public class ListaOpciones extends JPanel{
                     try{
                         if(!LP.contains(SwingUtilities.convertPoint((JComponent)event.getSource(), ((MouseEvent)event).getPoint(), LP))){
                             LP.setVisible(false);
-                            PnPlano.PlPrinc.repaint();
+                            plano.repaint();
                         }
                     }catch(ClassCastException e){}
                 }

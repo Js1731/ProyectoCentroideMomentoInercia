@@ -6,13 +6,14 @@ import java.awt.event.MouseEvent;
 
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.Arrastrable;
-import com.mec2021.PnPlano;
+import com.mec2021.gui.PnPlano;
 
 /**Componete Arrastrable para deformar una forma*/
 public class Pin extends Arrastrable {
     public Forma Fr;
 
-    public Pin(Forma fr, int x, int y){
+    public Pin(Forma fr, int x, int y, PnPlano plano){
+        super(plano);
         Fr = fr;
         setBackground(Color.BLUE);
         setBounds(x,y,10,10);
@@ -29,9 +30,16 @@ public class Pin extends Arrastrable {
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
 
-        PnPlano.PlPrinc.notificarCambios(1);
+        Plano.notificarCambios(1);
 
         if(Fr.Grp != null)
             Fr.Grp.ActualizarBordes();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        super.mouseReleased(e);
+
+        Plano.repaint();
     }
 }

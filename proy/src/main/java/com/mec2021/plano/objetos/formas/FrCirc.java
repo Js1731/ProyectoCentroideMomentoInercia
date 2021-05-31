@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Pin;
 import com.mec2021.Ctrl;
-import com.mec2021.PnPlano;
+import com.mec2021.gui.PnPlano;
 
 /**
  * Circulo que con diametro deformable y que se puede moficiar el arco
@@ -32,8 +32,8 @@ public class FrCirc extends Forma{
     /**
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
      */
-    public FrCirc(){
-        this(0, -5, 5, 90, 360);
+    public FrCirc(PnPlano plano){
+        this(0, -5, 5, 90, 360, plano);
     }
 
     /**
@@ -43,20 +43,20 @@ public class FrCirc extends Forma{
      * @param AngIni Angulo inicial del sector
      * @param Ext Angulo del sector
      */
-    public FrCirc(float X, float Y, float dia, int AngIni, int Ext){
-
+    public FrCirc(float X, float Y, float dia, int AngIni, int Ext, PnPlano plano){
+        super(plano);
         
         setOpaque(false);
 
         Nombre = "Circulo " + (ID++);
 
-        PnPlano.PlPrinc.notificarCambios(0);
+        Plano.notificarCambios(0);
 
-        PnPlano.PlPrinc.moveToFront(this);
+        Plano.moveToFront(this);
 
         Pines = new Pin[3];
         Diametro = Math.round(dia*Escala);
-        setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(X*Escala), Math.round(PnPlano.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
+        setBounds(Math.round(Plano.PtOrigen.x) + Math.round(X*Escala), Math.round(Plano.PtOrigen.y) +  Math.round(Y*Escala), Diametro, Diametro);
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
         ActualizarCoordenadas();
 
@@ -124,8 +124,8 @@ public class FrCirc extends Forma{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPlano.PtOrigen.x);
-        Y = Math.round(getY() - PnPlano.PtOrigen.y);
+        X = Math.round(getX() - Plano.PtOrigen.x);
+        Y = Math.round(getY() - Plano.PtOrigen.y);
 
         Diametro = getWidth();
     }
@@ -239,11 +239,11 @@ public class FrCirc extends Forma{
             int PinY = getY() + getHeight()/2;
 
             //PIN DE DIAMETRO
-            Pines[0] = new Pin(this, PinX, PinY){
+            Pines[0] = new Pin(this, PinX, PinY, Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
             
                     setBounds(Pos.x - PtOffset.x, Fr.getY() + Diametro/2, getWidth(), getHeight());
                     
@@ -253,18 +253,18 @@ public class FrCirc extends Forma{
                         Fr.Grp.ActualizarBordes();
                     ActualizarPines();
                     ActualizarCoordenadas();
-                    PnPlano.PlPrinc.notificarCambios(1);
+                    Plano.notificarCambios(1);
                 }
             };
 
             //PIN PARA MODIFICAR LA AMPLITUD DEL SECTOR
             PinX = getX() + getWidth()/2 + Math.round((float)(Diametro/4*Math.cos(Sector.start)));
 
-            Pines[1] = new Pin(this, PinX, PinY){
+            Pines[1] = new Pin(this, PinX, PinY, Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -295,18 +295,18 @@ public class FrCirc extends Forma{
 
                     ActualizarPines();
                     ActualizarCoordenadas();
-                    PnPlano.PlPrinc.notificarCambios(1);
+                    Plano.notificarCambios(1);
                     Fr.repaint();
                 }
             };
 
 
             //PIN PARA AJUSTAR EL ANGULO INCIAL
-            Pines[2] = new Pin(this, PinX, PinY){
+            Pines[2] = new Pin(this, PinX, PinY, Plano){
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
         
                     //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
                     float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
@@ -333,15 +333,15 @@ public class FrCirc extends Forma{
 
                     ActualizarPines();
                     ActualizarCoordenadas();
-                    PnPlano.PlPrinc.notificarCambios(1);
+                    Plano.notificarCambios(1);
                     Fr.repaint();
                 }
             };
 
             //AGREGAR PINES
             for (Pin pin : Pines) {
-                PnPlano.PlPrinc.add(pin, JLayeredPane.DRAG_LAYER);
-                PnPlano.PlPrinc.moveToFront(pin);
+                Plano.add(pin, JLayeredPane.DRAG_LAYER);
+                Plano.moveToFront(pin);
             }
 
             ActualizarPines();

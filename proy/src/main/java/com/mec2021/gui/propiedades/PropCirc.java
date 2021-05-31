@@ -5,10 +5,10 @@ import java.text.DecimalFormat;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrCirc;
-import com.mec2021.PnPlano;
 
 /**Panel de propiedades para un Circulo*/
 public class PropCirc extends PnPropiedades{
@@ -23,8 +23,8 @@ public class PropCirc extends PnPropiedades{
     private JTextField TFAngIni = new JTextField();
     private JTextField TFExt = new JTextField();
 
-    public PropCirc(Objeto2D obj) {
-        super(obj);
+    public PropCirc(Objeto2D obj, PnPlano plano) {
+        super(obj, plano);
 
         //POSICION X
         JLabel LbX = new JLabel("X");
@@ -110,8 +110,8 @@ public class PropCirc extends PnPropiedades{
     public void actualizarForma() {
         FrCirc Circ = (FrCirc)ObjRef;
 
-        Circ.setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(PnPlano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
+        Circ.setBounds(Math.round(Plano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
+                      Math.round(Plano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
                       2*Math.round(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))*Forma.Escala/PnPlano.Escala), 
                       2*Math.round(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))*Forma.Escala/PnPlano.Escala));
 
@@ -123,6 +123,6 @@ public class PropCirc extends PnPropiedades{
         Circ.ActualizarCoordenadas();
         Circ.ActualizarPines();
 
-        PnPlano.PlPrinc.repaint();
+        Plano.repaint();
     }
 }

@@ -5,10 +5,10 @@ import java.text.DecimalFormat;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrRect;
-import com.mec2021.PnPlano;
 
 /**Panel de propiedades para un Rectangulo*/
 public class PropRect extends PnPropiedades{
@@ -22,8 +22,8 @@ public class PropRect extends PnPropiedades{
     private JLabel LbCentX = new JLabel("Centroide en X:");
     private JLabel LbCentY = new JLabel("Centroide en Y:");
 
-    public PropRect(Objeto2D obj) {
-        super(obj);
+    public PropRect(Objeto2D obj, PnPlano plano) {
+        super(obj, plano);
          
         //POSICION X
         JLabel LbX = new JLabel("X");
@@ -98,8 +98,8 @@ public class PropRect extends PnPropiedades{
     public void actualizarForma() {
         FrRect Rec = (FrRect)ObjRef;
 
-        Rec.setBounds(Math.round(PnPlano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(PnPlano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
+        Rec.setBounds(Math.round(Plano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
+                      Math.round(Plano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
                       Math.round(Float.parseFloat((TFAn.getText().isEmpty() || TFAn.getText().equals("-") ? "0" : TFAn.getText()))*Forma.Escala/PnPlano.Escala), 
                       Math.round(Float.parseFloat((TFAl.getText().isEmpty() || TFAl.getText().equals("-") ? "0" : TFAl.getText()))*Forma.Escala/PnPlano.Escala));
                       
@@ -108,7 +108,7 @@ public class PropRect extends PnPropiedades{
         Rec.ActualizarCoordenadas();
         Rec.ActualizarPines();
 
-        PnPlano.PlPrinc.repaint();
+        Plano.repaint();
     }
     
 }

@@ -18,7 +18,6 @@ import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 import com.mec2021.Ctrl;
-import com.mec2021.PnPlano;
 import com.mec2021.plano.objetos.Objeto2D;
 
 import com.mec2021.gui.propiedades.*;
@@ -35,10 +34,14 @@ public class ArbolObjetos extends JPanel{
     /**Estructura de datos de los objetos*/
     Nodo Arbol = new Nodo();
 
+    public PnPlano Plano;
+
     public static int Altura = 30;
     
-    public ArbolObjetos(ArrayList<Objeto2D> lst){
+    public ArbolObjetos(ArrayList<Objeto2D> lst, PnPlano plano){
         setLayout(null);
+
+        Plano = plano;
 
         LstObj = lst;
 
@@ -120,7 +123,7 @@ public class ArbolObjetos extends JPanel{
             Nodo NodoVis = LstSinVisitar.get(0);
             LstSinVisitar.remove(NodoVis);
 
-            PnNodo Nd = new PnNodo(NodoVis.Altura, i, NodoVis); 
+            PnNodo Nd = new PnNodo(NodoVis.Altura, i, NodoVis, Plano); 
             add(Nd);
             LstPaneles.add(Nd);
             
@@ -191,7 +194,12 @@ class PnNodo extends JPanel implements MouseListener{
      * @param Pos Posicion vertical del nodo
      * @param nd Nodo que se va a representar
      */
-    public PnNodo(int Alt, int Pos, Nodo nd){
+
+    PnPlano Plano;
+
+    public PnNodo(int Alt, int Pos, Nodo nd, PnPlano plano){
+
+        Plano = plano;
 
         if(nd.Objeto == null){
             setBackground(Ctrl.ClGris);
@@ -246,24 +254,24 @@ class PnNodo extends JPanel implements MouseListener{
         if(Nd.Objeto != null){
         
             //ELIMINAR OTROS PANELES ACTIVOS
-            if(PnPlano.PlPrinc.PnPropActual != null){
-                PnPlano.PlPrinc.remove(PnPlano.PlPrinc.PnPropActual);
-                PnPlano.PlPrinc.PnPropActual = null;
-                PnPlano.PlPrinc.repaint();
+            if(Plano.PnPropActual != null){
+                Plano.remove(Plano.PnPropActual);
+                Plano.PnPropActual = null;
+                Plano.repaint();
             }
         
             //ABRIR EL PANEL DE PROPIEDADES DE LA FORMA
             if(Nd.Objeto instanceof FrRect){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropRect(Nd.Objeto), JLayeredPane.DRAG_LAYER);
+                Plano.add(Plano.PnPropActual = new PropRect(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrCirc){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropCirc(Nd.Objeto), JLayeredPane.DRAG_LAYER);
+                Plano.add(Plano.PnPropActual = new PropCirc(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrTria){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropTria(Nd.Objeto), JLayeredPane.DRAG_LAYER);
+                Plano.add(Plano.PnPropActual = new PropTria(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof Grupo){
-                PnPlano.PlPrinc.add(PnPlano.PlPrinc.PnPropActual = new PropGrupo(Nd.Objeto), JLayeredPane.DRAG_LAYER);
+                Plano.add(Plano.PnPropActual = new PropGrupo(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }
 
-            PnPlano.PlPrinc.moveToFront(PnPlano.PlPrinc.PnPropActual);
+            Plano.moveToFront(Plano.PnPropActual);
         }
     }
 

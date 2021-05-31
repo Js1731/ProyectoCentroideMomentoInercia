@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
+import com.mec2021.gui.PnPlano;
+
 /**
  * Controlador que permite que un panel se pueda arrastrar
  */
@@ -14,7 +16,10 @@ public class Arrastrable extends JPanel implements MouseInputListener{
     /**Distancia entre la esquina superior izquierda del componente al punto en el que el mouse esta arrastrando */
     protected Point PtOffset = new Point(0,0);
 
-    public Arrastrable(){
+    protected PnPlano Plano;
+
+    public Arrastrable(PnPlano plano){
+        Plano = plano;
         setBounds(10, 10, 50, 50);
         
         addMouseListener(this);
@@ -27,7 +32,7 @@ public class Arrastrable extends JPanel implements MouseInputListener{
     
     public void mouseDragged(MouseEvent e) {
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, Plano);
 
         setBounds(Pos.x - PtOffset.x, Pos.y - PtOffset.y, getWidth(), getHeight());
     }

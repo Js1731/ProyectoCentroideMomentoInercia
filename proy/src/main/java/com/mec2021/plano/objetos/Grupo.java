@@ -11,9 +11,9 @@ import javax.swing.SwingUtilities;
 
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
+import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrTria;
-import com.mec2021.PnPlano;
 
 /**Define un {@link Objeto2D} que permite agrupar un conjunto de {@link Forma}s.
  * <p> El area de arrastrado del grupo se define por las formas que estan dentro del mismo
@@ -31,7 +31,8 @@ public class Grupo extends Objeto2D{
     public static int ID = 1;
 
     /**Crea un nuevo grupo vacio en el origen*/
-    public Grupo(){
+    public Grupo(PnPlano plano){
+        super(plano);
         setOpaque(false);
         Nombre = "Grupo " + (ID++);
         repaint();
@@ -73,7 +74,7 @@ public class Grupo extends Objeto2D{
             SumaAreasPorX += CentX*Area;
         }
 
-        int x = Math.round(PnPlano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        int x = Math.round(Plano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
 
         return x;
     }
@@ -93,7 +94,7 @@ public class Grupo extends Objeto2D{
             SumaAreasPorY += CentY*Area;
         }
 
-        int y = Math.round(PnPlano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
+        int y = Math.round(Plano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
 
         return y;
     }
@@ -112,8 +113,8 @@ public class Grupo extends Objeto2D{
         ActualizarBordes();
 
         if(LstForma.size() == 0){
-            PnPlano.PlPrinc.LstObjetos.remove(this);
-            PnPlano.PlPrinc.remove(this);
+            Plano.LstObjetos.remove(this);
+            Plano.remove(this);
         }
     }
 
@@ -125,8 +126,8 @@ public class Grupo extends Objeto2D{
 
     public void eliminarGrupo(){
         vaciarGrupo();
-        PnPlano.PlPrinc.LstObjetos.remove(this);
-        PnPlano.PlPrinc.remove(this);
+        Plano.LstObjetos.remove(this);
+        Plano.remove(this);
     }
 
     /**Acualiza las dimensiones del panel del grupo */
@@ -162,8 +163,8 @@ public class Grupo extends Objeto2D{
 
     @Override
     public void ActualizarCoordenadas() {
-        X = Math.round(getX() - PnPlano.PtOrigen.x);
-        Y = Math.round(getY() - PnPlano.PtOrigen.y);
+        X = Math.round(getX() - Plano.PtOrigen.x);
+        Y = Math.round(getY() - Plano.PtOrigen.y);
 
         repaint();
     }
@@ -196,15 +197,15 @@ public class Grupo extends Objeto2D{
         super.mousePressed(e);
 
         //SELECCIONA GRUPO
-        PnPlano.GrupoSel = this;
+        Plano.GrupoSel = this;
 
         if(e.getClickCount() > 1){
             MoviendoFormas = true;
-            PnPlano.PlPrinc.moveToBack(this);
+            Plano.moveToBack(this);
         }
 
         if(SwingUtilities.isRightMouseButton(e)){
-            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY());
+            ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
             Grupo Gp = this;
             Opcion Agrupar = new Opcion(GrupoTemporal ? "Agrupar" : "Desagrupar"){
                 @Override
@@ -216,9 +217,9 @@ public class Grupo extends Objeto2D{
                         Gp.eliminarGrupo();
                     }
                         
-                    PnPlano.PlPrinc.notificarCambios(0);
+                    Plano.notificarCambios(0);
                 
-                    PnPlano.PlPrinc.remove(Lo);
+                    Plano.remove(Lo);
                 }
             };
 
@@ -228,9 +229,9 @@ public class Grupo extends Objeto2D{
                     super.mousePressed(e);
 
                     for (Forma fr : LstForma) {
-                        PnPlano.PlPrinc.eliminarForma(fr);
+                        Plano.eliminarForma(fr);
                     }
-                    PnPlano.PlPrinc.remove(Lo);
+                    Plano.remove(Lo);
                 }
             };
 
@@ -238,22 +239,22 @@ public class Grupo extends Objeto2D{
             Lo.agregarOpcion(Agrupar);
             Lo.agregarOpcion(Op);
 
-            PnPlano.PlPrinc.add(Lo, JLayeredPane.DRAG_LAYER);
-            PnPlano.PlPrinc.moveToFront(Lo);
+            Plano.add(Lo, JLayeredPane.DRAG_LAYER);
+            Plano.moveToFront(Lo);
             Lo.repaint();
         }
 
         //DESELECCIONAR FIGURA ACTUAL
-        PnPlano.PlPrinc.seleccionarForma(null);
+        Plano.seleccionarForma(null);
 
         //BUSCAR X PARA AJUSTARSE
         SnapXs.removeAll(SnapXs);
         SnapYs.removeAll(SnapYs);
 
-        SnapXs.add(Math.round(PnPlano.PtOrigen.x));
-        SnapYs.add(Math.round(PnPlano.PtOrigen.y));
+        SnapXs.add(Math.round(Plano.PtOrigen.x));
+        SnapYs.add(Math.round(Plano.PtOrigen.y));
 
-        for (Objeto2D obj : PnPlano.PlPrinc.LstObjetos) {
+        for (Objeto2D obj : Plano.LstObjetos) {
             if(obj != this && !LstForma.contains(obj)){
                 SnapXs.add(obj.getX());
                 SnapXs.add(obj.getX() + obj.getWidth());
@@ -267,11 +268,11 @@ public class Grupo extends Objeto2D{
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        PnPlano.PlPrinc.notificarCambios(1);
+        Plano.notificarCambios(1);
 
         //ARRASTRAR OBJETO
         Point Pos = e.getLocationOnScreen();
-        SwingUtilities.convertPointFromScreen(Pos, PnPlano.PlPrinc);
+        SwingUtilities.convertPointFromScreen(Pos, Plano);
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         int DifX = Pos.x - (PtOffset.x + getX());
@@ -285,9 +286,9 @@ public class Grupo extends Objeto2D{
         //AUTOAJUSTAR A FORMAS CERCANAS
         Point PtPrev = getLocation();
 
-        setLocation(snap(getX(), SnapXs), snap(getY(), SnapYs));
-        setLocation(snap(getX() + getWidth(), SnapXs) - getWidth(),
-                    snap(getY() + getHeight(), SnapYs) - getHeight());
+        setLocation(snapX(getX()), snapY(getY()));
+        setLocation(snapX(getX() + getWidth()) - getWidth(),
+                    snapY(getY() + getHeight()) - getHeight());
 
         //DISTANCIA ENTRE POSICION INICIAL Y FINAL
         DifX = getX() - PtPrev.x;
@@ -297,6 +298,6 @@ public class Grupo extends Objeto2D{
         moverFormas(DifX, DifY);
         
         ActualizarCoordenadas();
-        PnPlano.PlPrinc.repaint();
+        Plano.repaint();
     }
 }

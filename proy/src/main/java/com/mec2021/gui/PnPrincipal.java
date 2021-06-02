@@ -58,7 +58,7 @@ public class PnPrincipal extends JPanel{
 
         PnAreaTrabajo.setLayout(Expositor);
 
-        agregarTab();
+        TabSel = agregarTab();
 
         BotonGenerico BtAgregarTab = new BotonGenerico(){
             @Override

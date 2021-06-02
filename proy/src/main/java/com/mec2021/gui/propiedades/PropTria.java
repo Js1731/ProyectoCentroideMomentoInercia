@@ -207,7 +207,7 @@ public class PropTria extends PnPropiedades{
 
         LbArea.setText("Area:                      "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
         LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).centroideX()/Forma.Escala));
-        LbCentY.setText("Centroide en Y:     "+f.format(-(PnPlano.Escala*(float)((FrTria)ObjRef).centroideY() - ((FrTria)ObjRef).getHeight())/Forma.Escala));
+        LbCentY.setText("Centroide en Y:     "+f.format(-(PnPlano.Escala*(float)((FrTria)ObjRef).centroideY())/Forma.Escala));
 
         CBHueco.setSelected(((Forma)ObjRef).Hueco);
     }

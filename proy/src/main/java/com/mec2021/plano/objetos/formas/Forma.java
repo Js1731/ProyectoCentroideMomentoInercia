@@ -44,7 +44,6 @@ public abstract class Forma extends Objeto2D{
     }
 
 
-
     /**Calcula la coordenada X del centroide (Es local a la forma)*/
     public abstract float centroideX();
 

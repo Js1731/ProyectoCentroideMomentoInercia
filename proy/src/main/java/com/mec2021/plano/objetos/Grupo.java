@@ -54,7 +54,7 @@ public class Grupo extends Objeto2D{
 
         g.fillOval(x-3,y-3,6,6);
         ActualizarCoordenadas();
-        g.drawString( (float)(x + X)/Escala + ", " +  -(float)(y + Y)/Escala,
+        g.drawString( PnPlano.Escala*((float)(x + X)/Escala) + ", " +  -PnPlano.Escala*(float)(y + Y)/Escala,
                       x-3,
                       y-3);
     }

@@ -4,9 +4,15 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.mec2021.gui.PnPlano;
+import com.mec2021.gui.PnPrincipal;
+
 import java.awt.Color;
 
 public class Ctrl {
+
+    public static PnPrincipal PnPrinc = null;
     
     public static Font Fnt0;
     public static Font Fnt1;
@@ -33,38 +39,73 @@ public class Ctrl {
         }
     }
 
-    public static class Utils{
-        /**Ajustar un valor entre un minimo y un maximo 
-         * 
-         * @param a Valor
-         * @param min Valor Minimo
-         * @param max Valor Maximo
-         * @return Valor ajustado
-         */
-        public static float clamp(float a, float min, float max){
-            return a < max ? a > min ? a : min : max; 
-        }
+    /**
+     * Transforma un valor lineal de Pixeles a Unidad
+     * @param Valor
+     * @return
+     */
+    public static Float aplicarEscalaLn(float Valor){
+        return Valor*((float)PnPrinc.PlanoActual.Escala/PnPrinc.PlanoActual.EscalaPix);
+    }
 
         /**
-         * Elimina todos los caracteres no numericos en una cadena
-         * @param txt
-         * @return
-         */
-        public static String eliminarLetras(String txt){
-            
-            String StrFin = "";
-            
-            for (int i = 0; i < txt.length(); i++) {
-                char c = txt.charAt(i);
-                
-                if(c >= 48 && c <= 57 || c == 45)
-                    StrFin += c;
-            
-                if(c == 44 || c == 46)
-                    StrFin += '.';
-            }
-
-            return StrFin;
-        }
+     * Transforma un valor de area de Pixeles a Unidad
+     * @param Valor
+     * @return
+     */
+    public static Float aplicarEscalaAr(float Valor){
+        return  Valor*((float)(PnPrinc.PlanoActual.Escala*PnPrinc.PlanoActual.Escala)/(PnPrinc.PlanoActual.EscalaPix*PnPrinc.PlanoActual.EscalaPix));
     }
+
+    /**
+     * Transforma un valor lineal de Unidades a Pixeles
+     * @param Valor
+     * @return
+     */
+    public static Float aplicarEscalaLnInv(float Valor){
+        return Valor*((float)PnPrinc.PlanoActual.EscalaPix/PnPrinc.PlanoActual.Escala);
+    }
+
+    /**
+     * Transforma un valor de area de Unidades a Pixeles
+     * @param Valor
+     * @return
+     */
+    public static Float aplicarEscalaArInv(float Valor){
+        return  Valor*((float)(PnPrinc.PlanoActual.EscalaPix*PnPrinc.PlanoActual.EscalaPix)/(PnPrinc.PlanoActual.Escala*PnPrinc.PlanoActual.Escala));
+    }
+
+    /**Ajustar un valor entre un minimo y un maximo 
+     * 
+     * @param a Valor
+     * @param min Valor Minimo
+     * @param max Valor Maximo
+     * @return Valor ajustado
+     */
+    public static float clamp(float a, float min, float max){
+        return a < max ? a > min ? a : min : max; 
+    }
+
+    /**
+     * Elimina todos los caracteres no numericos en una cadena
+     * @param txt
+     * @return
+     */
+    public static String eliminarLetras(String txt){
+        
+        String StrFin = "";
+        
+        for (int i = 0; i < txt.length(); i++) {
+            char c = txt.charAt(i);
+            
+            if(c >= 48 && c <= 57 || c == 45)
+                StrFin += c;
+        
+            if(c == 44 || c == 46)
+                StrFin += '.';
+        }
+
+        return StrFin;
+    }
+
 }

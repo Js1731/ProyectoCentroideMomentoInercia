@@ -10,7 +10,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
+import com.mec2021.plano.EcuacionRecta;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Pin;
 
@@ -26,6 +28,26 @@ public class FrTria extends Forma{
     public Punto Ver2 = new Punto();
     /**Vertice 3 que es local al origen */
     public Punto Ver3 = new Punto();
+
+    public Punto Cent = new Punto();
+
+    /**Vertice 1 que es local al centroide */
+    public Punto Ver1C = new Punto();
+    /**Vertice 2 que es local al centroide */
+    public Punto Ver2C = new Punto();
+    /**Vertice 3 que es local al centroide */
+    public Punto Ver3C = new Punto();
+
+
+    /**Conjunto de rectas locales al centroide 
+    * <PRE>
+    *      <b>id </b   >      <b>Ecuacion</b>
+    *<code>0</code>:  <code>Recta que pasa por Ver1C a Ver2C</code>
+    *<code>1</code>:  <code>Recta que pasa por Ver2C a Ver3C</code>
+    *<code>2</code>:  <code>Recta que pasa por Ver3C a Ver1C</code>
+    * </PRE>
+    */
+    public EcuacionRecta Ec[] = new EcuacionRecta[3];
 
     //POLIGONO PARA REPRESENTAR EL TRIANGULO
     private Polygon Poligono = new Polygon();
@@ -57,18 +79,36 @@ public class FrTria extends Forma{
         Nombre = "Triangulo " + (ID++);
         Plano.notificarCambios(0);
 
-        Ver1.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x1*Escala);
-        Ver1.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y1*Escala);
+        Ver1.x = Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaLnInv(X) + Ctrl.aplicarEscalaLnInv(x1));
+        Ver1.y = Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaLnInv(Y) + Ctrl.aplicarEscalaLnInv(y1));
 
-        Ver2.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x2*Escala);
-        Ver2.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y2*Escala);
+        Ver2.x = Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaLnInv(X) + Ctrl.aplicarEscalaLnInv(x2));
+        Ver2.y = Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaLnInv(Y) + Ctrl.aplicarEscalaLnInv(y2));
 
-        Ver3.x = Math.round(Plano.PtOrigen.x) + Math.round(X*Escala) + Math.round(x3*Escala);
-        Ver3.y = Math.round(Plano.PtOrigen.y) + Math.round(Y*Escala) + Math.round(y3*Escala);
+        Ver3.x = Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaLnInv(X) + Ctrl.aplicarEscalaLnInv(x3));
+        Ver3.y = Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaLnInv(Y) + Ctrl.aplicarEscalaLnInv(y3));
+
+        //CALCULAR CENTROIDE
+        centroideX();
+        centroideY();
+
+        //CALCULAR VERTICES LOCALES AL CENTROIDE
+        Ver1C.x = Ver1.x - Cent.x - getX();
+        Ver1C.y = Ver1.y - Cent.y - getY();
+
+        Ver2C.x = Ver2.x - Cent.x - getX();
+        Ver2C.y = Ver2.y - Cent.y - getY();
+
+        Ver3C.x = Ver3.x - Cent.x - getX();
+        Ver3C.y = Ver3.y - Cent.y - getY();
+
+        //DEFINIR ECUACIONES DE LA RECTA LOCALES AL CENTROIDE
+        Ec[0] = new EcuacionRecta(Ver1C, Ver2C);
+        Ec[1] = new EcuacionRecta(Ver2C, Ver3C);
+        Ec[2] = new EcuacionRecta(Ver3C, Ver1C);
 
 
-        
-        setOpaque(false);
+        //setOpaque(false);
         ActualizarBordes();
         ActualizarCoordenadas();
     }
@@ -117,7 +157,35 @@ public class FrTria extends Forma{
         g.fillOval(x-3,y-3,6,6);
     }
 
+    @Override
+    public void actualizarEscala(){
 
+        float NuevaEsc = ( (float)Plano.EscalaPix/Plano.Escala) * Plano.EscalaVieja;
+
+        setBounds(Math.round(Plano.PtOrigen.x + X*NuevaEsc), 
+                  Math.round(Plano.PtOrigen.y + Y*NuevaEsc), 
+                  Math.round(getWidth()*NuevaEsc), 
+                  Math.round(getHeight()*NuevaEsc));
+        
+        Ver1.x = Math.round(Plano.PtOrigen.x + NuevaEsc*(Ver1.x - Plano.PtOrigen.x));
+        Ver1.y = Math.round(Plano.PtOrigen.y + NuevaEsc*(Ver1.y - Plano.PtOrigen.y));
+
+        Ver2.x = Math.round(Plano.PtOrigen.x + NuevaEsc*(Ver2.x - Plano.PtOrigen.x));
+        Ver2.y = Math.round(Plano.PtOrigen.y + NuevaEsc*(Ver2.y - Plano.PtOrigen.y));
+
+        Ver3.x = Math.round(Plano.PtOrigen.x + NuevaEsc*(Ver3.x - Plano.PtOrigen.x));
+        Ver3.y = Math.round(Plano.PtOrigen.y + NuevaEsc*(Ver3.y - Plano.PtOrigen.y));
+
+        ActualizarCoordenadas();
+        ActualizarPines();
+        actualizarEcuaciones();
+    }
+
+    public void actualizarEcuaciones(){
+        for (EcuacionRecta ec : Ec) {
+            ec.actualizarDatos();
+        }
+    }
 
     @Override
     public void ActualizarPines() {
@@ -147,6 +215,22 @@ public class FrTria extends Forma{
     public void ActualizarCoordenadas() {
         X = Math.round(getX() - Plano.PtOrigen.x);
         Y = Math.round(getY() - Plano.PtOrigen.y);
+
+        //CALCULAR CENTROIDE
+        centroideX();
+        centroideY();
+
+        //CALCULAR VERTICES LOCALES AL CENTROIDE
+        Ver1C.x = Ver1.x - Cent.x - getX();
+        Ver1C.y = Ver1.y - Cent.y - getY();
+
+        Ver2C.x = Ver2.x - Cent.x - getX();
+        Ver2C.y = Ver2.y - Cent.y - getY();
+
+        Ver3C.x = Ver3.x - Cent.x - getX();
+        Ver3C.y = Ver3.y - Cent.y - getY();
+
+        actualizarEcuaciones();
     }
 
     /**
@@ -178,13 +262,42 @@ public class FrTria extends Forma{
     }
 
     @Override
+    public float inerciaCentEjeX(){
+
+        float a = Ver3C.y*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float b = Ver1C.y*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float c = Ver2C.y*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        
+        float I1 = EcuacionRecta.integrar_fy(Ec[1], a, b);
+        float I2 = EcuacionRecta.integrar_fy(Ec[2], a, b);
+        float I3 = EcuacionRecta.integrar_fy(Ec[1], b, c);
+        float I4 = EcuacionRecta.integrar_fy(Ec[0], b, c);
+
+        return -(I1-I2+I3-I4);
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+        float a = Ver1C.x*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float b = Ver2C.x*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float c = Ver3C.x*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        
+        float I1 = EcuacionRecta.integrar_fx(Ec[0], a, b);
+        float I2 = EcuacionRecta.integrar_fx(Ec[2], a, b);
+        float I3 = EcuacionRecta.integrar_fx(Ec[1], b, c);
+        float I4 = EcuacionRecta.integrar_fx(Ec[2], b, c);
+
+        return -(I1-I2+I3-I4);
+    }
+
+    @Override
     public float centroideX() {
-        return (Ver1.x + Ver2.x + Ver3.x)/3 - getX();
+        return Cent.x = (Ver1.x + Ver2.x + Ver3.x)/3 - getX();
     }
 
     @Override
     public float centroideY() {
-        return ((Ver1.y + Ver2.y + Ver3.y)/3 - getY());
+        return Cent.y = ((Ver1.y + Ver2.y + Ver3.y)/3 - getY());
     }
 
 

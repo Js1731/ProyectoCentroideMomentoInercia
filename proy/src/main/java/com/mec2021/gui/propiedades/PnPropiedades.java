@@ -35,6 +35,13 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
     /**Panel con las propiedades del objeto */
     public JPanel PnCont = new JPanel();
 
+    protected JLabel LbArea = new JLabel("Area:");
+    protected JLabel LbCentX = new JLabel("Centroide en X:");
+    protected JLabel LbCentY = new JLabel("Centroide en Y:");
+
+    protected JLabel LbInX = new JLabel("Inercia en X:");
+    protected JLabel LbInY = new JLabel("Inercia en Y:");
+
     /**Indica si la forma esta hueca */
     JCheckBox CBHueco = new JCheckBox("Hueco");
 
@@ -61,7 +68,7 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
             //SI SE INGRESA UN CARACTER QUE NO SEA NUMERICO, ENTONCESE SE ELIMINA LOS CARACTERES INVALIDOS
             if(!Character.isDigit(e.getKeyChar()) && e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_BACK_SPACE)
                 try{
-                    JTF.setText(""+Ctrl.Utils.eliminarLetras(JTF.getText()));
+                    JTF.setText(""+Ctrl.eliminarLetras(JTF.getText()));
                     Float.parseFloat(JTF.getText());
                     
                 }catch(NumberFormatException ex){
@@ -163,6 +170,9 @@ public abstract class PnPropiedades extends JPanel implements MouseListener{
         
         add(PnSup, BorderLayout.NORTH);
         add(PnCont, BorderLayout.CENTER);
+
+        PnCont.add(LbInX);
+        PnCont.add(LbInY);
     }
 
     /**Actualiza las propiedades del panel a las del objeto */

@@ -45,6 +45,7 @@ public class PnPrincipal extends JPanel{
     public PnPrincipal(){
 
         PanelPrinc = this;
+        Ctrl.PnPrinc = this;
 
         setBackground(Ctrl.ClGris2);
 
@@ -225,8 +226,9 @@ public class PnPrincipal extends JPanel{
         JFTScale.addKeyListener(new KeyListener(){
 
             private void actualizarEscala(){
+                PnPlano.EscalaVieja = (float)PnPlano.Escala/PnPlano.EscalaPix;
                 PnPlano.Escala = (int)JFTScale.getValue();
-
+                PlanoActual.notificarCambios(2);
             }
 
             @Override

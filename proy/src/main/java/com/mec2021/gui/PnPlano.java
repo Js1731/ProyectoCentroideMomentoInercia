@@ -19,6 +19,7 @@ import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
+import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
@@ -27,6 +28,11 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     /**Escala de las coordenadas del plano */
     public static int Escala = 1;
+
+    /**Escala de unidad : Pixel */
+    public static int EscalaPix = 50;
+
+    public static float EscalaVieja = Escala/EscalaPix;
 
     /**Posicion del origen dentro del Panel del plano */
     public Punto PtOrigen = new Punto(500,500);
@@ -82,6 +88,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
         notificarCambios(0);
 
+        // add(new FrRect(0,0,30,20,this), JLayeredPane.DRAG_LAYER);
+        // add(new FrTria(0,0,0,0,30f,20f,30f,0,this), JLayeredPane.DRAG_LAYER);
+        // add(new FrCirc(0,0,7.5f,0,180,this), JLayeredPane.DRAG_LAYER);
+
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
@@ -103,19 +113,19 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 2));
+            g2.drawLine(Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y + 2));
             g2.setColor(Ctrl.ClGris);
             if(ux != 0)
-                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 20));
+                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y + 20));
         }
 
         //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*Forma.Escala), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*Forma.Escala));
+            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*PnPlano.EscalaPix), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*PnPlano.EscalaPix));
             g2.setColor(Ctrl.ClGris);
             if(uy != 0)
-                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*Forma.Escala));
+                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*PnPlano.EscalaPix));
         }
 
         g2.drawString("0",Math.round(PtOrigen.x - 18),Math.round(PtOrigen.y + 20));
@@ -184,7 +194,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     *    <b   >id           </b   >   <b>Evento   </b>
     *    <code>0</code>:  <code>Se ha agregado o eliminado un objeto</code>
     *    <code>1</code>:  <code>Se ha movido o modificado algun objeto</code>
-
+    *    <code>2</code>:  <code>Se ha cambiado la escala</code>
     * </PRE>
     *
      * @param tipo de evento
@@ -196,7 +206,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             case 0:{
                 AB.generarArbol();
                 AB.actualizarVisualizacion();
-                
+                break;
             }
 
             case 1:{
@@ -205,6 +215,17 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
                 if(PnPropActual != null)
                     moveToFront(PnPropActual);
+                break;
+            }
+
+            case 2:{
+                for (Objeto2D objeto2d : LstObjetos) {
+                    if(objeto2d instanceof Forma){
+                        ((Forma)objeto2d).actualizarEscala();
+                    }
+                }
+                repaint();
+                break;
             }
         }
 

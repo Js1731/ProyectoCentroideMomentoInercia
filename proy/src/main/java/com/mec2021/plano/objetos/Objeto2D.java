@@ -23,9 +23,6 @@ public abstract class Objeto2D extends Arrastrable{
 
     public String Nombre = "Nuebo";
 
-    /**Escala de unidad : Pixel */
-    public static int Escala = 50;
-
     protected final static int EjeX = 0;
     protected final static int EjeY = 0;
 

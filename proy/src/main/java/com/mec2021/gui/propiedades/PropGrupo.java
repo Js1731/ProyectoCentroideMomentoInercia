@@ -44,6 +44,9 @@ public class PropGrupo extends PnPropiedades{
         LbCentX.setBounds(10, 60, 200, 10);
         LbCentY.setBounds(10, 90, 200, 10);
 
+        LbInX.setBounds(10, 130, 200, 10);
+        LbInY.setBounds(10, 160, 200, 10);
+
         PnCont.add(LbX);
         PnCont.add(TFX);        
         PnCont.add(LbY);
@@ -56,20 +59,23 @@ public class PropGrupo extends PnPropiedades{
 
     @Override
     public void actualizarDatos() {
-        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/Forma.Escala);
-        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/Forma.Escala);
+        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/PnPlano.EscalaPix);
+        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/PnPlano.EscalaPix);
 
         DecimalFormat f = new DecimalFormat("#0.00");
 
-        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)(((Grupo)ObjRef).centroideX() + ((Grupo)ObjRef).X)/Forma.Escala));
-        LbCentY.setText("Centroide en Y:     "+f.format(-PnPlano.Escala*(float)(((Grupo)ObjRef).centroideY() + ((Grupo)ObjRef).Y)/Forma.Escala));
+        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)(((Grupo)ObjRef).centroideX() + ((Grupo)ObjRef).X)/PnPlano.EscalaPix));
+        LbCentY.setText("Centroide en Y:     "+f.format(-PnPlano.Escala*(float)(((Grupo)ObjRef).centroideY() + ((Grupo)ObjRef).Y)/PnPlano.EscalaPix));
+
+        LbInX.setText("Inercia en x:     "+f.format(((Grupo)ObjRef).inerciaX()));
+        LbInY.setText("Inercia en Y:     ");//+f.format(-PnPlano.Escala*(float)(((Grupo)ObjRef).centroideY() + ((Grupo)ObjRef).Y)/Forma.Escala));
     }
 
     @Override
     public void actualizarForma() {
 
-        int ValX = Math.round(Plano.PtOrigen.x) +  Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala)/PnPlano.Escala;
-        int ValY = Math.round(Plano.PtOrigen.y) -  Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala)/PnPlano.Escala;
+        int ValX = Math.round(Plano.PtOrigen.x) +  Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*PnPlano.EscalaPix)/PnPlano.Escala;
+        int ValY = Math.round(Plano.PtOrigen.y) -  Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*PnPlano.EscalaPix)/PnPlano.Escala;
 
         int DifX = ValX - Math.round(Plano.PtOrigen.x) - ObjRef.X;
         int DifY = ValY - Math.round(Plano.PtOrigen.y) - ObjRef.Y;

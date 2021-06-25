@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLayeredPane;
 
+import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Pin;
 
@@ -14,8 +15,8 @@ import com.mec2021.plano.objetos.Pin;
  */
 public class FrRect extends Forma{
     
-    public int Ancho = 50;
-    public int Alto = 50;
+    public float Ancho = 50;
+    public float Alto = 50;
 
     public static int ID = 0;
 
@@ -35,8 +36,8 @@ public class FrRect extends Forma{
      */
     public FrRect(float x, float y, float an, float al, PnPlano plano){
         super(plano);
-        Ancho = Math.round(an*1/PnPlano.Escala*Escala);
-        Alto = Math.round(al*1/PnPlano.Escala*Escala);
+        Ancho = an;
+        Alto = al;
 
         Nombre = "Rectangulo " + (ID++);
         Plano.notificarCambios(0);
@@ -45,7 +46,10 @@ public class FrRect extends Forma{
         Pines = new Pin[4];
         setOpaque(false);
 
-        setBounds(Math.round(Plano.PtOrigen.x) + Math.round(x*1/PnPlano.Escala*Escala), Math.round(Plano.PtOrigen.y) + Math.round(y*1/PnPlano.Escala*Escala), Ancho, Alto);
+        setBounds(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaLnInv(x)), 
+                  Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaLnInv(y)), 
+                  Math.round(Ctrl.aplicarEscalaLnInv(an)), 
+                  Math.round(Ctrl.aplicarEscalaLnInv(al)));
         setBackground(Color.DARK_GRAY);
         ActualizarCoordenadas();
     }
@@ -74,6 +78,20 @@ public class FrRect extends Forma{
     }
 
 
+    @Override
+    public void actualizarEscala(){
+
+        float NuevaEsc = ( (float)Plano.EscalaPix/Plano.Escala) * Plano.EscalaVieja;
+
+        setBounds(Math.round( Plano.PtOrigen.x + X * NuevaEsc),
+                  Math.round( Plano.PtOrigen.y + Y* NuevaEsc), 
+                  Math.round(getWidth()* NuevaEsc), 
+                  Math.round(getHeight()* NuevaEsc));
+        ActualizarCoordenadas();
+        ActualizarPines();
+        repaint();
+    }
+
 
     @Override
     public void ActualizarPines(){
@@ -85,8 +103,8 @@ public class FrRect extends Forma{
 
             Plano.repaint();
 
-            Ancho = getWidth();
-            Alto = getHeight();
+            Ancho = Ctrl.aplicarEscalaLn(getWidth());
+            Alto = Ctrl.aplicarEscalaLn(getHeight());
         }
     }
 
@@ -95,23 +113,40 @@ public class FrRect extends Forma{
         X = Math.round(getX() - Plano.PtOrigen.x);
         Y = Math.round(getY() - Plano.PtOrigen.y);
 
-        Ancho = getWidth();
-        Alto = getHeight();
+        Ancho = Ctrl.aplicarEscalaLn(getWidth());
+        Alto = Ctrl.aplicarEscalaLn(getHeight());
+    }
+
+    
+    @Override
+    public float calcularArea() {
+        return (Hueco ? -1 : 1)*Ctrl.aplicarEscalaLnInv(Ancho)*Ctrl.aplicarEscalaLnInv(Alto);
     }
 
     @Override
-    public float calcularArea() {
-        return (Hueco ? -1 : 1)*Ancho*Alto;
+    public float inerciaCentEjeX(){
+        float an = Ancho*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float al = Alto*((float)PnPlano.Escala/PnPlano.EscalaPix);
+
+        return (an*(al*al*al))/12;
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+        float an = Ancho*((float)PnPlano.Escala/PnPlano.EscalaPix);
+        float al = Alto*((float)PnPlano.Escala/PnPlano.EscalaPix);
+
+        return (al*(an*an*an))/12;
     }
 
     @Override
     public float centroideX() {
-        return Ancho/2;
+        return Ctrl.aplicarEscalaLnInv(Ancho)/2;
     }
 
     @Override
     public float centroideY() {
-        return Alto/2;
+        return Ctrl.aplicarEscalaLnInv(Alto)/2;
     }
 
 

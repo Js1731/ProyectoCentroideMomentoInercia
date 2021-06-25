@@ -54,9 +54,31 @@ public class Grupo extends Objeto2D{
 
         g.fillOval(x-3,y-3,6,6);
         ActualizarCoordenadas();
-        g.drawString( PnPlano.Escala*((float)(x + X)/Escala) + ", " +  -PnPlano.Escala*(float)(y + Y)/Escala,
+        g.drawString( PnPlano.Escala*((float)(x + X)/PnPlano.EscalaPix) + ", " +  -PnPlano.Escala*(float)(y + Y)/PnPlano.EscalaPix,
                       x-3,
                       y-3);
+    }
+
+
+    public float inerciaX(){
+
+        float SumaIx = 0;
+        float es = ((float)PnPlano.Escala/PnPlano.EscalaPix);
+
+        for (Forma forma : LstForma) {
+            float Ix = forma.inerciaCentEjeX();
+            float cty = -((float)(centroideY() + Y)*es);
+            float cy = ((float)(forma.centroideY() + Y))*es;
+            float dy =  cy - cty;
+
+            float ar = Math.abs(forma.calcularArea()*(es*es));
+
+            float I = Ix + (float)ar*dy*dy;
+
+            SumaIx += I;
+        }
+
+        return SumaIx;
     }
 
     /**Calcula la posicion X del centroide con respecto al origen */

@@ -43,6 +43,14 @@ public abstract class Forma extends Objeto2D{
         
     }
 
+    /**Actualiza al posicion y tamano de la forma a la escala actual del lienzo */
+    public abstract void actualizarEscala();
+
+    /**Calcula la inercia con respecto al centroide X para esta Forma */
+    public abstract float inerciaCentEjeX();
+    
+    /**Calcula la inercia con respecto al centroide Y para esta Forma */
+    public abstract float inerciaCentEjeY();
 
     /**Calcula la coordenada X del centroide (Es local a la forma)*/
     public abstract float centroideX();
@@ -79,6 +87,9 @@ public abstract class Forma extends Objeto2D{
         super.mousePressed(e);
 
         requestFocus();
+        ActualizarCoordenadas();
+        float inx = inerciaCentEjeX();
+        float iny = inerciaCentEjeY();
 
         //SELECCIONA LA FORMA
         Plano.moveToFront(this);

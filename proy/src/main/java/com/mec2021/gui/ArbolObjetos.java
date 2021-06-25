@@ -281,6 +281,7 @@ class PnNodo extends JPanel implements MouseListener{
     public void mouseExited(MouseEvent e) {}
 }
 
+/**Representacion en memoria de un Objeto en el arbol */
 class Nodo{
     Objeto2D Objeto = null;
     ArrayList<Nodo> Hijos = new ArrayList<Nodo>();

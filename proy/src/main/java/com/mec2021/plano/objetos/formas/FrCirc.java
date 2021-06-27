@@ -79,7 +79,11 @@ public class FrCirc extends Forma{
             g.setColor(Color.WHITE);
             G2.fill(Sector);
             g.setColor(Color.DARK_GRAY);
-            G2.draw(Sector);
+
+            if(Sector.extent != 360)
+                G2.draw(Sector);
+            else
+                G2.drawOval(0, 0, Math.round(Ctrl.aplicarEscalaUPix(Diametro)) - 1, Math.round(Ctrl.aplicarEscalaUPix(Diametro)) - 1);
         }else
             G2.fill(Sector);
 
@@ -104,6 +108,125 @@ public class FrCirc extends Forma{
 
         ActualizarPines();
         repaint();
+    }
+
+    @Override
+    public void mostrarPines() {
+        
+        //CREAR PINES
+        if(Pines[0] == null){
+
+            int PinX = getX() + getWidth()/2 + Math.round(Ctrl.aplicarEscalaUPix(Diametro)/2);
+            int PinY = getY() + getHeight()/2;
+
+            //PIN DE DIAMETRO
+            Pines[0] = new Pin(this, PinX, PinY, Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    Point Pos = e.getLocationOnScreen();
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
+            
+                    setBounds(Pos.x - PtOffset.x, Fr.getY() + Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2, getWidth(), getHeight());
+                    
+                    Diametro = Ctrl.aplicarEscalaLnPixU((Fr.getWidth() + getX()) - (Fr.getX() + Fr.getWidth()));
+                    
+                    if(Fr.Grp != null)
+                        Fr.Grp.ActualizarBordes();
+                    ActualizarPines();
+                    actualizarCoordenadas();
+                    Plano.notificarCambios(1);
+                }
+            };
+
+            //PIN PARA MODIFICAR LA AMPLITUD DEL SECTOR
+            PinX = getX() + getWidth()/2 + Math.round((float)(Math.round(Ctrl.aplicarEscalaUPix(Diametro))/4*Math.cos(Sector.start)));
+
+            Pines[1] = new Pin(this, PinX, PinY, Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    Point Pos = e.getLocationOnScreen();
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
+        
+                    //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
+                    float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
+                                                        Fr.getY() + Fr.getHeight()/2,
+                                                        Pos.x,
+                                                        Pos.y);
+
+                    //CREAR REPRESENTACION VECTORIAL DEL ANGULO
+                    Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
+
+                    //AJUSTAR EL PIN A LA CIRCUNFERENCIA
+                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
+                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
+                              getWidth(), 
+                              getHeight());
+                    
+                    /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
+                    *se busca un angulo usando las coordenadas del primero pero con -y
+                    */
+                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
+
+                    /* ACTUALIZAR LA AMPLITUD DEL SECTOR
+                     */
+                    Sector.extent = Sector.extent - 2*(Math.toDegrees(angInv) - Sector.start);
+
+                    //AJUSTAR NUEVO ANGULO INICIAL
+                    Sector.start = Math.toDegrees(angInv);
+
+                    ActualizarPines();
+                    actualizarCoordenadas();
+                    Plano.notificarCambios(1);
+                    Fr.repaint();
+                }
+            };
+
+
+            //PIN PARA AJUSTAR EL ANGULO INCIAL
+            Pines[2] = new Pin(this, PinX, PinY, Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    Point Pos = e.getLocationOnScreen();
+                    SwingUtilities.convertPointFromScreen(Pos, Plano);
+        
+                    //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
+                    float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
+                                                        Fr.getY() + Fr.getHeight()/2,
+                                                        Pos.x,
+                                                        Pos.y);
+
+                    //CREAR REPRESENTACION VECTORIAL DEL ANGULO
+                    Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
+
+                    //AJUSTAR EL PIN A LA CIRCUNFERENCIA
+                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
+                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
+                              getWidth(), 
+                              getHeight());
+                    
+                    /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
+                    *se busca un angulo usando las coordenadas del primero pero con -y
+                    */
+                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
+
+                    //AJUSTAR NUEVO ANGULO INICIAL
+                    Sector.start = Math.toDegrees(angInv);
+
+                    ActualizarPines();
+                    actualizarCoordenadas();
+                    Plano.notificarCambios(1);
+                    Fr.repaint();
+                }
+            };
+
+            //AGREGAR PINES
+            for (Pin pin : Pines) {
+                Plano.add(pin, JLayeredPane.DRAG_LAYER);
+                Plano.moveToFront(pin);
+            }
+
+            ActualizarPines();
+        }
     }
 
     @Override
@@ -307,120 +430,6 @@ public class FrCirc extends Forma{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        //CREAR PINES
-        if(Pines[0] == null){
-
-            int PinX = getX() + getWidth()/2 + Math.round(Ctrl.aplicarEscalaUPix(Diametro)/2);
-            int PinY = getY() + getHeight()/2;
-
-            //PIN DE DIAMETRO
-            Pines[0] = new Pin(this, PinX, PinY, Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, Plano);
-            
-                    setBounds(Pos.x - PtOffset.x, Fr.getY() + Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2, getWidth(), getHeight());
-                    
-                    Diametro = Ctrl.aplicarEscalaLnPixU((Fr.getWidth() + getX()) - (Fr.getX() + Fr.getWidth()));
-                    
-                    if(Fr.Grp != null)
-                        Fr.Grp.ActualizarBordes();
-                    ActualizarPines();
-                    actualizarCoordenadas();
-                    Plano.notificarCambios(1);
-                }
-            };
-
-            //PIN PARA MODIFICAR LA AMPLITUD DEL SECTOR
-            PinX = getX() + getWidth()/2 + Math.round((float)(Math.round(Ctrl.aplicarEscalaUPix(Diametro))/4*Math.cos(Sector.start)));
-
-            Pines[1] = new Pin(this, PinX, PinY, Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, Plano);
-        
-                    //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
-                    float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
-                                                        Fr.getY() + Fr.getHeight()/2,
-                                                        Pos.x,
-                                                        Pos.y);
-
-                    //CREAR REPRESENTACION VECTORIAL DEL ANGULO
-                    Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
-
-                    //AJUSTAR EL PIN A LA CIRCUNFERENCIA
-                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
-                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
-                              getWidth(), 
-                              getHeight());
-                    
-                    /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
-                    *se busca un angulo usando las coordenadas del primero pero con -y
-                    */
-                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
-
-                    /* ACTUALIZAR LA AMPLITUD DEL SECTOR
-                     */
-                    Sector.extent = Sector.extent - 2*(Math.toDegrees(angInv) - Sector.start);
-
-                    //AJUSTAR NUEVO ANGULO INICIAL
-                    Sector.start = Math.toDegrees(angInv);
-
-                    ActualizarPines();
-                    actualizarCoordenadas();
-                    Plano.notificarCambios(1);
-                    Fr.repaint();
-                }
-            };
-
-
-            //PIN PARA AJUSTAR EL ANGULO INCIAL
-            Pines[2] = new Pin(this, PinX, PinY, Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    Point Pos = e.getLocationOnScreen();
-                    SwingUtilities.convertPointFromScreen(Pos, Plano);
-        
-                    //CALCULAR ANGULO DESDE EL CENTRO DEL CIRCULO A ESTE PIN
-                    float ang = Punto.calcularDirection(Fr.getX() + Fr.getWidth()/2,
-                                                        Fr.getY() + Fr.getHeight()/2,
-                                                        Pos.x,
-                                                        Pos.y);
-
-                    //CREAR REPRESENTACION VECTORIAL DEL ANGULO
-                    Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
-
-                    //AJUSTAR EL PIN A LA CIRCUNFERENCIA
-                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
-                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
-                              getWidth(), 
-                              getHeight());
-                    
-                    /*Como las coordenadas estan invertidas en y, para poder realizar calculos correctos
-                    *se busca un angulo usando las coordenadas del primero pero con -y
-                    */
-                    float angInv = Punto.calcularDirection(0f, 0f,VectDir.x,-VectDir.y);
-
-                    //AJUSTAR NUEVO ANGULO INICIAL
-                    Sector.start = Math.toDegrees(angInv);
-
-                    ActualizarPines();
-                    actualizarCoordenadas();
-                    Plano.notificarCambios(1);
-                    Fr.repaint();
-                }
-            };
-
-            //AGREGAR PINES
-            for (Pin pin : Pines) {
-                Plano.add(pin, JLayeredPane.DRAG_LAYER);
-                Plano.moveToFront(pin);
-            }
-
-            ActualizarPines();
-        }
         
     }
 

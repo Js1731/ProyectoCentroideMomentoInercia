@@ -218,7 +218,7 @@ public class PnPrincipal extends JPanel{
         BtCirc.setPreferredSize(new Dimension(40, 40));
         BtTria.setPreferredSize(new Dimension(40, 40));
 
-        JFormattedTextField JFTScale = new JFormattedTextField(PnPlano.Escala);
+        JFormattedTextField JFTScale = new JFormattedTextField(1);
         JFTScale.setBounds(0, 0, 40, 25);
         JFTScale.setPreferredSize(new Dimension(40, 25));
         JFTScale.setBorder(BorderFactory.createEmptyBorder());
@@ -226,8 +226,8 @@ public class PnPrincipal extends JPanel{
         JFTScale.addKeyListener(new KeyListener(){
 
             private void actualizarEscala(){
-                PnPlano.EscalaVieja = (float)PnPlano.Escala/PnPlano.EscalaPix;
-                PnPlano.Escala = (int)JFTScale.getValue();
+                PlanoActual.EscalaVieja = (float)PlanoActual.Escala/PlanoActual.EscalaPix;
+                PlanoActual.Escala = (int)JFTScale.getValue();
                 PlanoActual.notificarCambios(2);
             }
 

@@ -183,7 +183,7 @@ public class ArbolObjetos extends JPanel{
 }
 
 /**Panel para la representacion de un nodo del arbol */
-class PnNodo extends JPanel implements MouseListener{
+class PnNodo extends BotonGenerico{
     
     /**Nodo del arbol */
     Nodo Nd;
@@ -236,14 +236,20 @@ class PnNodo extends JPanel implements MouseListener{
         }
 
         g2.setFont(Ctrl.Fnt1);
-        g2.setColor(Color.BLACK);
+        
         //Representar Grupo
-        if(Nd.Objeto != null)
+        if(Nd.Objeto != null){
+
+            if(MouseEncima)
+                g2.setColor(Color.gray);
+            else
+                g2.setColor(Color.BLACK);
+
             if(Nd.Objeto instanceof Forma)
                 g2.drawString(Nd.Objeto.Nombre,35,20);
             else
                 g2.drawString(Nd.Objeto.Nombre,5,20);
-        else{
+        }else{
             g2.setColor(Color.WHITE);
             g2.setFont(Ctrl.Fnt1);
             g2.drawString("Objetos",10,19);
@@ -260,6 +266,9 @@ class PnNodo extends JPanel implements MouseListener{
                 Plano.repaint();
             }
         
+            if(Nd.Objeto instanceof Forma)
+                Plano.seleccionarForma((Forma)Nd.Objeto);
+
             //ABRIR EL PANEL DE PROPIEDADES DE LA FORMA
             if(Nd.Objeto instanceof FrRect){
                 Plano.add(Plano.PnPropActual = new PropRect(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
@@ -274,11 +283,6 @@ class PnNodo extends JPanel implements MouseListener{
             Plano.moveToFront(Plano.PnPropActual);
         }
     }
-
-    public void mouseClicked(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
 }
 
 /**Representacion en memoria de un Objeto en el arbol */

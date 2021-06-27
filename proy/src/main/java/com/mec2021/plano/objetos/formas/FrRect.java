@@ -90,80 +90,9 @@ public class FrRect extends Forma{
         repaint();
     }
 
-
     @Override
-    public void ActualizarPines(){
-        if(Pines[0] != null){
-            Pines[0].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) - 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) - 15 + Plano.PtOrigen.y));
-            Pines[1].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) - 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) + getHeight() + 15 + Plano.PtOrigen.y));
-            Pines[2].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) + getWidth() + 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) - 15 + Plano.PtOrigen.y));
-            Pines[3].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) + getWidth() + 15 + Plano.PtOrigen.x),Math.round(Ctrl.aplicarEscalaUPix(Y) + getHeight() + 15 + Plano.PtOrigen.y));
+    public void mostrarPines(){
 
-            Plano.repaint();
-        }
-    }
-
-    @Override
-    public void actualizarCoordenadas() {
-        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-
-        Ancho = Ctrl.aplicarEscalaLnPixU(getWidth());
-        Alto = Ctrl.aplicarEscalaLnPixU(getHeight());
-    }
-
-    
-    @Override
-    public float calcularArea() {
-        return (Hueco ? -1 : 1)*Ancho*Alto;
-    }
-
-    @Override
-    public float inerciaCentEjeX(){
-
-        if(Grp != null){
-            float ix = (Ancho*(Alto*Alto*Alto))/12f;
-            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
-
-            float Ix = ix + Math.abs(calcularArea())*dy*dy;
-
-            return (Hueco ? -1 : 1)*Ix;
-        }else{
-            return 0;
-        }
-    }
-
-    @Override
-    public float inerciaCentEjeY(){
-
-        if(Grp != null){
-            float iy = (Alto*(Ancho*Ancho*Ancho))/12;
-            float dx = (X + centroideX()) - Grp.centroideX();
-
-            float Iy = iy + Math.abs(calcularArea())*dx*dx;
-
-            return (Hueco ? -1 : 1)*Iy;
-        }else{
-            return 0;
-        }
-    }
-
-    @Override
-    public float centroideX() {
-        return Ancho/2;
-    }
-
-    @Override
-    public float centroideY() {
-        return Alto/2;
-    }
-
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        
 
         //CREAR PINES DE DEFORMACION
         if(Pines[0] == null){
@@ -248,6 +177,81 @@ public class FrRect extends Forma{
 
             Plano.repaint();
         }
+    }
+
+    @Override
+    public void ActualizarPines(){
+        if(Pines[0] != null){
+            Pines[0].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) - 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) - 15 + Plano.PtOrigen.y));
+            Pines[1].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) - 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) + getHeight() + 15 + Plano.PtOrigen.y));
+            Pines[2].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) + getWidth() + 15 + Plano.PtOrigen.x), Math.round(Ctrl.aplicarEscalaUPix(Y) - 15 + Plano.PtOrigen.y));
+            Pines[3].setLocation(Math.round(Ctrl.aplicarEscalaUPix(X) + getWidth() + 15 + Plano.PtOrigen.x),Math.round(Ctrl.aplicarEscalaUPix(Y) + getHeight() + 15 + Plano.PtOrigen.y));
+
+            Plano.repaint();
+        }
+    }
+
+    @Override
+    public void actualizarCoordenadas() {
+        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+
+        Ancho = Ctrl.aplicarEscalaLnPixU(getWidth());
+        Alto = Ctrl.aplicarEscalaLnPixU(getHeight());
+    }
+
+    
+    @Override
+    public float calcularArea() {
+        return (Hueco ? -1 : 1)*Ancho*Alto;
+    }
+
+    @Override
+    public float inerciaCentEjeX(){
+
+        if(Grp != null){
+            float ix = (Ancho*(Alto*Alto*Alto))/12f;
+            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+
+            float Ix = ix + Math.abs(calcularArea())*dy*dy;
+
+            return (Hueco ? -1 : 1)*Ix;
+        }else{
+            return 0;
+        }
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+
+        if(Grp != null){
+            float iy = (Alto*(Ancho*Ancho*Ancho))/12;
+            float dx = (X + centroideX()) - Grp.centroideX();
+
+            float Iy = iy + Math.abs(calcularArea())*dx*dx;
+
+            return (Hueco ? -1 : 1)*Iy;
+        }else{
+            return 0;
+        }
+    }
+
+    @Override
+    public float centroideX() {
+        return Ancho/2;
+    }
+
+    @Override
+    public float centroideY() {
+        return Alto/2;
+    }
+
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        super.mousePressed(e);
+        
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.mec2021.plano.objetos;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -43,6 +45,11 @@ public class Grupo extends Objeto2D{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2 = (Graphics2D)g;
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);        
+        g2.setColor(Color.DARK_GRAY);
+
         g.setColor(Color.DARK_GRAY);
 
         if(MoviendoFormas)
@@ -60,10 +67,20 @@ public class Grupo extends Objeto2D{
 
         DecimalFormat f = new DecimalFormat("#0.00");
 
+        String Texto =  "" + f.format(xi + Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x)) + ",   " + f.format(Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) - yi);
 
-        g.drawString( "" + f.format(xi + Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x)) + ", " + f.format(Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) - yi),
-                      Math.round(x-3),
-                      Math.round(y-3));
+        g2.setColor(Color.darkGray);
+        g2.fillRoundRect(Math.round(x - 7) - Texto.length()*7/2, Math.round(y - 50), Texto.length()*7, 40, 9, 9);
+        
+        g2.setColor(Color.white);
+
+        g2.drawString("Centroide",
+                      Math.round(x + 6) - Texto.length()*7/2,
+                      Math.round(y-35));
+
+        g2.drawString(Texto,
+                      Math.round(x + 6) - Texto.length()*7/2,
+                      Math.round(y-15));
     }
 
     @Override

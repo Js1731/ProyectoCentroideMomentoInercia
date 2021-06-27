@@ -28,14 +28,18 @@ public class EcuacionRecta {
     /**Interseccion con el eje Y */
     public float b = 0;
 
+    public PnPlano Plano;
+
     /**
      * Define una nueva ecuacion de la recta que pasa por los puntos {@code A} y {@code B}
      * @param ai Punto A
      * @param bi Punto B
      */
-    public EcuacionRecta(Punto ai, Punto bi){
+    public EcuacionRecta(Punto ai, Punto bi, PnPlano plano){
         A = ai;
         B = bi;
+
+        Plano = plano;
 
         actualizarDatos();
     }
@@ -48,7 +52,7 @@ public class EcuacionRecta {
         else{
             Tipo = 0;
             m = (B.y - A.y)/(B.x - A.x);
-            b = A.y*((float)PnPlano.Escala/PnPlano.Escala) - m*A.x*((float)PnPlano.Escala/PnPlano.Escala);
+            b = A.y*((float)Plano.Escala/Plano.Escala) - m*A.x*((float)Plano.Escala/Plano.Escala);
         }
     }
 
@@ -87,13 +91,13 @@ public class EcuacionRecta {
      * @param b Limite superior de integracion
      * @return Inercia con respecto a Y
      */
-    public static float integrar_fy(EcuacionRecta Ec, float a, float b){
+    public static float integrar_fy(EcuacionRecta Ec, float a, float b, PnPlano plano){
 
 
         if (Ec.Tipo == 0)
             return (-4*Ec.b*((b*b*b)/3 - (a*a*a)/3) + (b*b*b*b) - (a*a*a*a))/(4*Ec.m);
         else if (Ec.Tipo == 2)
-            return Ec.A.x*((float)PnPlano.Escala/PnPlano.Escala)*((b*b*b)/3 - (a*a*a)/3);
+            return Ec.A.x*((float)plano.Escala/plano.Escala)*((b*b*b)/3 - (a*a*a)/3);
         else
             return 0;
     }
@@ -105,11 +109,11 @@ public class EcuacionRecta {
      * @param b Limite superior de integracion
      * @return Inercia con respecto a X
      */
-    public static float integrar_fx(EcuacionRecta Ec, float a, float b){
+    public static float integrar_fx(EcuacionRecta Ec, float a, float b, PnPlano plano){
         if (Ec.Tipo == 0)
             return (-3*a*a*a*a*Ec.m + 3*b*b*b*b*Ec.m -4*a*a*a*Ec.b + 4*b*b*b*Ec.b)/12;
         else if (Ec.Tipo == 1)
-            return Ec.A.y*((float)PnPlano.Escala/PnPlano.Escala)*((b*b*b)/3 - (a*a*a)/3);
+            return Ec.A.y*((float)plano.Escala/plano.Escala)*((b*b*b)/3 - (a*a*a)/3);
         else
             return 0;
     }

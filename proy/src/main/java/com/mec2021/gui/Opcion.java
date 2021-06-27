@@ -9,6 +9,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.mec2021.Ctrl;
+
 
 /**Representa una Opcion para el {@link ListaOpciones}*/
 public class Opcion extends JPanel implements MouseListener{
@@ -20,6 +22,7 @@ public class Opcion extends JPanel implements MouseListener{
         add(LbTexto);
 
         LbTexto.setText(Txt);
+        LbTexto.setFont(Ctrl.Fnt1);
 
         addMouseListener(this);
 
@@ -33,7 +36,7 @@ public class Opcion extends JPanel implements MouseListener{
     }
     
     public void mouseEntered(MouseEvent e) {
-        setBackground(Color.gray);
+        setBackground(new Color(230,230,230));
         repaint();
     }
     

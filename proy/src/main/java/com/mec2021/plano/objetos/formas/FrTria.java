@@ -90,9 +90,9 @@ public class FrTria extends Forma{
 
 
         //DEFINIR ECUACIONES DE LA RECTA LOCALES AL CENTROIDE
-        Ec[0] = new EcuacionRecta(Ver1C, Ver2C);
-        Ec[1] = new EcuacionRecta(Ver2C, Ver3C);
-        Ec[2] = new EcuacionRecta(Ver3C, Ver1C);
+        Ec[0] = new EcuacionRecta(Ver1C, Ver2C, Plano);
+        Ec[1] = new EcuacionRecta(Ver2C, Ver3C, Plano);
+        Ec[2] = new EcuacionRecta(Ver3C, Ver1C, Plano);
 
 
         setOpaque(false);
@@ -172,6 +172,75 @@ public class FrTria extends Forma{
     public void actualizarEcuaciones(){
         for (EcuacionRecta ec : Ec) {
             ec.actualizarDatos();
+        }
+    }
+
+    @Override
+    public void mostrarPines() {
+        
+        if(Pines[0] == null){
+
+            //VER1
+            Pines[0] = new Pin(this, getX(), getY() + getHeight(), Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    super.mouseDragged(e);
+
+                    setLocation(snapX(getX()), snapY(getY()));
+
+                    Ver1.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+                    Ver1.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+
+                    ActualizarBordes();
+                    actualizarCoordenadas();
+                    Plano.repaint();
+                }
+            };
+
+            //VER2
+            Pines[1] = new Pin(this, getX() + 25, getY(), Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    super.mouseDragged(e);
+
+                    setLocation(snapX(getX()), snapY(getY()));
+
+                    Ver2.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+                    Ver2.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+
+                    ActualizarBordes();
+                    actualizarCoordenadas();
+                    Plano.repaint();
+                }
+            };
+
+            //VER3
+            Pines[2] = new Pin(this, getX() + getWidth(), getY() + getHeight(), Plano){
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    super.mouseDragged(e);
+
+                    setLocation(snapX(getX()), snapY(getY()));
+
+                    Ver3.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+                    Ver3.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+
+                    ActualizarBordes();
+                    actualizarCoordenadas();
+                    Plano.repaint();
+                    
+                }
+            };
+
+            //AGREGAR PINES AL PANEL PRINCIPAL
+            for (Pin pin : Pines) {
+                Plano.add(pin, JLayeredPane.DRAG_LAYER);
+                Plano.moveToFront(pin);
+            }
+
+            ActualizarPines();
+
+            Plano.repaint();
         }
     }
 
@@ -275,10 +344,10 @@ public class FrTria extends Forma{
             float b = Ver1C.y;
             float c = Ver2C.y;
             
-            float I1 = EcuacionRecta.integrar_fy(Ec[1], a, b);
-            float I2 = EcuacionRecta.integrar_fy(Ec[2], a, b);
-            float I3 = EcuacionRecta.integrar_fy(Ec[1], b, c);
-            float I4 = EcuacionRecta.integrar_fy(Ec[0], b, c);
+            float I1 = EcuacionRecta.integrar_fy(Ec[1], a, b, Plano);
+            float I2 = EcuacionRecta.integrar_fy(Ec[2], a, b, Plano);
+            float I3 = EcuacionRecta.integrar_fy(Ec[1], b, c, Plano);
+            float I4 = EcuacionRecta.integrar_fy(Ec[0], b, c, Plano);
 
 
             float ix = Math.abs(I1-I2+I3-I4);
@@ -297,10 +366,10 @@ public class FrTria extends Forma{
             float b = Ver2C.x;
             float c = Ver3C.x;
             
-            float I1 = EcuacionRecta.integrar_fx(Ec[0], a, b);
-            float I2 = EcuacionRecta.integrar_fx(Ec[2], a, b);
-            float I3 = EcuacionRecta.integrar_fx(Ec[1], b, c);
-            float I4 = EcuacionRecta.integrar_fx(Ec[2], b, c);
+            float I1 = EcuacionRecta.integrar_fx(Ec[0], a, b, Plano);
+            float I2 = EcuacionRecta.integrar_fx(Ec[2], a, b, Plano);
+            float I3 = EcuacionRecta.integrar_fx(Ec[1], b, c, Plano);
+            float I4 = EcuacionRecta.integrar_fx(Ec[2], b, c, Plano);
 
             float iy = Math.abs(I1-I2+I3-I4);
 
@@ -334,70 +403,6 @@ public class FrTria extends Forma{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if(Pines[0] == null){
-
-            //VER1
-            Pines[0] = new Pin(this, getX(), getY() + getHeight(), Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    super.mouseDragged(e);
-
-                    setLocation(snapX(getX()), snapY(getY()));
-
-                    Ver1.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-                    Ver1.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-
-                    ActualizarBordes();
-                    actualizarCoordenadas();
-                    Plano.repaint();
-                }
-            };
-
-            //VER2
-            Pines[1] = new Pin(this, getX() + 25, getY(), Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    super.mouseDragged(e);
-
-                    setLocation(snapX(getX()), snapY(getY()));
-
-                    Ver2.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-                    Ver2.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-
-                    ActualizarBordes();
-                    actualizarCoordenadas();
-                    Plano.repaint();
-                }
-            };
-
-            //VER3
-            Pines[2] = new Pin(this, getX() + getWidth(), getY() + getHeight(), Plano){
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    super.mouseDragged(e);
-
-                    setLocation(snapX(getX()), snapY(getY()));
-
-                    Ver3.x = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-                    Ver3.y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-
-                    ActualizarBordes();
-                    actualizarCoordenadas();
-                    Plano.repaint();
-                    
-                }
-            };
-
-            //AGREGAR PINES AL PANEL PRINCIPAL
-            for (Pin pin : Pines) {
-                Plano.add(pin, JLayeredPane.DRAG_LAYER);
-                Plano.moveToFront(pin);
-            }
-
-            ActualizarPines();
-
-            Plano.repaint();
-        }
     }
 
     @Override

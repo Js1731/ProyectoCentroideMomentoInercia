@@ -30,12 +30,12 @@ import com.mec2021.plano.objetos.formas.FrTria;
 public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWheelListener{
 
     /**Escala de las coordenadas del plano */
-    public static int Escala = 25;
+    public int Escala = 25;
 
     /**Escala de unidad : Pixel */
-    public static int EscalaPix = 50;
+    public int EscalaPix = 50;
 
-    public static float EscalaVieja = Escala/EscalaPix;
+    public float EscalaVieja = Escala/EscalaPix;
 
     /**Posicion del origen dentro del Panel del plano */
     public Punto PtOrigen = new Punto(500,500);
@@ -138,19 +138,19 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y + 2));
+            g2.drawLine(Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 2));
             g2.setColor(Ctrl.ClGris);
             if(ux != 0)
-                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*PnPlano.EscalaPix), Math.round(PtOrigen.y + 20));
+                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 20));
         }
 
         //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*PnPlano.EscalaPix), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*PnPlano.EscalaPix));
+            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*EscalaPix), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*EscalaPix));
             g2.setColor(Ctrl.ClGris);
             if(uy != 0)
-                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*PnPlano.EscalaPix));
+                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*EscalaPix));
         }
 
         g2.drawString("0",Math.round(PtOrigen.x - 18),Math.round(PtOrigen.y + 20));
@@ -243,6 +243,9 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         }
 
         FrSel = Fr;
+
+        if(Fr != null)
+            Fr.mostrarPines();
     }
     
     /**
@@ -299,10 +302,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
         }else if(SwingUtilities.isRightMouseButton(e)){
             //ABRIR MENU CONTEXTUAL
-            LOP.setLocation(e.getX(), e.getY());
-            moveToFront(LOP);
-            LOP.setVisible(true);
-            repaint();
+            // LOP.setLocation(e.getX(), e.getY());
+            // moveToFront(LOP);
+            // LOP.setVisible(true);
+            // repaint();
         }
     }
 
@@ -356,7 +359,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         //MODIFICAR ZOOM
-        PnPlano.EscalaVieja = (float)PnPlano.Escala/PnPlano.EscalaPix;
+        EscalaVieja = (float)Escala/EscalaPix;
         if (e.getWheelRotation() > 0 && Escala < 10000)
             EscalaPix -= 5;
         else if (e.getWheelRotation() < 0)

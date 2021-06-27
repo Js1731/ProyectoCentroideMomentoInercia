@@ -1,5 +1,6 @@
 package com.mec2021.gui.propiedades;
 
+import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Grupo;
 
@@ -59,26 +60,35 @@ public class PropGrupo extends PnPropiedades{
 
     @Override
     public void actualizarDatos() {
-        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/PnPlano.EscalaPix);
-        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/PnPlano.EscalaPix);
+        TFX.setText("" + ObjRef.X);
+        TFY.setText("" + (-ObjRef.Y));
 
         DecimalFormat f = new DecimalFormat("#0.00");
 
-        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)(((Grupo)ObjRef).centroideX() + ((Grupo)ObjRef).X)/PnPlano.EscalaPix));
-        LbCentY.setText("Centroide en Y:     "+f.format(-PnPlano.Escala*(float)(((Grupo)ObjRef).centroideY() + ((Grupo)ObjRef).Y)/PnPlano.EscalaPix));
+        float a = ObjRef.getY();
+        float b = Plano.PtOrigen.y;
+        float c = Ctrl.aplicarEscalaLnPixU(b-a);
+        float d = (((Grupo)ObjRef).centroideY());
 
-        LbInX.setText("Inercia en x:     "+f.format(((Grupo)ObjRef).inerciaX()));
-        LbInY.setText("Inercia en Y:     ");//+f.format(-PnPlano.Escala*(float)(((Grupo)ObjRef).centroideY() + ((Grupo)ObjRef).Y)/Forma.Escala));
+        LbCentX.setText("Centroide en x:     "+f.format((((Grupo)ObjRef).centroideX())));
+        LbCentY.setText("Centroide en Y:     "+f.format(c-d));
+
+        LbInX.setText("Inercia en x:     " + f.format(((Grupo)ObjRef).inerciaCentEjeX()));
+        LbInY.setText("Inercia en Y:     " + f.format(((Grupo)ObjRef).inerciaCentEjeY()));
     }
 
     @Override
     public void actualizarForma() {
 
-        int ValX = Math.round(Plano.PtOrigen.x) +  Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*PnPlano.EscalaPix)/PnPlano.Escala;
-        int ValY = Math.round(Plano.PtOrigen.y) -  Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*PnPlano.EscalaPix)/PnPlano.Escala;
 
-        int DifX = ValX - Math.round(Plano.PtOrigen.x) - ObjRef.X;
-        int DifY = ValY - Math.round(Plano.PtOrigen.y) - ObjRef.Y;
+        float PosX = Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()));
+        float PosY = -Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()));
+
+        int ValX = Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(PosX));
+        int ValY = Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(PosY));
+
+        float DifX = PosX - ObjRef.X;
+        float DifY = PosY - ObjRef.Y;
 
         ObjRef.setBounds(ValX, ValY, ObjRef.getWidth(), ObjRef.getHeight());
 
@@ -88,36 +98,28 @@ public class PropGrupo extends PnPropiedades{
             if(fr instanceof FrRect){
                 FrRect Rec = (FrRect)fr;
 
-                Rec.setBounds(Rec.getX() + DifX, 
-                              Rec.getY() + DifY, 
-                              Rec.getWidth(),
-                              Rec.getHeight());
+                Rec.X += DifX;
+                Rec.Y += DifY;
 
-                Rec.ActualizarCoordenadas();
+                Rec.actualizarDimensiones();
                 Rec.ActualizarPines();
             }else if(fr instanceof FrCirc){
                 FrCirc Circ = (FrCirc)fr;
 
-                Circ.setBounds(Circ.getX() + DifX, 
-                               Circ.getY() + DifY, 
-                               getWidth(),
-                               getHeight());
+                Circ.X += DifX;
+                Circ.Y += DifY;
 
-                Circ.ActualizarCoordenadas();
+                Circ.actualizarDimensiones();
                 Circ.ActualizarPines();
             }else if(fr instanceof FrTria){
                 FrTria Tria = (FrTria)fr;
 
-                Tria.setBounds(Tria.getX() + DifX, 
-                               Tria.getY() + DifY, 
-                               Tria.getWidth(), 
-                               Tria.getHeight());
+                Tria.X += DifX;
+                Tria.Y += DifY;
                 
                 Tria.moverVertices( DifX, DifY);
 
-                Tria.Hueco = CBHueco.isSelected();
-
-                Tria.ActualizarCoordenadas();
+                Tria.actualizarDimensiones();
                 Tria.ActualizarPines();
             }
             Plano.repaint();

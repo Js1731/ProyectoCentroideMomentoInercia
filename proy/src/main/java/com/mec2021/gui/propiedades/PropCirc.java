@@ -96,20 +96,16 @@ public class PropCirc extends PnPropiedades{
         DecimalFormat f = new DecimalFormat("#0.00");
         FrCirc Circulo = (FrCirc)ObjRef;
 
-        TFX.setText("" + f.format(Ctrl.aplicarEscalaLn(Circulo.X)));
-        TFY.setText("" + f.format(Ctrl.aplicarEscalaLn(-Circulo.Y)));
+        TFX.setText("" + f.format(Circulo.X));
+        TFY.setText("" + f.format(-Circulo.Y));
         TFRadio.setText("" + f.format(Circulo.Diametro/2));
-
-        
-
+    
         TFAngIni.setText("" + f.format(Circulo.Sector.start));
         TFExt.setText("" + f.format(Circulo.Sector.extent));
 
-        Float t = Circulo.calcularArea();
-
-        LbArea.setText("Area:                      " + f.format(Ctrl.aplicarEscalaAr(Circulo.calcularArea())));
-        LbCentX.setText("Centroide en x:     " + f.format(Ctrl.aplicarEscalaLn(-Circulo.getWidth()/2f + Circulo.centroideX())));
-        LbCentY.setText("Centroide en Y:     " + f.format(Ctrl.aplicarEscalaLn(Circulo.getHeight()/2f - Circulo.centroideY())));
+        LbArea.setText("Area:                      " + f.format(Circulo.calcularArea()));
+        LbCentX.setText("Centroide en x:     " + f.format(Circulo.centroideX()));
+        LbCentY.setText("Centroide en Y:     " + f.format(Circulo.centroideY()));
 
         LbInX.setText("Inercia en x:     " + f.format(Circulo.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     " + f.format(Circulo.inerciaCentEjeY()));
@@ -121,24 +117,27 @@ public class PropCirc extends PnPropiedades{
     public void actualizarForma() {
         FrCirc Circ = (FrCirc)ObjRef;
 
-        Circ.setBounds(Math.round(Plano.PtOrigen.x) + Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))), 
-                      Math.round(Plano.PtOrigen.y) + Math.round(Ctrl.aplicarEscalaLnInv(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText())))), 
-                      2*Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText())))), 
-                      2*Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText())))));
+        //PROPIEDADES NUEVAS
+        float PosX = Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()));
+        float PosY = -Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()));
+        float Radio = Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()));
 
-        //Circ.Diametro = 2*Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))));
-        Circ.Sector.start = Float.parseFloat(TFAngIni.getText().isEmpty() || TFAngIni.getText().equals("-") ? "0" : TFAngIni.getText());
-        Circ.Sector.extent = Float.parseFloat(TFExt.getText().isEmpty() || TFExt.getText().equals("-") ? "0" : TFExt.getText());
-        Circ.Sector.width = 2*Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))));
-        Circ.Sector.height = 2*Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") ? "0" : TFRadio.getText()))));
+        float AngIni = Float.parseFloat(TFAngIni.getText().isEmpty() || TFAngIni.getText().equals("-") ? "0" : TFAngIni.getText());
+        float AngExt = Float.parseFloat(TFExt.getText().isEmpty() || TFExt.getText().equals("-") ? "0" : TFExt.getText());
+
+        //APLICAR PROPIEDADES
+        Circ.X = PosX;
+        Circ.Y = PosY;
+        Circ.Diametro = Radio*2;
+
+        Circ.Sector.start = AngIni;
+        Circ.Sector.extent = AngExt;
 
         Circ.Hueco = CBHueco.isSelected();
 
-        Circ.ActualizarCoordenadas();
+        Circ.actualizarDimensiones();
         Circ.ActualizarPines();
 
         Circ.repaint();
-
-        Plano.repaint();
     }
 }

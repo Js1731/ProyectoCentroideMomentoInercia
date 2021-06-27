@@ -11,6 +11,8 @@ import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrRect;
 
+import javafx.geometry.Pos;
+
 /**Panel de propiedades para un Rectangulo*/
 public class PropRect extends PnPropiedades{
 
@@ -85,14 +87,14 @@ public class PropRect extends PnPropiedades{
         FrRect Rect = ((FrRect)ObjRef);
         DecimalFormat f = new DecimalFormat("#0.00");
 
-        TFX.setText("" + f.format(Ctrl.aplicarEscalaLn(Rect.X)));
-        TFY.setText("" + f.format(Ctrl.aplicarEscalaLn(-Rect.Y)));
+        TFX.setText("" + f.format(Rect.X));
+        TFY.setText("" + f.format(-Rect.Y));
         TFAn.setText(""+ f.format(Rect.Ancho));
         TFAl.setText(""+ f.format(Rect.Alto));
         
-        LbArea.setText("Area:                      " +f.format(Ctrl.aplicarEscalaAr(Rect.calcularArea())));
-        LbCentX.setText("Centroide en x:     " + f.format(Ctrl.aplicarEscalaLn(Rect.centroideX())));
-        LbCentY.setText("Centroide en Y:     " + f.format(Ctrl.aplicarEscalaLn(Rect.centroideY())));
+        LbArea.setText("Area:                      " +f.format(Rect.calcularArea()));
+        LbCentX.setText("Centroide en x:     " + f.format(Rect.centroideX()));
+        LbCentY.setText("Centroide en Y:     " + f.format(Rect.centroideY()));
 
         LbInX.setText("Inercia en X:     "+f.format(Rect.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     "+f.format(Rect.inerciaCentEjeY()));
@@ -104,14 +106,21 @@ public class PropRect extends PnPropiedades{
     public void actualizarForma() {
         FrRect Rec = (FrRect)ObjRef;
 
-        Rec.setBounds(Math.round(Plano.PtOrigen.x) + Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))), 
-                      Math.round(Plano.PtOrigen.y) + Math.round(Ctrl.aplicarEscalaLnInv(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText())))), 
-                      Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFAn.getText().isEmpty() || TFAn.getText().equals("-") ? "0" : TFAn.getText())))), 
-                      Math.round(Ctrl.aplicarEscalaLnInv(Float.parseFloat((TFAl.getText().isEmpty() || TFAl.getText().equals("-") ? "0" : TFAl.getText())))));
+        //NUEVAS PROPIEDADES
+        float PosX = Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()));
+        float PosY = -Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()));
+        float Ancho = Float.parseFloat((TFAn.getText().isEmpty() || TFAn.getText().equals("-") ? "0" : TFAn.getText()));
+        float Alto = Float.parseFloat((TFAl.getText().isEmpty() || TFAl.getText().equals("-") ? "0" : TFAl.getText()));
+
+        //APLICAR PROPIEDADES
+        Rec.X = PosX;
+        Rec.Y = PosY;
+        Rec.Ancho = Ancho;
+        Rec.Alto = Alto;
                       
         Rec.Hueco = CBHueco.isSelected();
 
-        Rec.ActualizarCoordenadas();
+        Rec.actualizarDimensiones();
         Rec.ActualizarPines();
 
         Plano.repaint();

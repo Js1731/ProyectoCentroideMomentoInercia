@@ -44,11 +44,11 @@ public class Ctrl {
      * @param Valor
      * @return
      */
-    public static Float aplicarEscalaLn(float Valor){
+    public static Float aplicarEscalaLnPixU(float Valor){
         return Valor*((float)PnPrinc.PlanoActual.Escala/PnPrinc.PlanoActual.EscalaPix);
     }
 
-        /**
+    /**
      * Transforma un valor de area de Pixeles a Unidad
      * @param Valor
      * @return
@@ -62,7 +62,7 @@ public class Ctrl {
      * @param Valor
      * @return
      */
-    public static Float aplicarEscalaLnInv(float Valor){
+    public static Float aplicarEscalaUPix(float Valor){
         return Valor*((float)PnPrinc.PlanoActual.EscalaPix/PnPrinc.PlanoActual.Escala);
     }
 

@@ -23,6 +23,7 @@ import com.mec2021.gui.PnPlano;
  */
 public class FrCirc extends Forma{
 
+
     public Arc2D.Double Sector;
 
     public float Diametro = 5;
@@ -33,7 +34,7 @@ public class FrCirc extends Forma{
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
      */
     public FrCirc(PnPlano plano){
-        this(0, -5, 5, 90, 360, plano);
+        this(0*plano.Escala, -5*plano.Escala, 5*plano.Escala, 90, 360, plano);
     }
 
     /**
@@ -57,12 +58,12 @@ public class FrCirc extends Forma{
 
         Pines = new Pin[3];
 
-        setBounds(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaLnInv(X)), 
-                  Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaLnInv(Y)), 
-                  Math.round(Ctrl.aplicarEscalaLnInv(Diametro)), 
-                  Math.round(Ctrl.aplicarEscalaLnInv(Diametro)));
+        setBounds(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(X)), 
+                  Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Y)), 
+                  Math.round(Ctrl.aplicarEscalaUPix(Diametro)), 
+                  Math.round(Ctrl.aplicarEscalaUPix(Diametro)));
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
-        ActualizarCoordenadas();
+        actualizarCoordenadas();
     }
     
 
@@ -82,8 +83,8 @@ public class FrCirc extends Forma{
         }else
             G2.fill(Sector);
 
-        int x = Math.round(centroideX());
-        int y = Math.round(centroideY());
+        int x = Math.round(Ctrl.aplicarEscalaUPix(centroideX()));
+        int y = Math.round(Ctrl.aplicarEscalaUPix(centroideY()));
 
         g.setColor(Color.RED);
 
@@ -92,16 +93,15 @@ public class FrCirc extends Forma{
 
 
     @Override
-    public void actualizarEscala(){
-        float NuevaEsc = ( (float)Plano.EscalaPix/Plano.Escala) * Plano.EscalaVieja;
+    public void actualizarDimensiones(){
+        setBounds(Math.round( Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(X)),
+                  Math.round( Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Y)), 
+                  Math.round(Ctrl.aplicarEscalaUPix(Diametro)), 
+                  Math.round(Ctrl.aplicarEscalaUPix(Diametro)));
 
-        setBounds(Math.round(Plano.PtOrigen.x + X*NuevaEsc), 
-                  Math.round(Plano.PtOrigen.y + Y*NuevaEsc), 
-                  Math.round(getWidth()*NuevaEsc), 
-                  Math.round(getHeight()*NuevaEsc));
-        Sector.width = getWidth()*NuevaEsc;
-        Sector.height = getHeight()*NuevaEsc;
-        ActualizarCoordenadas();
+        Sector.width = Ctrl.aplicarEscalaUPix(Diametro);
+        Sector.height = Ctrl.aplicarEscalaUPix(Diametro);
+
         ActualizarPines();
         repaint();
     }
@@ -113,42 +113,42 @@ public class FrCirc extends Forma{
             return;
 
         //ACTUALIZAR CIRCULO
-        setBounds(getX(), getY(), Math.round(Ctrl.aplicarEscalaLnInv(Diametro)), Math.round(Ctrl.aplicarEscalaLnInv(Diametro)));
+        setBounds(getX(), getY(), Math.round(Ctrl.aplicarEscalaUPix(Diametro)), Math.round(Ctrl.aplicarEscalaUPix(Diametro)));
         Sector.width = getWidth();
         Sector.height = getHeight();
 
         //ACTUALIZAR PINES
 
         //PIN DE DIAMETRO
-        int PinX = getX() + getWidth()/2  + Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/2;
+        int PinX = getX() + getWidth()/2  + Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2;
         int PinY = getY() + getWidth()/2;
 
         Pines[0].setLocation(PinX, PinY);
 
         //PIN PARA MODIFICAR ARCO
-        PinX = getX() + getWidth()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/2.5)*Math.cos(Math.toRadians(-Sector.start))));
-        PinY = getY() + getHeight()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/2.5)*Math.sin(Math.toRadians(-Sector.start))));
+        PinX = getX() + getWidth()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2.5)*Math.cos(Math.toRadians(-Sector.start))));
+        PinY = getY() + getHeight()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2.5)*Math.sin(Math.toRadians(-Sector.start))));
 
         Pines[1].setLocation(PinX, PinY);
 
         //PIN PARA MODIFICAR LA ROTACION DEL CIRCULO
-        PinX = getX() + getWidth()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/5)*Math.cos(Math.toRadians(-Sector.start))));
-        PinY = getY() + getHeight()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/5)*Math.sin(Math.toRadians(-Sector.start))));
+        PinX = getX() + getWidth()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaUPix(Diametro))/5)*Math.cos(Math.toRadians(-Sector.start))));
+        PinY = getY() + getHeight()/2 + Math.round((float)((Math.round(Ctrl.aplicarEscalaUPix(Diametro))/5)*Math.sin(Math.toRadians(-Sector.start))));
 
         Pines[2].setLocation(PinX, PinY);
     }
 
     @Override
-    public void ActualizarCoordenadas() {
-        X = Math.round(getX() - Plano.PtOrigen.x);
-        Y = Math.round(getY() - Plano.PtOrigen.y);
+    public void actualizarCoordenadas() {
+        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
 
-        Diametro = Ctrl.aplicarEscalaLn(getWidth());
+        Diametro = Ctrl.aplicarEscalaLnPixU(getWidth());
     }
 
     @Override
     public float calcularArea() {
-        return (Hueco ? -1 : 1)*areaSector(Ctrl.aplicarEscalaLnInv(Diametro)/2f, (float)Math.toRadians(Sector.extent));
+        return (Hueco ? -1 : 1)*areaSector(Diametro/2f, (float)Math.toRadians(Sector.extent));
     }
 
     /**
@@ -184,10 +184,26 @@ public class FrCirc extends Forma{
         //Referencia
         //https://www.efunda.com/math/areas/CircularSection.cfm
         
-        float r = (Ctrl.aplicarEscalaLnInv(Diametro)/2)*((float)PnPlano.Escala/PnPlano.EscalaPix);
-        float a = (float)Math.toRadians(Sector.extent)/2f;
+        if(Grp != null){
+            float r = (Diametro)/2;
+            float a = (float)Math.toRadians(Sector.extent)/2f;
 
-        return ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
+            //float ix = ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
+            float ix = ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
+            
+            // float ix = (2*r*(float)Math.sin(a))/(3*a);
+            // float ix = 1423008.00f;
+            float y0 = Ctrl.aplicarEscalaLnPixU(getHeight());
+            float centini = centroideY();
+            float centfin = y0 - centini;
+
+            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+
+            float Ix = ix + Math.abs(calcularArea())*dy*dy;
+
+            return (Hueco ? -1 : 1)*Ix;
+        }else 
+            return 0;
     }
 
     @Override
@@ -195,16 +211,33 @@ public class FrCirc extends Forma{
         //Referencia
         //https://www.efunda.com/math/areas/CircularSection.cfm
         
-        float r = (Ctrl.aplicarEscalaLnInv(Diametro)/2)*((float)PnPlano.Escala/PnPlano.EscalaPix);
-        float a = (float)Math.toRadians(Sector.extent)/2f;
+        if(Grp != null){
+            float r = (Diametro)/2;
+            float a = (float)Math.toRadians(Sector.extent)/2f;
 
-        return ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
+            float ix = ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
+            
+            // float ix = (2*r*(float)Math.sin(a))/(3*a);
+            // float ix = 1423008.00f;
+            float y0 = Ctrl.aplicarEscalaLnPixU(getHeight());
+            float centini = centroideY();
+            float centfin = y0 - centini;
+
+            float dy = (centroideX() + X) - Grp.centroideX();
+
+            float Ix = ix + Math.abs(calcularArea())*dy*dy;
+
+            return (Hueco ? -1 : 1)*Ix;
+
+            //return ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
+        }else 
+            return 0;
     }
 
     @Override
     public float centroideX() {
 
-        float Radio = Ctrl.aplicarEscalaLnInv(Diametro)/2;
+        float Radio = Diametro/2;
 
         //AMPLITUD DEL SECTOR PRINCIPAL
         float a = (float)Math.toRadians(Ctrl.clamp((float)Sector.extent, 0f, 180f)/2);
@@ -232,12 +265,12 @@ public class FrCirc extends Forma{
         float SumaAreas = AreaP + 2*AreaS;
         float SumaAreasPorX = Axp + AxS1 + AxS2;
 
-        return SumaAreasPorX/SumaAreas + Ctrl.aplicarEscalaLnInv(Diametro)/2;
+        return SumaAreasPorX/SumaAreas + Diametro/2;
     }
 
     @Override
     public float centroideY() {
-        float Radio = Ctrl.aplicarEscalaLnInv(Diametro)/2;
+        float Radio = Diametro/2;
 
         //AMPLITUD DEL SECTOR PRINCIPAL
         float a = (float)Math.toRadians(Ctrl.clamp((float)Sector.extent, 0, 180)/2);
@@ -263,9 +296,9 @@ public class FrCirc extends Forma{
         float AyS2 = AreaS*yS2;
 
         float SumaAreas = AreaP + 2*AreaS;
-        float SumaAreasPorX = Ayp + AyS1 + AyS2;
+        float SumaAreasPorY = Ayp + AyS1 + AyS2;
 
-        return -SumaAreasPorX/SumaAreas + Ctrl.aplicarEscalaLnInv(Diametro)/2;
+        return -SumaAreasPorY/SumaAreas + Diametro/2;
     }
 
 
@@ -277,7 +310,7 @@ public class FrCirc extends Forma{
         //CREAR PINES
         if(Pines[0] == null){
 
-            int PinX = getX() + getWidth()/2 + Math.round(Ctrl.aplicarEscalaLnInv(Diametro)/2);
+            int PinX = getX() + getWidth()/2 + Math.round(Ctrl.aplicarEscalaUPix(Diametro)/2);
             int PinY = getY() + getHeight()/2;
 
             //PIN DE DIAMETRO
@@ -287,20 +320,20 @@ public class FrCirc extends Forma{
                     Point Pos = e.getLocationOnScreen();
                     SwingUtilities.convertPointFromScreen(Pos, Plano);
             
-                    setBounds(Pos.x - PtOffset.x, Fr.getY() + Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/2, getWidth(), getHeight());
+                    setBounds(Pos.x - PtOffset.x, Fr.getY() + Math.round(Ctrl.aplicarEscalaUPix(Diametro))/2, getWidth(), getHeight());
                     
-                    Diametro = Ctrl.aplicarEscalaLn((Fr.getWidth() + getX()) - (Fr.getX() + Fr.getWidth()));
+                    Diametro = Ctrl.aplicarEscalaLnPixU((Fr.getWidth() + getX()) - (Fr.getX() + Fr.getWidth()));
                     
                     if(Fr.Grp != null)
                         Fr.Grp.ActualizarBordes();
                     ActualizarPines();
-                    ActualizarCoordenadas();
+                    actualizarCoordenadas();
                     Plano.notificarCambios(1);
                 }
             };
 
             //PIN PARA MODIFICAR LA AMPLITUD DEL SECTOR
-            PinX = getX() + getWidth()/2 + Math.round((float)(Math.round(Ctrl.aplicarEscalaLnInv(Diametro))/4*Math.cos(Sector.start)));
+            PinX = getX() + getWidth()/2 + Math.round((float)(Math.round(Ctrl.aplicarEscalaUPix(Diametro))/4*Math.cos(Sector.start)));
 
             Pines[1] = new Pin(this, PinX, PinY, Plano){
                 @Override
@@ -318,8 +351,8 @@ public class FrCirc extends Forma{
                     Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
 
                     //AJUSTAR EL PIN A LA CIRCUNFERENCIA
-                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaLnInv(Diametro)/2 + (float)(Ctrl.aplicarEscalaLnInv(Diametro)/2*VectDir.x)),
-                              Math.round(Fr.getY() + Ctrl.aplicarEscalaLnInv(Diametro)/2 + (float)(Ctrl.aplicarEscalaLnInv(Diametro)/2*VectDir.y)), 
+                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
+                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
                               getWidth(), 
                               getHeight());
                     
@@ -336,7 +369,7 @@ public class FrCirc extends Forma{
                     Sector.start = Math.toDegrees(angInv);
 
                     ActualizarPines();
-                    ActualizarCoordenadas();
+                    actualizarCoordenadas();
                     Plano.notificarCambios(1);
                     Fr.repaint();
                 }
@@ -360,8 +393,8 @@ public class FrCirc extends Forma{
                     Punto VectDir = new Punto((float)Math.cos(ang), (float)Math.sin(ang));
 
                     //AJUSTAR EL PIN A LA CIRCUNFERENCIA
-                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaLnInv(Diametro)/2 + (float)(Ctrl.aplicarEscalaLnInv(Diametro)/2*VectDir.x)),
-                              Math.round(Fr.getY() + Ctrl.aplicarEscalaLnInv(Diametro)/2 + (float)(Ctrl.aplicarEscalaLnInv(Diametro)/2*VectDir.y)), 
+                    setBounds(Math.round(Fr.getX() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.x)),
+                              Math.round(Fr.getY() + Ctrl.aplicarEscalaUPix(Diametro)/2 + (float)(Ctrl.aplicarEscalaUPix(Diametro)/2*VectDir.y)), 
                               getWidth(), 
                               getHeight());
                     
@@ -374,7 +407,7 @@ public class FrCirc extends Forma{
                     Sector.start = Math.toDegrees(angInv);
 
                     ActualizarPines();
-                    ActualizarCoordenadas();
+                    actualizarCoordenadas();
                     Plano.notificarCambios(1);
                     Fr.repaint();
                 }

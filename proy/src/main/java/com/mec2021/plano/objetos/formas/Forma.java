@@ -43,21 +43,6 @@ public abstract class Forma extends Objeto2D{
         
     }
 
-    /**Actualiza al posicion y tamano de la forma a la escala actual del lienzo */
-    public abstract void actualizarEscala();
-
-    /**Calcula la inercia con respecto al centroide X para esta Forma */
-    public abstract float inerciaCentEjeX();
-    
-    /**Calcula la inercia con respecto al centroide Y para esta Forma */
-    public abstract float inerciaCentEjeY();
-
-    /**Calcula la coordenada X del centroide (Es local a la forma)*/
-    public abstract float centroideX();
-
-    /**Calcula la coordenada Y del centroide (Es local a la forma)*/
-    public abstract float centroideY();
-
     /**Calcula el area de esta forma, si la figura esta hueca el area sera negativa */
     public abstract float calcularArea();
 
@@ -87,7 +72,7 @@ public abstract class Forma extends Objeto2D{
         super.mousePressed(e);
 
         requestFocus();
-        ActualizarCoordenadas();
+        actualizarCoordenadas();
         float inx = inerciaCentEjeX();
         float iny = inerciaCentEjeY();
 
@@ -130,6 +115,6 @@ public abstract class Forma extends Objeto2D{
 
         if(Grp != null)
             Grp.ActualizarBordes();
-        ActualizarCoordenadas();
+        actualizarCoordenadas();
     }
 }

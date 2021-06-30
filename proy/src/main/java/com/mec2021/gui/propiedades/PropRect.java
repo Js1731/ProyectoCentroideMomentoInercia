@@ -10,6 +10,7 @@ import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrRect;
 
+
 /**Panel de propiedades para un Rectangulo*/
 public class PropRect extends PnPropiedades{
 
@@ -18,13 +19,11 @@ public class PropRect extends PnPropiedades{
     private JTextField TFAn = new JTextField();
     private JTextField TFAl = new JTextField();
 
-    private JLabel LbArea = new JLabel("Area:");
-    private JLabel LbCentX = new JLabel("Centroide en X:");
-    private JLabel LbCentY = new JLabel("Centroide en Y:");
-
     public PropRect(Objeto2D obj, PnPlano plano) {
         super(obj, plano);
          
+        setBounds(getX(), getY(), getWidth(), 350);
+
         //POSICION X
         JLabel LbX = new JLabel("X");
         LbX.setBounds(10, 15, 50, 10);
@@ -59,7 +58,10 @@ public class PropRect extends PnPropiedades{
         LbCentX.setBounds(10, 155, 200, 10);
         LbCentY.setBounds(10, 180, 200, 10);
 
-        CBHueco.setBounds(8, 220, 200, 30);
+        LbInX.setBounds(10, 215, 200, 10);
+        LbInY.setBounds(10, 240, 200, 10);
+
+        CBHueco.setBounds(8, 270, 200, 30);
 
         PnCont.add(LbX);
         PnCont.add(TFX);        
@@ -80,16 +82,20 @@ public class PropRect extends PnPropiedades{
 
     @Override
     public void actualizarDatos() {
-        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/Forma.Escala);
-        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/Forma.Escala);
-        TFAn.setText(""+PnPlano.Escala*(float)((FrRect)ObjRef).Ancho/Forma.Escala);
-        TFAl.setText(""+PnPlano.Escala*(float)((FrRect)ObjRef).Alto/Forma.Escala);
-
+        FrRect Rect = ((FrRect)ObjRef);
         DecimalFormat f = new DecimalFormat("#0.00");
+
+        TFX.setText("" + f.format(Rect.X));
+        TFY.setText("" + f.format(-Rect.Y));
+        TFAn.setText(""+ f.format(Rect.Ancho));
+        TFAl.setText(""+ f.format(Rect.Alto));
         
-        LbArea.setText("Area:                      "+f.format(PnPlano.Escala*PnPlano.Escala*(float)((FrRect)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
-        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrRect)ObjRef).centroideX()/Forma.Escala));
-        LbCentY.setText("Centroide en Y:     "+f.format(PnPlano.Escala*(float)((FrRect)ObjRef).centroideY()/Forma.Escala));
+        LbArea.setText("Area:                      " +f.format(Rect.calcularArea()));
+        LbCentX.setText("Centroide en x:     " + f.format(Rect.centroideX()));
+        LbCentY.setText("Centroide en Y:     " + f.format(Rect.centroideY()));
+
+        LbInX.setText("Inercia en X:     "+f.format(Rect.inerciaCentEjeX()));
+        LbInY.setText("Inercia en Y:     "+f.format(Rect.inerciaCentEjeY()));
         
         CBHueco.setSelected(((Forma)ObjRef).Hueco);
     }
@@ -98,14 +104,21 @@ public class PropRect extends PnPropiedades{
     public void actualizarForma() {
         FrRect Rec = (FrRect)ObjRef;
 
-        Rec.setBounds(Math.round(Plano.PtOrigen.x) + Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(Plano.PtOrigen.y) + Math.round(-Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(Float.parseFloat((TFAn.getText().isEmpty() || TFAn.getText().equals("-") ? "0" : TFAn.getText()))*Forma.Escala/PnPlano.Escala), 
-                      Math.round(Float.parseFloat((TFAl.getText().isEmpty() || TFAl.getText().equals("-") ? "0" : TFAl.getText()))*Forma.Escala/PnPlano.Escala));
+        //NUEVAS PROPIEDADES
+        float PosX = Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()));
+        float PosY = -Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()));
+        float Ancho = Float.parseFloat((TFAn.getText().isEmpty() || TFAn.getText().equals("-") ? "0" : TFAn.getText()));
+        float Alto = Float.parseFloat((TFAl.getText().isEmpty() || TFAl.getText().equals("-") ? "0" : TFAl.getText()));
+
+        //APLICAR PROPIEDADES
+        Rec.X = PosX;
+        Rec.Y = PosY;
+        Rec.Ancho = Ancho;
+        Rec.Alto = Alto;
                       
         Rec.Hueco = CBHueco.isSelected();
 
-        Rec.ActualizarCoordenadas();
+        Rec.actualizarDimensiones();
         Rec.ActualizarPines();
 
         Plano.repaint();

@@ -16,10 +16,6 @@ import com.mec2021.gui.PnPlano;
 /**Panel de propiedades para un Triangulo*/
 public class PropTria extends PnPropiedades{
 
-    private JLabel LbArea = new JLabel("Area:");
-    private JLabel LbCentX = new JLabel("Centroide en X:");
-    private JLabel LbCentY = new JLabel("Centroide en Y:");
-
     private JTextField TFX = new JTextField();
     private JTextField TFY = new JTextField();
 
@@ -50,7 +46,7 @@ public class PropTria extends PnPropiedades{
 
             if(!Character.isDigit(e.getKeyChar()) && e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && e.getKeyChar() != KeyEvent.VK_BACK_SPACE)
             try{
-                JTF.setText(""+Ctrl.Utils.eliminarLetras(JTF.getText()));
+                JTF.setText(""+Ctrl.eliminarLetras(JTF.getText()));
                 Float.parseFloat(JTF.getText());
 
             }catch(NumberFormatException ex){
@@ -67,7 +63,7 @@ public class PropTria extends PnPropiedades{
     public PropTria(Objeto2D obj, PnPlano plano) {
         super(obj, plano);
 
-        setBounds(getX(), getY(), getWidth(), 400);
+        setBounds(getX(), getY(), getWidth(), 490);
 
         int Y = 1;
         int Esp = 30;
@@ -151,7 +147,10 @@ public class PropTria extends PnPropiedades{
         LbCentX.setBounds(10, 70 + Y*Esp, 200, 10);
         LbCentY.setBounds(10, 100 + Y*Esp, 200, 10);
 
-        CBHueco.setBounds(8, 120  + Y*Esp, 120, 30);
+        LbInX.setBounds(10, 140 + Y*Esp, 200, 10);
+        LbInY.setBounds(10, 170 + Y*Esp, 200, 10);
+
+        CBHueco.setBounds(8, 200  + Y*Esp, 120, 30);
 
 
         PnCont.add(LbX);
@@ -191,23 +190,30 @@ public class PropTria extends PnPropiedades{
 
     @Override
     public void actualizarDatos() {
-        TFX.setText(""+PnPlano.Escala*(float)ObjRef.X/Forma.Escala);
-        TFY.setText(""+PnPlano.Escala*(float)-ObjRef.Y/Forma.Escala);
 
-        TFX1.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver1.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY1.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver1.y  - Plano.PtOrigen.y)/Forma.Escala);
-
-        TFX2.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver2.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY2.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver2.y  - Plano.PtOrigen.y)/Forma.Escala);
-
-        TFX3.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver3.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY3.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver3.y  - Plano.PtOrigen.y)/Forma.Escala);
-
+        FrTria Tria = (FrTria)ObjRef;
         DecimalFormat f = new DecimalFormat("#0.00");
 
-        LbArea.setText("Area:                      "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).calcularArea()/(Forma.Escala * Forma.Escala)));
-        LbCentX.setText("Centroide en x:     "+f.format(PnPlano.Escala*(float)((FrTria)ObjRef).centroideX()/Forma.Escala));
-        LbCentY.setText("Centroide en Y:     "+f.format(-(PnPlano.Escala*(float)((FrTria)ObjRef).centroideY())/Forma.Escala));
+        TFX.setText("" + f.format(Tria.X));
+        TFY.setText("" + f.format(-Tria.Y));
+
+        TFX1.setText("" + f.format(Tria.Ver1.x));
+        TFY1.setText("" + f.format(-Tria.Ver1.y));
+
+        TFX2.setText("" + f.format(Tria.Ver2.x));
+        TFY2.setText("" + f.format(-Tria.Ver2.y));
+
+        TFX3.setText("" + f.format(Tria.Ver3.x));
+        TFY3.setText("" + f.format(-Tria.Ver3.y));
+
+        
+
+        LbArea.setText("Area:                      " + f.format(Tria.calcularArea()));
+        LbCentX.setText("Centroide en x:     " + f.format(Tria.centroideX()));
+        LbCentY.setText("Centroide en Y:     " + f.format(Ctrl.aplicarEscalaLnPixU(ObjRef.getHeight()) - Tria.centroideY()));
+
+        LbInX.setText("Inercia en x:     " + f.format(Tria.inerciaCentEjeX()));
+        LbInY.setText("Inercia en Y:     " + f.format(Tria.inerciaCentEjeY()));
 
         CBHueco.setSelected(((Forma)ObjRef).Hueco);
     }
@@ -216,18 +222,17 @@ public class PropTria extends PnPropiedades{
     public void actualizarForma() {
         FrTria Tria = (FrTria)ObjRef;
 
-        Tria.Ver1.x = (Float.parseFloat((TFX1.getText().isEmpty() || TFX1.getText().equals("-") ? "0" : TFX1.getText())) )*Forma.Escala/PnPlano.Escala + Plano.PtOrigen.x;
-        Tria.Ver1.y = -(Float.parseFloat((TFY1.getText().isEmpty() || TFY1.getText().equals("-") ? "0" : TFY1.getText())) )*Forma.Escala/PnPlano.Escala + Plano.PtOrigen.y;
+        Tria.Ver1.x = Float.parseFloat((TFX1.getText().isEmpty() || TFX1.getText().equals("-") ? "0" : TFX1.getText()));
+        Tria.Ver1.y = -Float.parseFloat((TFY1.getText().isEmpty() || TFY1.getText().equals("-") ? "0" : TFY1.getText()));
 
-        Tria.Ver2.x = (Float.parseFloat((TFX2.getText().isEmpty() || TFX2.getText().equals("-") ? "0" : TFX2.getText())))*Forma.Escala/PnPlano.Escala  + Plano.PtOrigen.x;
-        Tria.Ver2.y = -(Float.parseFloat((TFY2.getText().isEmpty() || TFY2.getText().equals("-") ? "0" : TFY2.getText())))*Forma.Escala/PnPlano.Escala  + Plano.PtOrigen.y;
+        Tria.Ver2.x = Float.parseFloat((TFX2.getText().isEmpty() || TFX2.getText().equals("-") ? "0" : TFX2.getText()));
+        Tria.Ver2.y = -Float.parseFloat((TFY2.getText().isEmpty() || TFY2.getText().equals("-") ? "0" : TFY2.getText()));
 
-        Tria.Ver3.x = (Float.parseFloat((TFX3.getText().isEmpty() || TFX3.getText().equals("-") ? "0" : TFX3.getText())))*Forma.Escala/PnPlano.Escala  + Plano.PtOrigen.x;
-        Tria.Ver3.y = -(Float.parseFloat((TFY3.getText().isEmpty() || TFY3.getText().equals("-") ? "0" : TFY3.getText())))*Forma.Escala/PnPlano.Escala  + Plano.PtOrigen.y;
+        Tria.Ver3.x = Float.parseFloat((TFX3.getText().isEmpty() || TFX3.getText().equals("-") ? "0" : TFX3.getText()));
+        Tria.Ver3.y = -Float.parseFloat((TFY3.getText().isEmpty() || TFY3.getText().equals("-") ? "0" : TFY3.getText()));
 
         Tria.Hueco = CBHueco.isSelected();
 
-        Tria.ActualizarCoordenadas();
         Tria.ActualizarBordes();
         Tria.ActualizarPines();
 
@@ -238,11 +243,11 @@ public class PropTria extends PnPropiedades{
     public void actualizarPosTriangulo() {
         FrTria Tria = (FrTria)ObjRef;
 
-        int DifX = Math.round(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala)/PnPlano.Escala  - Tria.X;
-        int DifY = -Math.round(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala)/PnPlano.Escala - Tria.Y;
+        int DifX = Math.round(Ctrl.aplicarEscalaUPix(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))  - Tria.X);
+        int DifY = -Math.round(Ctrl.aplicarEscalaUPix(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))) - Tria.Y);
 
-        Tria.setBounds(Math.round(Plano.PtOrigen.x + Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))*Forma.Escala/PnPlano.Escala),
-                      Math.round(Plano.PtOrigen.y - Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))*Forma.Escala/PnPlano.Escala),
+        Tria.setBounds(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))),
+                      Math.round(Plano.PtOrigen.y - Ctrl.aplicarEscalaUPix(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText())))),
                       Tria.getWidth(),
                       Tria.getHeight());
 
@@ -250,19 +255,19 @@ public class PropTria extends PnPropiedades{
 
         Tria.Hueco = CBHueco.isSelected();
 
-        Tria.ActualizarCoordenadas();
+        Tria.actualizarCoordenadas();
         Tria.ActualizarPines();
         Plano.repaint();
 
         //ACTUALIZAR CAMPOS
-        TFX1.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver1.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY1.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver1.y  - Plano.PtOrigen.y)/Forma.Escala);
+        TFX1.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver1.x - Plano.PtOrigen.x));
+        TFY1.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver1.y + Plano.PtOrigen.y));
 
-        TFX2.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver2.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY2.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver2.y  - Plano.PtOrigen.y)/Forma.Escala);
+        TFX2.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver2.x - Plano.PtOrigen.x));
+        TFY2.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver2.y + Plano.PtOrigen.y));
 
-        TFX3.setText(""+PnPlano.Escala*(float)(((FrTria)ObjRef).Ver3.x  - Plano.PtOrigen.x)/Forma.Escala);
-        TFY3.setText(""+PnPlano.Escala*(float)-(((FrTria)ObjRef).Ver3.y  - Plano.PtOrigen.y)/Forma.Escala);
+        TFX3.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver3.x - Plano.PtOrigen.x));
+        TFY3.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver3.y + Plano.PtOrigen.y));
     }
 
 }

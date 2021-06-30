@@ -2,13 +2,17 @@ package com.mec2021.plano.objetos;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.Ctrl;
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
 import com.mec2021.gui.PnPlano;
@@ -20,7 +24,6 @@ import com.mec2021.plano.objetos.formas.FrTria;
  * <p> Se puede calcular el centroide de todas la formas que estan dentro del grupo
 */
 public class Grupo extends Objeto2D{
-
     /**Lista de todas las formas del grupo */
     public ArrayList<Forma> LstForma = new ArrayList<Forma>();
 
@@ -42,6 +45,11 @@ public class Grupo extends Objeto2D{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2 = (Graphics2D)g;
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);        
+        g2.setColor(Color.DARK_GRAY);
+
         g.setColor(Color.DARK_GRAY);
 
         if(MoviendoFormas)
@@ -49,23 +57,61 @@ public class Grupo extends Objeto2D{
 
         g.setColor(Color.darkGray);
 
-        int x = centroideX();
-        int y = centroideY();
+        float xi = centroideX();
+        float yi = centroideY();
+        float x = Ctrl.aplicarEscalaUPix(xi);
+        float y = Ctrl.aplicarEscalaUPix(yi);
 
-        g.fillOval(x-3,y-3,6,6);
-        ActualizarCoordenadas();
-        g.drawString( PnPlano.Escala*((float)(x + X)/Escala) + ", " +  -PnPlano.Escala*(float)(y + Y)/Escala,
-                      x-3,
-                      y-3);
+        g.fillOval(Math.round(x-3),Math.round(y-3),6,6);
+        actualizarCoordenadas();
+
+        DecimalFormat f = new DecimalFormat("#0.00");
+
+        String Texto =  "" + f.format(xi + Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x)) + ",   " + f.format(Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) - yi);
+
+        g2.setColor(Color.darkGray);
+        g2.fillRoundRect(Math.round(x - 7) - Texto.length()*7/2, Math.round(y - 50), Texto.length()*7, 40, 9, 9);
+        
+        g2.setColor(Color.white);
+
+        g2.drawString("Centroide",
+                      Math.round(x + 6) - Texto.length()*7/2,
+                      Math.round(y-35));
+
+        g2.drawString(Texto,
+                      Math.round(x + 6) - Texto.length()*7/2,
+                      Math.round(y-15));
+    }
+
+    @Override
+    public float inerciaCentEjeX(){
+
+        float SumaIx = 0;
+
+        for (Forma forma : LstForma)
+            SumaIx += forma.inerciaCentEjeX();
+        
+        return SumaIx;
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+
+        float SumaIy = 0;
+
+        for (Forma forma : LstForma)
+            SumaIy += forma.inerciaCentEjeY();
+        
+        return SumaIy;
     }
 
     /**Calcula la posicion X del centroide con respecto al origen */
-    public int centroideX(){
+    public float centroideX(){
         float SumaAreas = 0;
         float SumaAreasPorX = 0;
 
         for (Forma forma : LstForma) {
-            forma.ActualizarCoordenadas();
+
             float Area = forma.calcularArea();
             SumaAreas += Area;
 
@@ -74,18 +120,18 @@ public class Grupo extends Objeto2D{
             SumaAreasPorX += CentX*Area;
         }
 
-        int x = Math.round(Plano.PtOrigen.x - getX() + SumaAreasPorX/SumaAreas);
+        float x = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.x - getX()) + (SumaAreasPorX/SumaAreas);
 
         return x;
     }
 
     /**Calcula la posicion Y del centroide con respecto al origen */
-    public int centroideY(){
+    public float centroideY(){
         float SumaAreas = 0;
         float SumaAreasPorY = 0;
 
         for (Forma forma : LstForma) {
-            forma.ActualizarCoordenadas();
+            //forma.ActualizarCoordenadas();
             float Area = forma.calcularArea();
             SumaAreas += Area;
 
@@ -94,7 +140,7 @@ public class Grupo extends Objeto2D{
             SumaAreasPorY += CentY*Area;
         }
 
-        int y = Math.round(Plano.PtOrigen.y - getY() + SumaAreasPorY/SumaAreas);
+        float y = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) + SumaAreasPorY/SumaAreas;
 
         return y;
     }
@@ -118,16 +164,18 @@ public class Grupo extends Objeto2D{
         }
     }
 
-    public void vaciarGrupo(){
+    public void eliminarGrupo(){
         for (Forma fr : LstForma) {
             fr.Grp = null;
         }
-    }
 
-    public void eliminarGrupo(){
-        vaciarGrupo();
         Plano.LstObjetos.remove(this);
         Plano.remove(this);
+    }
+
+    @Override
+    public void actualizarDimensiones() {
+        ActualizarBordes();
     }
 
     /**Acualiza las dimensiones del panel del grupo */
@@ -162,9 +210,9 @@ public class Grupo extends Objeto2D{
     }
 
     @Override
-    public void ActualizarCoordenadas() {
-        X = Math.round(getX() - Plano.PtOrigen.x);
-        Y = Math.round(getY() - Plano.PtOrigen.y);
+    public void actualizarCoordenadas() {
+        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
 
         repaint();
     }
@@ -173,24 +221,21 @@ public class Grupo extends Objeto2D{
         //ACTUALIZAR POSICIONES DE LAS FORMAS
         for (Forma Fr : LstForma) {
             Fr.setBounds(Fr.getX() + distx, Fr.getY() + disty, Fr.getWidth(), Fr.getHeight());
-            Fr.ActualizarCoordenadas();
+            Fr.actualizarCoordenadas();
             
             if(Fr instanceof FrTria){
                 //ACTUALIZAR VERTICES
-                ((FrTria)Fr).Ver1.x += distx;
-                ((FrTria)Fr).Ver1.y += disty;
+                ((FrTria)Fr).Ver1.x += Ctrl.aplicarEscalaLnPixU(distx);
+                ((FrTria)Fr).Ver1.y += Ctrl.aplicarEscalaLnPixU(disty);
                 
-                ((FrTria)Fr).Ver2.x += distx;
-                ((FrTria)Fr).Ver2.y += disty;
+                ((FrTria)Fr).Ver2.x += Ctrl.aplicarEscalaLnPixU(distx);
+                ((FrTria)Fr).Ver2.y += Ctrl.aplicarEscalaLnPixU(disty);
                 
-                ((FrTria)Fr).Ver3.x += distx;
-                ((FrTria)Fr).Ver3.y += disty;
+                ((FrTria)Fr).Ver3.x += Ctrl.aplicarEscalaLnPixU(distx);
+                ((FrTria)Fr).Ver3.y += Ctrl.aplicarEscalaLnPixU(disty);
             }
         }
     }
-
-
-
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -297,7 +342,7 @@ public class Grupo extends Objeto2D{
         //ACTUALIZAR POSICIONES DE LAS FORMAS
         moverFormas(DifX, DifY);
         
-        ActualizarCoordenadas();
+        actualizarCoordenadas();
         Plano.repaint();
     }
 }

@@ -10,10 +10,10 @@ import com.mec2021.gui.PnPlano;
 /**Define un objeto generico con coordenadas relativas al Origen */
 public abstract class Objeto2D extends Arrastrable{
     /**Coordenada X relativa al origen */
-    public int X = 0;
+    public float X = 0;
 
     /**Coordenada Y relativa al origen */
-    public int Y = 0;
+    public float Y = 0;
 
     /**Lista de las coordenadas X a las que la figura puede ajustarse */
     public ArrayList<Integer> SnapXs = new ArrayList<Integer>(); 
@@ -22,9 +22,6 @@ public abstract class Objeto2D extends Arrastrable{
     public ArrayList<Integer> SnapYs = new ArrayList<Integer>(); 
 
     public String Nombre = "Nuebo";
-
-    /**Escala de unidad : Pixel */
-    public static int Escala = 50;
 
     protected final static int EjeX = 0;
     protected final static int EjeY = 0;
@@ -80,8 +77,23 @@ public abstract class Objeto2D extends Arrastrable{
         super.paintComponent(g);
     }
 
+    /**Actualiza al posicion y tamano de la forma a la escala actual del lienzo */
+    public abstract void actualizarDimensiones();
+
     /**Actualiza las coordenadas de la figura */
-    public abstract void ActualizarCoordenadas();
+    public abstract void actualizarCoordenadas();
+
+    /**Calcula la inercia con respecto al centroide X para esta Forma */
+    public abstract float inerciaCentEjeX();
+    
+    /**Calcula la inercia con respecto al centroide Y para esta Forma */
+    public abstract float inerciaCentEjeY();
+
+    /**Calcula la coordenada X del centroide (Es local a la forma)*/
+    public abstract float centroideX();
+
+    /**Calcula la coordenada Y del centroide (Es local a la forma)*/
+    public abstract float centroideY();
 
     @Override
     public void mousePressed(MouseEvent e) {

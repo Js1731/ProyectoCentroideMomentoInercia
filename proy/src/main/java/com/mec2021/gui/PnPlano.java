@@ -6,12 +6,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.awt.BasicStroke;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
+import java.awt.event.MouseWheelListener;
 
 import com.mec2021.Ctrl;
 import com.mec2021.gui.propiedades.PnPropiedades;
@@ -19,14 +21,18 @@ import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */
-public class PnPlano extends JLayeredPane implements MouseInputListener{
+public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWheelListener{
 
     /**Escala de las coordenadas del plano */
-    public static int Escala = 1;
+    public int Escala = 25;
+
+    /**Escala de unidad : Pixel */
+    public int EscalaPix = 50;
+
+    public float EscalaVieja = Escala/EscalaPix;
 
     /**Posicion del origen dentro del Panel del plano */
     public Punto PtOrigen = new Punto(500,500);
@@ -72,6 +78,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
         addMouseMotionListener(this);
         addMouseListener(this);
+        addMouseWheelListener(this);
 
         setBackground(Color.WHITE);
         setOpaque(true);
@@ -81,6 +88,31 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         LOP.setVisible(false);
 
         notificarCambios(0);
+
+        // Grupo NuevoGrupo = new Grupo(this);
+
+        
+        // FrRect Rec = new FrRect(0,-80,120,80,this);
+        // FrTria Tria = new FrTria(0,0,0,0,0,60,120f,0,this);
+        // FrCirc Cir1 = new FrCirc(0,-140,120,0,180,this);
+        // FrCirc Cir2 = new FrCirc(20,-120,80,0,360,this);
+        
+        
+        // add(Rec, JLayeredPane.DRAG_LAYER);
+        // add(Tria, JLayeredPane.DRAG_LAYER);
+        // add(Cir1, JLayeredPane.DRAG_LAYER);
+        // add(Cir2, JLayeredPane.DRAG_LAYER);
+        
+        // moveToFront(Cir2);
+
+        // NuevoGrupo.agregarForma(Rec);
+        // NuevoGrupo.agregarForma(Tria);
+        // NuevoGrupo.agregarForma(Cir1);
+        // NuevoGrupo.agregarForma(Cir2);
+
+        // add(NuevoGrupo, JLayeredPane.DRAG_LAYER);
+        // moveToFront(NuevoGrupo);
+        // LstObjetos.add(NuevoGrupo);
 
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
@@ -103,19 +135,19 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 2));
+            g2.drawLine(Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 2));
             g2.setColor(Ctrl.ClGris);
             if(ux != 0)
-                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*Forma.Escala), Math.round(PtOrigen.y + 20));
+                g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 20));
         }
 
         //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*Forma.Escala), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*Forma.Escala));
+            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*EscalaPix), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*EscalaPix));
             g2.setColor(Ctrl.ClGris);
             if(uy != 0)
-                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*Forma.Escala));
+                g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*EscalaPix));
         }
 
         g2.drawString("0",Math.round(PtOrigen.x - 18),Math.round(PtOrigen.y + 20));
@@ -158,25 +190,6 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
     }
 
-    public void actualizarEscala(int EscalaAnt){
-        
-
-        for (Objeto2D objeto2d : LstObjetos) {
-            if(objeto2d instanceof FrRect){
-
-                objeto2d.ActualizarCoordenadas();
-
-                int X = Math.round(PtOrigen.x + objeto2d.X*((float)EscalaAnt/Escala));
-                int Y = Math.round(PtOrigen.y + objeto2d.Y*((float)EscalaAnt/Escala));
-                
-                objeto2d.setBounds(X,Y,objeto2d.getWidth(),objeto2d.getHeight());
-            }
-        }
-
-        revalidate();
-        this.repaint();
-    }
-
     /** 
     * Notifica al Panel los eventos que suceden
     * <p><b>Tipos de ventos</b>
@@ -184,7 +197,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     *    <b   >id           </b   >   <b>Evento   </b>
     *    <code>0</code>:  <code>Se ha agregado o eliminado un objeto</code>
     *    <code>1</code>:  <code>Se ha movido o modificado algun objeto</code>
-
+    *    <code>2</code>:  <code>Se ha cambiado la escala</code>
     * </PRE>
     *
      * @param tipo de evento
@@ -196,7 +209,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
             case 0:{
                 AB.generarArbol();
                 AB.actualizarVisualizacion();
-                
+                break;
             }
 
             case 1:{
@@ -205,6 +218,15 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
                 if(PnPropActual != null)
                     moveToFront(PnPropActual);
+                break;
+            }
+
+            case 2:{
+                for (Objeto2D objeto2d : LstObjetos) 
+                    objeto2d.actualizarDimensiones();
+                
+                repaint();
+                break;
             }
         }
 
@@ -218,6 +240,9 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
         }
 
         FrSel = Fr;
+
+        if(Fr != null)
+            Fr.mostrarPines();
     }
     
     /**
@@ -274,13 +299,13 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
 
         }else if(SwingUtilities.isRightMouseButton(e)){
             //ABRIR MENU CONTEXTUAL
-            LOP.setLocation(e.getX(), e.getY());
-            moveToFront(LOP);
-            LOP.setVisible(true);
-            repaint();
+            // LOP.setLocation(e.getX(), e.getY());
+            // moveToFront(LOP);
+            // LOP.setVisible(true);
+            // repaint();
         }
     }
-    
+
     public void mouseDragged(MouseEvent e) {
 
         //SELECCIONAR
@@ -313,19 +338,41 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 obj.setBounds(obj.getX() + DifX, obj.getY() + DifY, obj.getWidth(), obj.getHeight());
                 if(obj instanceof FrTria){
                     //ACTUALIZAR VERTICES
-                    ((FrTria)obj).Ver1.x += DifX;
-                    ((FrTria)obj).Ver1.y += DifY;
+                    // ((FrTria)obj).Ver1.x += DifX;
+                    // ((FrTria)obj).Ver1.y += DifY;
     
-                    ((FrTria)obj).Ver2.x += DifX;
-                    ((FrTria)obj).Ver2.y += DifY;
+                    // ((FrTria)obj).Ver2.x += DifX;
+                    // ((FrTria)obj).Ver2.y += DifY;
     
-                    ((FrTria)obj).Ver3.x += DifX;
-                    ((FrTria)obj).Ver3.y += DifY;
+                    // ((FrTria)obj).Ver3.x += DifX;
+                    // ((FrTria)obj).Ver3.y += DifY;
                 }
             }
     
             repaint();
         }
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        //MODIFICAR ZOOM
+        EscalaVieja = (float)Escala/EscalaPix;
+        if (e.getWheelRotation() > 0 && Escala < 10000)
+            EscalaPix -= 5;
+        else if (e.getWheelRotation() < 0)
+            EscalaPix += 5;
+        
+        if(EscalaPix <= 25){
+            EscalaPix = 50;
+            Escala *= 5;
+        }
+        
+        if(EscalaPix >= 100){
+            EscalaPix = 50;
+            Escala /= 5;
+        }
+
+        notificarCambios(2);
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -390,7 +437,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
                 moveToFront(NuevoGrupo);
                 LstObjetos.add(NuevoGrupo);
             }else{
-                NuevoGrupo.vaciarGrupo();
+                NuevoGrupo.eliminarGrupo();
             }
         }
 
@@ -401,4 +448,6 @@ public class PnPlano extends JLayeredPane implements MouseInputListener{
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {}
+
+
 }

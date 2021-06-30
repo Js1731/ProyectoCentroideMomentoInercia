@@ -7,7 +7,6 @@ public class Main {
 
     public static JFrame VentPrinc;
 
-
     public static void main(String[] args){
         JFrame Vent = VentPrinc = new JFrame();    
 

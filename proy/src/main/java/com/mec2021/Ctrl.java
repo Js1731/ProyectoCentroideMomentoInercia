@@ -5,7 +5,6 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.mec2021.gui.PnPlano;
 import com.mec2021.gui.PnPrincipal;
 
 import java.awt.Color;

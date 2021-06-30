@@ -1,7 +1,6 @@
 package com.mec2021.gui;
 
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -22,8 +21,6 @@ import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrCirc;
-import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */

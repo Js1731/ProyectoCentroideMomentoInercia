@@ -1,7 +1,7 @@
 package com.mec2021.plano;
 
 import com.mec2021.gui.PnPlano;
-import com.mec2021.plano.objetos.formas.Forma;
+
 
 /**Representacion de la ecuacion de la recta de dos {@link Punto}s dados */
 public class EcuacionRecta {

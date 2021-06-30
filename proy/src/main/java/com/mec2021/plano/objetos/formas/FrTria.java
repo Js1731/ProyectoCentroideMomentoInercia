@@ -106,27 +106,24 @@ public class FrTria extends Forma{
 
         Poligono.reset();
 
-        float a = 0;
-        float b = 0;
-
         //VERTICE 1
         Point TmpVer1 = new Point(Math.round(Ctrl.aplicarEscalaUPix(Ver1.x)), Math.round(Ctrl.aplicarEscalaUPix(Ver1.y)));
-        TmpVer1.x -= a = getX() - Plano.PtOrigen.x;         
-        TmpVer1.y -= b = getY() - Plano.PtOrigen.y;         
+        TmpVer1.x -= getX() - Plano.PtOrigen.x;         
+        TmpVer1.y -= getY() - Plano.PtOrigen.y;         
 
         Poligono.addPoint(TmpVer1.x,TmpVer1.y);
         
         //VERTICE 2
         Point TmpVer2 = new Point(Math.round(Ctrl.aplicarEscalaUPix(Ver2.x)), Math.round(Ctrl.aplicarEscalaUPix(Ver2.y)));
-        TmpVer2.x -= a = getX() - Plano.PtOrigen.x;         
-        TmpVer2.y -= b = getY() - Plano.PtOrigen.y;  
+        TmpVer2.x -= getX() - Plano.PtOrigen.x;         
+        TmpVer2.y -= getY() - Plano.PtOrigen.y;  
         
         Poligono.addPoint(TmpVer2.x,TmpVer2.y);
         
         //VERTICE 3
         Point TmpVer3 = new Point(Math.round(Ctrl.aplicarEscalaUPix(Ver3.x)), Math.round(Ctrl.aplicarEscalaUPix(Ver3.y)));
-        TmpVer3.x -= a = getX() - Plano.PtOrigen.x;         
-        TmpVer3.y -= b = getY() - Plano.PtOrigen.y;  
+        TmpVer3.x -= getX() - Plano.PtOrigen.x;         
+        TmpVer3.y -= getY() - Plano.PtOrigen.y;  
         
         Poligono.addPoint(TmpVer3.x, TmpVer3.y);
 

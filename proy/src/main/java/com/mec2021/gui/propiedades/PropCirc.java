@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;

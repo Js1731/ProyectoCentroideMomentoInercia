@@ -316,9 +316,6 @@ public class FrCirc extends Forma{
             
             // float ix = (2*r*(float)Math.sin(a))/(3*a);
             // float ix = 1423008.00f;
-            float y0 = Ctrl.aplicarEscalaLnPixU(getHeight());
-            float centini = centroideY();
-            float centfin = y0 - centini;
 
             float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
 
@@ -342,9 +339,6 @@ public class FrCirc extends Forma{
             
             // float ix = (2*r*(float)Math.sin(a))/(3*a);
             // float ix = 1423008.00f;
-            float y0 = Ctrl.aplicarEscalaLnPixU(getHeight());
-            float centini = centroideY();
-            float centfin = y0 - centini;
 
             float dy = (centroideX() + X) - Grp.centroideX();
 

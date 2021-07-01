@@ -234,7 +234,7 @@ public class PropTria extends PnPropiedades{
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.ActualizarBordes();
-        Tria.ActualizarPines();
+        Tria.actualizarPines();
 
         Plano.repaint();
     }
@@ -256,7 +256,7 @@ public class PropTria extends PnPropiedades{
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.actualizarCoordenadas();
-        Tria.ActualizarPines();
+        Tria.actualizarPines();
         Plano.repaint();
 
         //ACTUALIZAR CAMPOS

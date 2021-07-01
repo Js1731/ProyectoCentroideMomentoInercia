@@ -12,16 +12,18 @@ import java.awt.Color;
 public class Ctrl {
 
     public static PnPrincipal PnPrinc = null;
-    
+
+    //CONSTANTES PARA LAS FUENTES
     public static Font Fnt0;
     public static Font Fnt1;
     public static Font Fnt2;
 
-    public static Color ClGrisClaro = new Color(196, 196, 196);
-    public static Color ClGrisClaro2 = new Color(220, 220, 220);
-    public static Color ClGrisClaro3 = new Color(240, 240, 240);
-    public static Color ClGris = new Color(136, 136, 136);
-    public static Color ClGris2 = new Color(172, 172, 172);
+    //CONSTANTES PARA COLORES
+    public static final Color ClGrisClaro = new Color(196, 196, 196);
+    public static final Color ClGrisClaro2 = new Color(220, 220, 220);
+    public static final Color ClGrisClaro3 = new Color(240, 240, 240);
+    public static final Color ClGris = new Color(136, 136, 136);
+    public static final Color ClGris2 = new Color(172, 172, 172);
 
     public static void importarArchivos(){
         InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Regular.ttf");

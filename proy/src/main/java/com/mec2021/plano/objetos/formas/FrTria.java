@@ -29,6 +29,7 @@ public class FrTria extends Forma{
     /**Vertice 3 que es local al origen */
     public Punto Ver3 = new Punto();
 
+    /**Centroide del triangulo */
     public Punto Cent = new Punto();
 
     /**Vertice 1 que es local al centroide */
@@ -52,6 +53,7 @@ public class FrTria extends Forma{
     //POLIGONO PARA REPRESENTAR EL TRIANGULO
     private Polygon Poligono = new Polygon();
 
+    /**ID unico para cada triangulo */
     public static int ID = 1;
 
     /**
@@ -65,39 +67,40 @@ public class FrTria extends Forma{
      * Crea un tringulo en las coordenadas especificadas
      * @param X X del panel que contiene a la figura
      * @param Y Y del panel que contiene a la figura
-     * @param x1 X del Vertice 1 local al panel
-     * @param y1 Y del Vertice 1 local al panel
-     * @param x2 X del Vertice 2 local al panel
-     * @param y2 Y del Vertice 2 local al panel
-     * @param x3 X del Vertice 3 local al panel
-     * @param y3 Y del Vertice 3 local al panel
+     * @param x1 X del Vertice 1 local al origen
+     * @param y1 Y del Vertice 1 local al origen
+     * @param x2 X del Vertice 2 local al origen
+     * @param y2 Y del Vertice 2 local al origen
+     * @param x3 X del Vertice 3 local al origen
+     * @param y3 Y del Vertice 3 local al origen
      */
     public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3, PnPlano plano){
         super(plano);
         Pines = new Pin[3];
 
         Nombre = "Triangulo " + (ID++);
-        Plano.notificarCambios(0);
-
+        
         Ver1.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x1));
         Ver1.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y1));
-
+        
         Ver2.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x2));
         Ver2.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y2));
-
+        
         Ver3.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x3));
         Ver3.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y3));
-
-
+        
+        
         //DEFINIR ECUACIONES DE LA RECTA LOCALES AL CENTROIDE
         Ec[0] = new EcuacionRecta(Ver1C, Ver2C, Plano);
         Ec[1] = new EcuacionRecta(Ver2C, Ver3C, Plano);
         Ec[2] = new EcuacionRecta(Ver3C, Ver1C, Plano);
-
-
+        
+        
         setOpaque(false);
         ActualizarBordes();
         actualizarCoordenadas();
+
+        Plano.notificarCambios(0);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class FrTria extends Forma{
         
         Poligono.addPoint(TmpVer3.x, TmpVer3.y);
 
-        g.setColor(ColFig);
+        g.setColor(ColForma);
 
         if(Hueco){
             g.setColor(Color.WHITE);
@@ -145,11 +148,16 @@ public class FrTria extends Forma{
         g.setColor(Color.RED);
 
         g.fillOval(x-3,y-3,6,6);
-
-        // g.drawString("" + Ver1.x + ", " + Ver1.y, 0, 30);
-        // g.drawString("" + Ver2.x + ", " + Ver2.y, 0, 60);
-        // g.drawString("" + Ver3.x + ", " + Ver3.y, 0, 90);
     }
+
+
+    /**Actualiza las ecuaciones de la recta de la aristas del triangulo locales al centroide */
+    public void actualizarEcuaciones(){
+        for (EcuacionRecta ec : Ec) {
+            ec.actualizarDatos();
+        }
+    }
+
 
     @Override
     public void actualizarDimensiones(){
@@ -162,15 +170,168 @@ public class FrTria extends Forma{
 
         setBounds(XMen, YMen, XMax - XMen, YMax - YMen);
 
-        ActualizarPines();
+        actualizarPines();
         actualizarEcuaciones();
     }
 
-    public void actualizarEcuaciones(){
-        for (EcuacionRecta ec : Ec) {
-            ec.actualizarDatos();
-        }
+
+    @Override
+    public void actualizarCoordenadas() {
+        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+
+        //CALCULAR CENTROIDE
+        centroideX();
+        centroideY();
+
+        //CALCULAR VERTICES LOCALES AL CENTROIDE
+        Ver1C.x = Ver1.x - Cent.x;
+        Ver1C.y = Ver1.y + Cent.y;
+
+        Ver2C.x = Ver2.x - Cent.x;
+        Ver2C.y = Ver2.y + Cent.y;
+
+        Ver3C.x = Ver3.x - Cent.x;
+        Ver3C.y = Ver3.y + Cent.y;
+
+        actualizarEcuaciones();
     }
+
+
+    /**Acualiza las dimensiones del panel que contiene la forma */
+    public void ActualizarBordes(){
+
+        float XMen = Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Math.min(Ver1.x, Math.min(Ver2.x, Ver3.x)));
+        float YMen = Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Math.min(Ver1.y, Math.min(Ver2.y, Ver3.y)));
+
+        float XMax = Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Math.max(Ver1.x, Math.max(Ver2.x, Ver3.x)));
+        float YMax = Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Math.max(Ver1.y, Math.max(Ver2.y, Ver3.y)));
+
+        X = Ctrl.aplicarEscalaLnPixU(XMen - Plano.PtOrigen.x);
+        Y = Ctrl.aplicarEscalaLnPixU(YMen - Plano.PtOrigen.y);
+
+        setBounds(Math.round(XMen), Math.round(YMen), Math.round(XMax) - Math.round(XMen), Math.round(YMax) - Math.round(YMen));
+        
+        repaint();
+    }
+
+
+
+    /**
+     * Actualiza los vertices del triangulo
+     * @param distx Distancia en X
+     * @param disty Distancia en Y
+     */
+    public void moverVertices(float distx, float disty){
+        //ACTUALIZAR VERTICES
+        Ver1.x += distx;
+        Ver1.y += disty;
+
+        Ver2.x += distx;
+        Ver2.y += disty;
+
+        Ver3.x += distx;
+        Ver3.y += disty;
+
+        //CALCULAR CENTROIDE
+        centroideX();
+        centroideY();
+
+        //CALCULAR VERTICES LOCALES AL CENTROIDE
+        Ver1C.x = Ver1.x - Cent.x;
+        Ver1C.y = Ver1.y + Cent.y;
+
+        Ver2C.x = Ver2.x - Cent.x;
+        Ver2C.y = Ver2.y + Cent.y;
+
+        Ver3C.x = Ver3.x - Cent.x;
+        Ver3C.y = Ver3.y + Cent.y;
+
+        actualizarEcuaciones();
+    }
+
+    @Override
+    public float calcularArea() {
+        float LadoA = Punto.distanciaEntre(Ver1.x, Ver1.y, Ver2.x, Ver2.y);
+        float LadoB = Punto.distanciaEntre(Ver3.x, Ver3.y, Ver2.x, Ver2.y);
+        float LadoC = Punto.distanciaEntre(Ver1.x, Ver1.y, Ver3.x, Ver3.y);
+
+        float s = (LadoA + LadoB + LadoC)/2;
+
+        return (Hueco ? -1 : 1)*(float)Math.sqrt(s * (s - LadoA) * (s - LadoB) * (s - LadoC));
+    }
+
+    @Override
+    public float centroideX() {
+        float Cx = (Ver1.x + Ver2.x + Ver3.x)/3 - Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
+        Cent.x = Cx + X;
+
+        return Cx;
+    }
+
+    
+    @Override
+    public float centroideY() {
+        float Cy = (Ver1.y + Ver2.y + Ver3.y)/3 - Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
+        Cent.y = -Y - Cy;
+
+        return Cy;
+    }
+
+    @Override
+    public float inerciaCentEjeX(){
+        if(Grp != null){
+
+            //LIMITES DE INTEGRACION
+            float a = Ver3C.y;
+            float b = Ver1C.y;
+            float c = Ver2C.y;
+            
+            //CALCULAR INERCIA DE LAS RECTAS
+            float I1 = EcuacionRecta.integrar_fy(Ec[1], a, b, Plano);
+            float I2 = EcuacionRecta.integrar_fy(Ec[2], a, b, Plano);
+            float I3 = EcuacionRecta.integrar_fy(Ec[1], b, c, Plano);
+            float I4 = EcuacionRecta.integrar_fy(Ec[0], b, c, Plano);
+
+
+            float ix = Math.abs(I1-I2+I3-I4);
+            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+
+            //TRASLADAR INERCIA AL CENTROIDE DE LA FIGURA
+            float Ix = ix + Math.abs(calcularArea())*dy*dy;
+
+            return (Hueco ? -1 : 1)*Ix;
+        }else
+            return 0;
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+        if(Grp != null){
+            //LIMITES DE INTEGRACION
+            float a = Ver1C.x;
+            float b = Ver2C.x;
+            float c = Ver3C.x;
+            
+            //CALCULAR INCERCIA DE LAS RECTAS
+            float I1 = EcuacionRecta.integrar_fx(Ec[0], a, b, Plano);
+            float I2 = EcuacionRecta.integrar_fx(Ec[2], a, b, Plano);
+            float I3 = EcuacionRecta.integrar_fx(Ec[1], b, c, Plano);
+            float I4 = EcuacionRecta.integrar_fx(Ec[2], b, c, Plano);
+
+            //SUMAR INERCIAS
+            float iy = Math.abs(I1-I2+I3-I4);
+
+            float dx = (X + centroideX()) - Grp.centroideX();
+
+            //TRASLADAR INERCIA AL CENTROIDE DE LA FORMA
+            float Ix = iy + Math.abs(calcularArea())*dx*dx;
+            
+            return (Hueco ? -1 : 1)*Ix;
+        }else
+            return 0;
+    }
+
 
     @Override
     public void mostrarPines() {
@@ -235,14 +396,13 @@ public class FrTria extends Forma{
                 Plano.moveToFront(pin);
             }
 
-            ActualizarPines();
-
+            actualizarPines();
             Plano.repaint();
         }
     }
 
     @Override
-    public void ActualizarPines() {
+    public void actualizarPines() {
         if(Pines[0] == null)
             return;
 
@@ -251,156 +411,6 @@ public class FrTria extends Forma{
         Pines[2].setLocation(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Ver3.x)), Math.round(Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Ver3.y)));
     }
 
-    /**Acualiza las dimensiones del panel que contiene la forma */
-    public void ActualizarBordes(){
-
-        float XMen = Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Math.min(Ver1.x, Math.min(Ver2.x, Ver3.x)));
-        float YMen = Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Math.min(Ver1.y, Math.min(Ver2.y, Ver3.y)));
-
-        float XMax = Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Math.max(Ver1.x, Math.max(Ver2.x, Ver3.x)));
-        float YMax = Plano.PtOrigen.y + Ctrl.aplicarEscalaUPix(Math.max(Ver1.y, Math.max(Ver2.y, Ver3.y)));
-
-        X = Ctrl.aplicarEscalaLnPixU(XMen - Plano.PtOrigen.x);
-        Y = Ctrl.aplicarEscalaLnPixU(YMen - Plano.PtOrigen.y);
-
-        setBounds(Math.round(XMen), Math.round(YMen), Math.round(XMax) - Math.round(XMen), Math.round(YMax) - Math.round(YMen));
-        
-        repaint();
-    }
-
-    @Override
-    public void actualizarCoordenadas() {
-        X = Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-        Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-
-        //CALCULAR CENTROIDE
-        centroideX();
-        centroideY();
-
-        //CALCULAR VERTICES LOCALES AL CENTROIDE
-        Ver1C.x = Ver1.x - Cent.x;
-        Ver1C.y = Ver1.y + Cent.y;
-
-        Ver2C.x = Ver2.x - Cent.x;
-        Ver2C.y = Ver2.y + Cent.y;
-
-        Ver3C.x = Ver3.x - Cent.x;
-        Ver3C.y = Ver3.y + Cent.y;
-
-        actualizarEcuaciones();
-    }
-
-    /**
-     * Actualiza los vertices del triangulo
-     * @param distx Distancia en X
-     * @param disty Distancia en Y
-     */
-    public void moverVertices(float distx, float disty){
-        //ACTUALIZAR VERTICES
-        Ver1.x += distx;
-        Ver1.y += disty;
-
-        Ver2.x += distx;
-        Ver2.y += disty;
-
-        Ver3.x += distx;
-        Ver3.y += disty;
-
-        //CALCULAR CENTROIDE
-        centroideX();
-        centroideY();
-
-        //CALCULAR VERTICES LOCALES AL CENTROIDE
-        Ver1C.x = Ver1.x - Cent.x;
-        Ver1C.y = Ver1.y + Cent.y;
-
-        Ver2C.x = Ver2.x - Cent.x;
-        Ver2C.y = Ver2.y + Cent.y;
-
-        Ver3C.x = Ver3.x - Cent.x;
-        Ver3C.y = Ver3.y + Cent.y;
-
-        actualizarEcuaciones();
-    }
-
-    @Override
-    public float calcularArea() {
-        float LadoA = Punto.distanciaEntre(Ver1.x, Ver1.y, Ver2.x, Ver2.y);
-        float LadoB = Punto.distanciaEntre(Ver3.x, Ver3.y, Ver2.x, Ver2.y);
-        float LadoC = Punto.distanciaEntre(Ver1.x, Ver1.y, Ver3.x, Ver3.y);
-
-        float s = (LadoA + LadoB + LadoC)/2;
-
-        return (Hueco ? -1 : 1)*(float)Math.sqrt(s * (s - LadoA) * (s - LadoB) * (s - LadoC));
-    }
-
-    @Override
-    public float inerciaCentEjeX(){
-        if(Grp != null){
-            float a = Ver3C.y;
-            float b = Ver1C.y;
-            float c = Ver2C.y;
-            
-            float I1 = EcuacionRecta.integrar_fy(Ec[1], a, b, Plano);
-            float I2 = EcuacionRecta.integrar_fy(Ec[2], a, b, Plano);
-            float I3 = EcuacionRecta.integrar_fy(Ec[1], b, c, Plano);
-            float I4 = EcuacionRecta.integrar_fy(Ec[0], b, c, Plano);
-
-
-            float ix = Math.abs(I1-I2+I3-I4);
-            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
-
-            float Ix = ix + Math.abs(calcularArea())*dy*dy;
-            return (Hueco ? -1 : 1)*Ix;
-        }else
-            return 0;
-    }
-
-    @Override
-    public float inerciaCentEjeY(){
-        if(Grp != null){
-            float a = Ver1C.x;
-            float b = Ver2C.x;
-            float c = Ver3C.x;
-            
-            float I1 = EcuacionRecta.integrar_fx(Ec[0], a, b, Plano);
-            float I2 = EcuacionRecta.integrar_fx(Ec[2], a, b, Plano);
-            float I3 = EcuacionRecta.integrar_fx(Ec[1], b, c, Plano);
-            float I4 = EcuacionRecta.integrar_fx(Ec[2], b, c, Plano);
-
-            float iy = Math.abs(I1-I2+I3-I4);
-
-            float dx = (X + centroideX()) - Grp.centroideX();
-
-            float Ix = iy + Math.abs(calcularArea())*dx*dx;
-            return (Hueco ? -1 : 1)*Ix;
-        }else
-            return 0;
-    }
-
-    @Override
-    public float centroideX() {
-        float Cx = (Ver1.x + Ver2.x + Ver3.x)/3 - Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x);
-        Cent.x = Cx + X;
-
-        return Cx;
-    }
-
-    
-    @Override
-    public float centroideY() {
-        float Cy = (Ver1.y + Ver2.y + Ver3.y)/3 - Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
-        Cent.y = -Y - Cy;
-
-        return Cy;
-    }
-
-    
-    @Override
-    public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-
-    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -417,7 +427,7 @@ public class FrTria extends Forma{
         moverVertices(DifX, DifY);
 
         setBounds(Pos.x - PtOffset.x, Pos.y - PtOffset.y, getWidth(), getHeight());
-        ActualizarPines();
+        actualizarPines();
         
         if(Grp != null)
             Grp.ActualizarBordes();
@@ -436,7 +446,7 @@ public class FrTria extends Forma{
         //ACTUALIZAR VERTICES
         moverVertices(DifX, DifY);
 
-        ActualizarPines();
+        actualizarPines();
         actualizarCoordenadas();
 
         Plano.repaint();

@@ -21,23 +21,27 @@ import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Define un {@link Objeto2D} que permite agrupar un conjunto de {@link Forma}s.
  * <p> El area de arrastrado del grupo se define por las formas que estan dentro del mismo
- * <p> Se puede calcular el centroide de todas la formas que estan dentro del grupo
+ * <p> Se puede calcular el centroide e inercia de todas la formas que estan dentro del grupo
 */
 public class Grupo extends Objeto2D{
     /**Lista de todas las formas del grupo */
     public ArrayList<Forma> LstForma = new ArrayList<Forma>();
 
+    /**Indica si se estan moviendo formas dentro del grupo */
     public boolean MoviendoFormas = false;
 
+    /**Indica si el grupo es temporal, cuando se haga click en cualquier otra parte del plano el grupo se elimina */
     public boolean GrupoTemporal = true;
 
+    /**ID unico para cada grupo */
     public static int ID = 1;
 
     /**Crea un nuevo grupo vacio en el origen*/
     public Grupo(PnPlano plano){
         super(plano);
-        setOpaque(false);
+        
         Nombre = "Grupo " + (ID++);
+        setOpaque(false);
         repaint();
     }
 
@@ -55,122 +59,36 @@ public class Grupo extends Objeto2D{
         if(MoviendoFormas)
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-        g.setColor(Color.darkGray);
 
         float xi = centroideX();
         float yi = centroideY();
         float x = Ctrl.aplicarEscalaUPix(xi);
         float y = Ctrl.aplicarEscalaUPix(yi);
 
-        g.fillOval(Math.round(x-3),Math.round(y-3),6,6);
-        actualizarCoordenadas();
-
+        //MOSTRAR CENTROIDE DEL GRUPO
         DecimalFormat f = new DecimalFormat("#0.00");
 
+        //TEXTO CON LAS COORDENADAS
         String Texto =  "" + f.format(xi + Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x)) + ",   " + f.format(Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) - yi);
 
+        //DIBUJAR CUADRO
         g2.setColor(Color.darkGray);
         g2.fillRoundRect(Math.round(x - 7) - Texto.length()*7/2, Math.round(y - 50), Texto.length()*7, 40, 9, 9);
         
+        //TITULO
         g2.setColor(Color.white);
-
         g2.drawString("Centroide",
                       Math.round(x + 6) - Texto.length()*7/2,
                       Math.round(y-35));
 
+        //DIBUJAR TEXTO DE COORDENADAS
         g2.drawString(Texto,
                       Math.round(x + 6) - Texto.length()*7/2,
                       Math.round(y-15));
-    }
 
-    @Override
-    public float inerciaCentEjeX(){
-
-        float SumaIx = 0;
-
-        for (Forma forma : LstForma)
-            SumaIx += forma.inerciaCentEjeX();
-        
-        return SumaIx;
-    }
-
-    @Override
-    public float inerciaCentEjeY(){
-
-        float SumaIy = 0;
-
-        for (Forma forma : LstForma)
-            SumaIy += forma.inerciaCentEjeY();
-        
-        return SumaIy;
-    }
-
-    /**Calcula la posicion X del centroide con respecto al origen */
-    public float centroideX(){
-        float SumaAreas = 0;
-        float SumaAreasPorX = 0;
-
-        for (Forma forma : LstForma) {
-
-            float Area = forma.calcularArea();
-            SumaAreas += Area;
-
-            float CentX = forma.X + forma.centroideX();
-
-            SumaAreasPorX += CentX*Area;
-        }
-
-        float x = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.x - getX()) + (SumaAreasPorX/SumaAreas);
-
-        return x;
-    }
-
-    /**Calcula la posicion Y del centroide con respecto al origen */
-    public float centroideY(){
-        float SumaAreas = 0;
-        float SumaAreasPorY = 0;
-
-        for (Forma forma : LstForma) {
-            //forma.ActualizarCoordenadas();
-            float Area = forma.calcularArea();
-            SumaAreas += Area;
-
-            float CentY = forma.Y + forma.centroideY();
-
-            SumaAreasPorY += CentY*Area;
-        }
-
-        float y = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) + SumaAreasPorY/SumaAreas;
-
-        return y;
-    }
-
-    public void agregarForma(Forma Fr){
-        Fr.Grp = this;
-        LstForma.add(Fr);
-        ActualizarBordes();
-        repaint();
-        
-    }
-
-    public void sacarForma(Forma Fr){
-        LstForma.remove(Fr);
-        Fr.Grp = null;
-        ActualizarBordes();
-
-        if(LstForma.size() == 0){
-            Plano.LstObjetos.remove(this);
-            Plano.remove(this);
-        }
-    }
-
-    public void eliminarGrupo(){
-        for (Forma fr : LstForma) {
-            fr.Grp = null;
-        }
-
-        Plano.LstObjetos.remove(this);
-        Plano.remove(this);
+        //DIBUJAR PUNTO EN EL CENTROIDE
+        g.setColor(Color.darkGray);
+        g.fillOval(Math.round(x-3),Math.round(y-3),6,6);
     }
 
     @Override
@@ -217,6 +135,115 @@ public class Grupo extends Objeto2D{
         repaint();
     }
 
+    /**Calcula la posicion X del centroide con respecto al origen */
+    public float centroideX(){
+        float SumaAreas = 0;
+        float SumaAreasPorX = 0;
+
+        for (Forma forma : LstForma) {
+
+            float Area = forma.calcularArea();
+            SumaAreas += Area;
+
+            float CentX = forma.X + forma.centroideX();
+
+            SumaAreasPorX += CentX*Area;
+        }
+
+        float x = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.x - getX()) + (SumaAreasPorX/SumaAreas);
+
+        return x;
+    }
+
+    /**Calcula la posicion Y del centroide con respecto al origen */
+    public float centroideY(){
+        float SumaAreas = 0;
+        float SumaAreasPorY = 0;
+
+        for (Forma forma : LstForma) {
+            //forma.ActualizarCoordenadas();
+            float Area = forma.calcularArea();
+            SumaAreas += Area;
+
+            float CentY = forma.Y + forma.centroideY();
+
+            SumaAreasPorY += CentY*Area;
+        }
+
+        float y = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) + SumaAreasPorY/SumaAreas;
+
+        return y;
+    }
+
+    @Override
+    public float inerciaCentEjeX(){
+
+        float SumaIx = 0;
+
+        for (Forma forma : LstForma)
+            SumaIx += forma.inerciaCentEjeX();
+        
+        return SumaIx;
+    }
+
+    @Override
+    public float inerciaCentEjeY(){
+
+        float SumaIy = 0;
+
+        for (Forma forma : LstForma)
+            SumaIy += forma.inerciaCentEjeY();
+        
+        return SumaIy;
+    }
+
+
+    /**Asocia una {@link Forma} a este grupo. Si la forma ya pertence a otro grupo, entonces se saca de ese y se agrega al actual 
+     * @param Fr Forma que se va a agregar
+    */
+    public void agregarForma(Forma Fr){
+        Fr.Grp = this;
+        LstForma.add(Fr);
+        ActualizarBordes();
+        repaint();
+        
+    }
+
+    /**
+     * Saca una forma de este grupo. Si se intenta eliminar una forma que no pertence al grupo no sucedera nada. 
+     * Cuando el grupo no tenga formas dentro, se elimina
+     * @param Fr
+     */
+    public void sacarForma(Forma Fr){
+        if(Fr.Grp == this){
+            LstForma.remove(Fr);
+            Fr.Grp = null;
+            ActualizarBordes();
+
+            if(LstForma.size() == 0){
+                Plano.LstObjetos.remove(this);
+                Plano.remove(this);
+            }
+        }
+    }
+
+    /**Desasocia todas las formas de este grupo y luego se elimina cuando este vacio */
+    public void eliminarGrupo(){
+        for (Forma fr : LstForma) {
+            fr.Grp = null;
+        }
+
+        Plano.LstObjetos.remove(this);
+        Plano.remove(this);
+    }
+
+    
+
+    /**
+     * Desplaza todas las formas en X y en Y
+     * @param distx Distancia en X que se debe mover
+     * @param disty Distancia en Y que se debe mover
+     */
     private void moverFormas(int distx, int disty) {
         //ACTUALIZAR POSICIONES DE LAS FORMAS
         for (Forma Fr : LstForma) {

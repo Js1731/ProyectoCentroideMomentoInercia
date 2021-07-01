@@ -97,7 +97,7 @@ public class PropCirc extends PnPropiedades{
 
         TFX.setText("" + f.format(Circulo.X));
         TFY.setText("" + f.format(-Circulo.Y));
-        TFRadio.setText("" + f.format(Circulo.Diametro/2));
+        TFRadio.setText("" + f.format(Circulo.Radio));
     
         TFAngIni.setText("" + f.format(Circulo.Sector.start));
         TFExt.setText("" + f.format(Circulo.Sector.extent));
@@ -127,7 +127,7 @@ public class PropCirc extends PnPropiedades{
         //APLICAR PROPIEDADES
         Circ.X = PosX;
         Circ.Y = PosY;
-        Circ.Diametro = Radio*2;
+        Circ.Radio = Radio;
 
         Circ.Sector.start = AngIni;
         Circ.Sector.extent = AngExt;
@@ -135,7 +135,7 @@ public class PropCirc extends PnPropiedades{
         Circ.Hueco = CBHueco.isSelected();
 
         Circ.actualizarDimensiones();
-        Circ.ActualizarPines();
+        Circ.actualizarPines();
 
         Circ.repaint();
     }

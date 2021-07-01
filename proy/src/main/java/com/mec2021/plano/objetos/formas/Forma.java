@@ -20,7 +20,11 @@ import com.mec2021.plano.objetos.Pin;
 */
 public abstract class Forma extends Objeto2D{
     
-    protected Color ColFig;
+    /**Contador de formas creadas */
+    public static int FrCount = 0;
+
+    /**Color de la forma */
+    protected Color ColForma;
 
     /**Hace referencia al grupo al que pertenece la figura (Si pertenece a uno) */
     public Grupo Grp;
@@ -30,7 +34,7 @@ public abstract class Forma extends Objeto2D{
 
     public boolean Hueco = false;
 
-    public static int FrCount = 0;
+    
 
     public Forma(PnPlano plano){
         super(plano);
@@ -38,12 +42,11 @@ public abstract class Forma extends Objeto2D{
         Plano = plano;
         FrCount++;
 
+        //ESCOGE UN COLOR PARA LA FIGURA
         int Val = 230 - Math.round((float)(40*(Math.cos(Math.toRadians(FrCount*60)) + 1)/2));
-        ColFig = new Color(Val, Val, Val);
+        ColForma = new Color(Val, Val, Val);
 
         Plano.LstObjetos.add(this);
-
-        
     }
 
     /**Calcula el area de esta forma, si la figura esta hueca el area sera negativa */
@@ -52,7 +55,7 @@ public abstract class Forma extends Objeto2D{
     /**
      * Actualiza la posicion de los pines de la figura
      */
-    public abstract void ActualizarPines();
+    public abstract void actualizarPines();
 
     /**
      * Mostrar los Pines de la Forma
@@ -82,6 +85,7 @@ public abstract class Forma extends Objeto2D{
         requestFocus();
         actualizarCoordenadas();
 
+        //ABRIR PANEL DE PROPIEDADES
         if(e.getClickCount() > 1){
             //ELIMINAR OTROS PANELES ACTIVOS
             if(Plano.PnPropActual != null){
@@ -101,22 +105,17 @@ public abstract class Forma extends Objeto2D{
 
             Plano.moveToFront(Plano.PnPropActual);
         }
-
-        //SELECCIONA LA FORMA
-        //Plano.moveToFront(this);
-
-        if(Pines[0] != null){
-            for (Pin pin : Pines) 
-            Plano.moveToFront(pin);
-        }
+        
 
         if(Plano.FrSel != this)
             Plano.seleccionarForma(this);
 
+        //CREA UN MENU CONTEXTUAL PARA LA FORMA
         if(SwingUtilities.isRightMouseButton(e)){
             ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
 
             Forma Fr = this;
+            //OPCION PARA ELIMINAR LA FORMA
             Opcion OpEliminar = new Opcion("Eliminar"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -127,6 +126,7 @@ public abstract class Forma extends Objeto2D{
                 }
             };
 
+            //OPCION PARA ENVIAR LA FORMA AL FRENTE DEL PLANO
             Opcion OpEnvFrente = new Opcion("Enviar al Frente"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -137,6 +137,7 @@ public abstract class Forma extends Objeto2D{
                 }
             };
 
+            //OPCION PARA ENVIAR LA FORMA DETRAS DE TODAS LAS FORMAS DEL PLANO
             Opcion OpEnvFondo = new Opcion("Enviar al Fondo"){
                 @Override
                 public void mousePressed(MouseEvent e) {

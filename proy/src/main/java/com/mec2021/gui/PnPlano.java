@@ -27,7 +27,7 @@ import com.mec2021.plano.objetos.formas.FrTria;
 public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWheelListener{
 
     /**Escala de las coordenadas del plano */
-    public int Escala = 25;
+    public int Escala = 1;
 
     /**Escala de unidad : Pixel */
     public int EscalaPix = 50;

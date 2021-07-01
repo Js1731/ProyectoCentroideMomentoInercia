@@ -101,7 +101,7 @@ public class PropGrupo extends PnPropiedades{
                 Rec.Y += DifY;
 
                 Rec.actualizarDimensiones();
-                Rec.ActualizarPines();
+                Rec.actualizarPines();
             }else if(fr instanceof FrCirc){
                 FrCirc Circ = (FrCirc)fr;
 
@@ -109,7 +109,7 @@ public class PropGrupo extends PnPropiedades{
                 Circ.Y += DifY;
 
                 Circ.actualizarDimensiones();
-                Circ.ActualizarPines();
+                Circ.actualizarPines();
             }else if(fr instanceof FrTria){
                 FrTria Tria = (FrTria)fr;
 
@@ -119,7 +119,7 @@ public class PropGrupo extends PnPropiedades{
                 Tria.moverVertices( DifX, DifY);
 
                 Tria.actualizarDimensiones();
-                Tria.ActualizarPines();
+                Tria.actualizarPines();
             }
             Plano.repaint();
         }

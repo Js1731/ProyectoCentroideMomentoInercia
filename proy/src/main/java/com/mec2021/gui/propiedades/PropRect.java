@@ -119,7 +119,7 @@ public class PropRect extends PnPropiedades{
         Rec.Hueco = CBHueco.isSelected();
 
         Rec.actualizarDimensiones();
-        Rec.ActualizarPines();
+        Rec.actualizarPines();
 
         Plano.repaint();
     }

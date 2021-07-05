@@ -66,7 +66,7 @@ public class FrCirc extends Forma{
                              2*Math.round(Ctrl.aplicarEscalaUPix(Radio)));
         Sector = new Arc2D.Double(0,0, getWidth(), getHeight(), AngIni, Ext, Arc2D.PIE);
         
-        //setOpaque(false);
+        setOpaque(false);
 
         Plano.notificarCambios(0);
     }

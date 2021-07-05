@@ -81,8 +81,6 @@ public abstract class Forma extends Objeto2D{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-
-        requestFocus();
         actualizarCoordenadas();
 
         //ABRIR PANEL DE PROPIEDADES

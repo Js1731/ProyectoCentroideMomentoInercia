@@ -27,6 +27,8 @@ import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 import com.mec2021.Ctrl;
+import com.mec2021.gui.agregarforma.PnAgCirc;
+import com.mec2021.gui.agregarforma.PnAgRect;
 
 public class PnPrincipal extends JPanel{
 
@@ -130,7 +132,8 @@ public class PnPrincipal extends JPanel{
         
         Tab tab = new Tab(Nom, Plano);
         PnPrincipal.PanelPrinc.BarraTabs.add(tab);        
-        
+        PnPrincipal.PanelPrinc.BarraTabs.revalidate();
+
         TabsCount ++;
 
         return tab;
@@ -254,18 +257,32 @@ public class PnPrincipal extends JPanel{
         BtRect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrRect(PlanoActual);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgRect PG = new PnAgRect(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 
         BtCirc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrCirc(PlanoActual);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgCirc PG = new PnAgCirc(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 
@@ -324,7 +341,7 @@ public class PnPrincipal extends JPanel{
         PnBarraSup.add(BtCirc);
         PnBarraSup.add(BtTria);
         PnBarraSup.add(LbIngresarFr);
-        PnBarraSup.add(JFTScale);
+        //PnBarraSup.add(JFTScale);
         PnBarraSup.add(LbEscala);
         PnBarraSup.add(LbTitulo);
     }

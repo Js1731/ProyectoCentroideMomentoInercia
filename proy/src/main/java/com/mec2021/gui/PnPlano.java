@@ -16,11 +16,14 @@ import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseWheelListener;
 
 import com.mec2021.Ctrl;
+import com.mec2021.gui.agregarforma.PnAgRect;
+import com.mec2021.gui.agregarforma.PnAgregarForma;
 import com.mec2021.gui.propiedades.PnPropiedades;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
+import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */
@@ -61,6 +64,8 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
     /**Menu contextual */
     public ListaOpciones LOP = new ListaOpciones(100, 100, this);
 
+    public PnAgregarForma PnAgActivo = null;
+
     private Point PtOffset = new Point(0,0);
 
     public ArbolObjetos AB;
@@ -88,32 +93,6 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         LOP.setVisible(false);
 
         notificarCambios(0);
-
-        // Grupo NuevoGrupo = new Grupo(this);
-
-        
-        // FrRect Rec = new FrRect(0,-80,120,80,this);
-        // FrTria Tria = new FrTria(0,0,0,0,0,60,120f,0,this);
-        // FrCirc Cir1 = new FrCirc(0,-140,120,0,180,this);
-        // FrCirc Cir2 = new FrCirc(20,-120,80,0,360,this);
-        
-        
-        // add(Rec, JLayeredPane.DRAG_LAYER);
-        // add(Tria, JLayeredPane.DRAG_LAYER);
-        // add(Cir1, JLayeredPane.DRAG_LAYER);
-        // add(Cir2, JLayeredPane.DRAG_LAYER);
-        
-        // moveToFront(Cir2);
-
-        // NuevoGrupo.agregarForma(Rec);
-        // NuevoGrupo.agregarForma(Tria);
-        // NuevoGrupo.agregarForma(Cir1);
-        // NuevoGrupo.agregarForma(Cir2);
-
-        // add(NuevoGrupo, JLayeredPane.DRAG_LAYER);
-        // moveToFront(NuevoGrupo);
-        // LstObjetos.add(NuevoGrupo);
-
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
@@ -126,31 +105,39 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         Graphics2D g2 = (Graphics2D)g;
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);        
-        g2.setColor(Color.DARK_GRAY);
 
-        g2.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
-        g2.drawLine(Math.round(PtOrigen.x), 0,Math.round(PtOrigen.x), getHeight());
         g2.setFont(Ctrl.Fnt0);
 
         //COORDENADAS X
         for(int ux = -100; ux < 100; ux++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y - 2), Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 2));
-            g2.setColor(Ctrl.ClGris);
-            if(ux != 0)
+            if(ux != 0){
+                g2.setColor(Ctrl.ClGrisClaro2);
+                g2.drawLine(Math.round(PtOrigen.x + ux*EscalaPix), 0, Math.round(PtOrigen.x + ux*EscalaPix), getHeight());
+                g2.setColor(Ctrl.ClGris);
                 g2.drawString(""+(ux*Escala),Math.round(PtOrigen.x + ux*EscalaPix), Math.round(PtOrigen.y + 20));
+            }
         }
 
         //COORDENADAS Y
         for(int uy = -100; uy < 100; uy++){
             g2.setColor(Color.DARK_GRAY);
-            g2.drawLine(Math.round(PtOrigen.x - 2),Math.round(PtOrigen.y + uy*EscalaPix), Math.round(PtOrigen.x + 2), Math.round(PtOrigen.y + uy*EscalaPix));
-            g2.setColor(Ctrl.ClGris);
-            if(uy != 0)
+            if(uy != 0){
+                g2.setColor(Ctrl.ClGrisClaro2);
+                g2.drawLine(0,Math.round(PtOrigen.y + uy*EscalaPix), getWidth(), Math.round(PtOrigen.y + uy*EscalaPix));
+                g2.setColor(Ctrl.ClGris);
                 g2.drawString(""+(-uy*Escala),Math.round(PtOrigen.x - 20),Math.round(PtOrigen.y + uy*EscalaPix));
+            }
         }
 
+        g2.setColor(Color.DARK_GRAY);
+
+        g2.drawLine(0, Math.round(PtOrigen.y), getWidth(), Math.round(PtOrigen.y));
+        g2.drawLine(Math.round(PtOrigen.x), 0,Math.round(PtOrigen.x), getHeight());
+
         g2.drawString("0",Math.round(PtOrigen.x - 18),Math.round(PtOrigen.y + 20));
+
+        
 
         //DIBUJAR AREA DE SELECCION
         if(Seleccinando){
@@ -276,6 +263,12 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         PtOffset.x = Math.round(PtOrigen.x - Pos.x);
         PtOffset.y = Math.round(PtOrigen.y - Pos.y);
 
+        //CERRAR VENTANA PARA AGREGAR FIGURA
+        if(PnAgActivo != null){
+            remove(PnAgActivo);
+            PnAgActivo = null;
+        }
+
         if(SwingUtilities.isLeftMouseButton(e)){
 
             //DESELECCIONAR CUALQUIER FORMA
@@ -359,7 +352,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         EscalaVieja = (float)Escala/EscalaPix;
         if (e.getWheelRotation() > 0 && Escala < 10000)
             EscalaPix -= 5;
-        else if (e.getWheelRotation() < 0)
+        else if (e.getWheelRotation() < 0 && Escala > 1)
             EscalaPix += 5;
         
         if(EscalaPix <= 25){

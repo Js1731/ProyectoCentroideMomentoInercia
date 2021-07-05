@@ -64,7 +64,7 @@ public class Tab extends BotonGenerico{
                 PnPrincipal.PanelPrinc.BarraTabs.revalidate();
                 PnPrincipal.PanelPrinc.BarraTabs.repaint();
 
-                if(PnPrincipal.TabSel == tb){
+                if(PnPrincipal.TabSel == tb && PnPrincipal.PanelPrinc.BarraTabs.getComponentCount() > 1){
                     Tab PrimTab = (Tab)PnPrincipal.PanelPrinc.BarraTabs.getComponent(0);
                     PnPrincipal.PanelPrinc.PlanoActual = PrimTab.Plano;
                     PnPrincipal.TabSel = PrimTab;

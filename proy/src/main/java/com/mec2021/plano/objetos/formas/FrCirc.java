@@ -88,7 +88,7 @@ public class FrCirc extends Forma{
             if(Sector.extent != 360)
                 G2.draw(Sector);
             else
-                G2.drawOval(0, 0, Math.round(Ctrl.aplicarEscalaUPix(Radio)) - 1, Math.round(Ctrl.aplicarEscalaUPix(Radio)) - 1);
+                G2.drawOval(0, 0, Math.round(2*Ctrl.aplicarEscalaUPix(Radio)) - 1, Math.round(2*Ctrl.aplicarEscalaUPix(Radio)) - 1);
         }else
             G2.fill(Sector);
 
@@ -233,19 +233,18 @@ public class FrCirc extends Forma{
         //Referencia
         //https://www.efunda.com/math/areas/CircularSection.cfm
         
-        if(Grp != null){
+
             float r = Radio;
             float a = (float)Math.toRadians(Sector.extent)/2f;
 
             float ix = ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
             
-            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+            float dy = (-Y - centroideY()) + Plano.centroideY();
 
             float Ix = ix + Math.abs(calcularArea())*dy*dy;
 
             return (Hueco ? -1 : 1)*Ix;
-        }else 
-            return 0;
+
     }
 
     @Override
@@ -253,19 +252,16 @@ public class FrCirc extends Forma{
         //Referencia
         //https://www.efunda.com/math/areas/CircularSection.cfm
         
-        if(Grp != null){
             float r = Radio;
             float a = (float)Math.toRadians(Sector.extent)/2f;
 
             float ix = ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
 
-            float dy = (centroideX() + X) - Grp.centroideX();
+            float dy = (centroideX() + X) - Plano.centroideX();
 
             float Ix = ix + Math.abs(calcularArea())*dy*dy;
 
             return (Hueco ? -1 : 1)*Ix;
-        }else 
-            return 0;
     }
 
 

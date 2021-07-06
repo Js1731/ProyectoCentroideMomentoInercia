@@ -128,31 +128,23 @@ public class FrRect extends Forma{
     @Override
     public float inerciaCentEjeX(){
 
-        if(Grp != null){
-            float ix = (Ancho*(Alto*Alto*Alto))/12f;
-            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+        float ix = (Ancho*(Alto*Alto*Alto))/12f;
+        float dy = (-Y - centroideY()) + Plano.centroideY();
 
-            float Ix = ix + Math.abs(calcularArea())*dy*dy;
+        float Ix = ix + Math.abs(calcularArea())*dy*dy;
 
-            return (Hueco ? -1 : 1)*Ix;
-        }else{
-            return 0;
-        }
+        return (Hueco ? -1 : 1)*Ix;
     }
 
     @Override
     public float inerciaCentEjeY(){
 
-        if(Grp != null){
-            float iy = (Alto*(Ancho*Ancho*Ancho))/12;
-            float dx = (X + centroideX()) - Grp.centroideX();
+        float iy = (Alto*(Ancho*Ancho*Ancho))/12;
+        float dx = (X + centroideX()) - Plano.centroideX();
 
-            float Iy = iy + Math.abs(calcularArea())*dx*dx;
+        float Iy = iy + Math.abs(calcularArea())*dx*dx;
 
-            return (Hueco ? -1 : 1)*Iy;
-        }else{
-            return 0;
-        }
+        return (Hueco ? -1 : 1)*Iy;
     }
 
     @Override

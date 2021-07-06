@@ -52,6 +52,23 @@ public abstract class Forma extends Objeto2D{
     /**Calcula el area de esta forma, si la figura esta hueca el area sera negativa */
     public abstract float calcularArea();
 
+    /**Calcula la coordenada X del centroide (Es local a la forma)*/
+    public abstract float centroideX();
+
+    /**Calcula la coordenada Y del centroide (Es local a la forma)*/
+    public abstract float centroideY();
+
+
+    /**Calcula la inercia con respecto al centroide X para esta Forma 
+     *<p>Si la forma no pertence a un grupo, no se podra calcular la inercia y se retornara 0.
+    */
+    public abstract float inerciaCentEjeX();
+    
+    /**Calcula la inercia con respecto al centroide Y para esta Forma
+     * <p>Si la forma no pertence a un grupo, no se podra calcular la inercia y se retornara 0.
+     */
+    public abstract float inerciaCentEjeY();
+
     /**
      * Actualiza la posicion de los pines de la figura
      */

@@ -280,7 +280,6 @@ public class FrTria extends Forma{
 
     @Override
     public float inerciaCentEjeX(){
-        if(Grp != null){
 
             //LIMITES DE INTEGRACION
             float a = Ver3C.y;
@@ -295,19 +294,18 @@ public class FrTria extends Forma{
 
 
             float ix = Math.abs(I1-I2+I3-I4);
-            float dy = (-Y - centroideY()) - (Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - Grp.getY()) - Grp.centroideY());
+            float dy = (-Y - centroideY()) + Plano.centroideY();
 
             //TRASLADAR INERCIA AL CENTROIDE DE LA FIGURA
             float Ix = ix + Math.abs(calcularArea())*dy*dy;
 
             return (Hueco ? -1 : 1)*Ix;
-        }else
-            return 0;
+
     }
 
     @Override
     public float inerciaCentEjeY(){
-        if(Grp != null){
+
             //LIMITES DE INTEGRACION
             float a = Ver1C.x;
             float b = Ver2C.x;
@@ -322,14 +320,13 @@ public class FrTria extends Forma{
             //SUMAR INERCIAS
             float iy = Math.abs(I1-I2+I3-I4);
 
-            float dx = (X + centroideX()) - Grp.centroideX();
+            float dx = (X + centroideX()) - Plano.centroideX();
 
             //TRASLADAR INERCIA AL CENTROIDE DE LA FORMA
             float Ix = iy + Math.abs(calcularArea())*dx*dx;
             
             return (Hueco ? -1 : 1)*Ix;
-        }else
-            return 0;
+
     }
 
 

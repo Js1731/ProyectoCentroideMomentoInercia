@@ -19,6 +19,7 @@ import com.mec2021.Ctrl;
 import com.mec2021.gui.agregarforma.PnAgRect;
 import com.mec2021.gui.agregarforma.PnAgregarForma;
 import com.mec2021.gui.propiedades.PnPropiedades;
+import com.mec2021.plano.PnCentroide;
 import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
@@ -78,6 +79,8 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
     public int SnapX = 0;
     public int SnapY = 0;
 
+    public PnCentroide PnCent = new PnCentroide(this);
+
     public PnPlano(){
         setLayout(null);
 
@@ -94,6 +97,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
         notificarCambios(0);
         add(LOP, JLayeredPane.DRAG_LAYER);
+        add(PnCent, JLayeredPane.DRAG_LAYER);
         add(AB);
     }
 
@@ -101,6 +105,22 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        float CX = centroideX();
+        float CY = centroideY();
+        float IY = inerciaCentEjeY();
+        float IX = inerciaCentEjeX();
+
+        PnCent.setBounds(Math.round(PtOrigen.x + Ctrl.aplicarEscalaUPix(CX)) - 60, 
+                        Math.round(PtOrigen.y + Ctrl.aplicarEscalaUPix(CY)) - 117,
+                        120,
+                        120);
+        
+        PnCent.CX = CX;
+        PnCent.CY = CY;
+        PnCent.IX = IX;
+        PnCent.IY = IY;
+
+        moveToFront(PnCent);
 
         Graphics2D g2 = (Graphics2D)g;
 
@@ -175,7 +195,86 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
             SnapActivoX = false;
         }
 
+        g2.drawString(""+centroideX(), PtOrigen.x + 20, PtOrigen.y + 20);
+        g2.drawString(""+(-centroideY()), PtOrigen.x + 20, PtOrigen.y + 60);
+
     }
+
+    /**Calcula la posicion X del centroide con respecto al origen */
+    public float centroideX(){
+        float SumaAreas = 0;
+        float SumaAreasPorX = 0;
+
+        for (Objeto2D forma : LstObjetos) {
+
+            if(forma instanceof Forma){
+                Forma fr = (Forma)forma;
+
+                float Area = fr.calcularArea();
+                SumaAreas += Area;
+
+                float CentX = fr.X + fr.centroideX();
+
+                SumaAreasPorX += CentX*Area;
+            }
+        }
+
+        float x = (SumaAreasPorX/SumaAreas);
+
+        return x;
+    }
+
+    /**Calcula la posicion Y del centroide con respecto al origen */
+    public float centroideY(){
+        float SumaAreas = 0;
+        float SumaAreasPorY = 0;
+
+        for (Objeto2D forma : LstObjetos) {
+
+            if(forma instanceof Forma){
+                Forma fr = (Forma)forma;
+
+                float Area = fr.calcularArea();
+                SumaAreas += Area;
+
+                float CentY = fr.Y + fr.centroideY();
+
+                SumaAreasPorY += CentY*Area;
+            }
+        }
+
+        float y = SumaAreasPorY/SumaAreas;
+
+        return y;
+    }
+
+    public float inerciaCentEjeX(){
+
+        float SumaIx = 0;
+
+        for (Objeto2D forma : LstObjetos) 
+            if(forma instanceof Forma){
+                Forma fr = (Forma)forma;
+                SumaIx += fr.inerciaCentEjeX();
+            }
+        
+        return SumaIx;
+    }
+
+    public float inerciaCentEjeY(){
+
+        float SumaIy = 0;
+
+        for (Objeto2D forma : LstObjetos) 
+
+            if(forma instanceof Forma){
+                Forma fr = (Forma)forma;
+                SumaIy += fr.inerciaCentEjeY();
+            }
+        
+        return SumaIy;
+    }
+
 
     /** 
     * Notifica al Panel los eventos que suceden

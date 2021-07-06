@@ -58,37 +58,6 @@ public class Grupo extends Objeto2D{
 
         if(MoviendoFormas)
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-
-        float xi = centroideX();
-        float yi = centroideY();
-        float x = Ctrl.aplicarEscalaUPix(xi);
-        float y = Ctrl.aplicarEscalaUPix(yi);
-
-        //MOSTRAR CENTROIDE DEL GRUPO
-        DecimalFormat f = new DecimalFormat("#0.00");
-
-        //TEXTO CON LAS COORDENADAS
-        String Texto =  "" + f.format(xi + Ctrl.aplicarEscalaLnPixU(getX() - Plano.PtOrigen.x)) + ",   " + f.format(Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) - yi);
-
-        //DIBUJAR CUADRO
-        g2.setColor(Color.darkGray);
-        g2.fillRoundRect(Math.round(x - 7) - Texto.length()*7/2, Math.round(y - 50), Texto.length()*7, 40, 9, 9);
-        
-        //TITULO
-        g2.setColor(Color.white);
-        g2.drawString("Centroide",
-                      Math.round(x + 6) - Texto.length()*7/2,
-                      Math.round(y-35));
-
-        //DIBUJAR TEXTO DE COORDENADAS
-        g2.drawString(Texto,
-                      Math.round(x + 6) - Texto.length()*7/2,
-                      Math.round(y-15));
-
-        //DIBUJAR PUNTO EN EL CENTROIDE
-        g.setColor(Color.darkGray);
-        g.fillOval(Math.round(x-3),Math.round(y-3),6,6);
     }
 
     @Override
@@ -133,80 +102,6 @@ public class Grupo extends Objeto2D{
         Y = Ctrl.aplicarEscalaLnPixU(getY() - Plano.PtOrigen.y);
 
         repaint();
-    }
-
-    /**Calcula la posicion X del centroide con respecto al origen */
-    public float centroideX(){
-        float SumaAreas = 0;
-        float SumaAreasPorX = 0;
-
-        for (Forma forma : LstForma) {
-
-            float Area = forma.calcularArea();
-            SumaAreas += Area;
-
-            float CentX = forma.X + forma.centroideX();
-
-            SumaAreasPorX += CentX*Area;
-        }
-
-        float x = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.x - getX()) + (SumaAreasPorX/SumaAreas);
-
-        return x;
-    }
-
-    /**Calcula la posicion Y del centroide con respecto al origen */
-    public float centroideY(){
-        float SumaAreas = 0;
-        float SumaAreasPorY = 0;
-
-        for (Forma forma : LstForma) {
-            //forma.ActualizarCoordenadas();
-            float Area = forma.calcularArea();
-            SumaAreas += Area;
-
-            float CentY = forma.Y + forma.centroideY();
-
-            SumaAreasPorY += CentY*Area;
-        }
-
-        float y = Ctrl.aplicarEscalaLnPixU(Plano.PtOrigen.y - getY()) + SumaAreasPorY/SumaAreas;
-
-        return y;
-    }
-
-    @Override
-    public float inerciaCentEjeX(){
-
-        float SumaIx = 0;
-
-        for (Forma forma : LstForma)
-            SumaIx += forma.inerciaCentEjeX();
-        
-        return SumaIx;
-    }
-
-    @Override
-    public float inerciaCentEjeY(){
-
-        float SumaIy = 0;
-
-        for (Forma forma : LstForma)
-            SumaIy += forma.inerciaCentEjeY();
-        
-        return SumaIy;
-    }
-
-
-    /**Asocia una {@link Forma} a este grupo. Si la forma ya pertence a otro grupo, entonces se saca de ese y se agrega al actual 
-     * @param Fr Forma que se va a agregar
-    */
-    public void agregarForma(Forma Fr){
-        Fr.Grp = this;
-        LstForma.add(Fr);
-        ActualizarBordes();
-        repaint();
-        
     }
 
     /**

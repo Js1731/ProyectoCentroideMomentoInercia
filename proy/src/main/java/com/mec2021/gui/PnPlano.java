@@ -195,9 +195,6 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
             SnapActivoX = false;
         }
 
-        g2.drawString(""+centroideX(), PtOrigen.x + 20, PtOrigen.y + 20);
-        g2.drawString(""+(-centroideY()), PtOrigen.x + 20, PtOrigen.y + 60);
-
     }
 
     /**Calcula la posicion X del centroide con respecto al origen */
@@ -379,6 +376,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                     GrupoSel.eliminarGrupo();
                 
                 GrupoSel = null;
+                notificarCambios(0);
             }
 
             seleccionarForma(null);
@@ -528,6 +526,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                 add(NuevoGrupo, JLayeredPane.DRAG_LAYER);
                 moveToFront(NuevoGrupo);
                 LstObjetos.add(NuevoGrupo);
+                notificarCambios(0);
             }else{
                 NuevoGrupo.eliminarGrupo();
             }

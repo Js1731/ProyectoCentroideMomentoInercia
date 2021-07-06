@@ -104,6 +104,19 @@ public class Grupo extends Objeto2D{
         repaint();
     }
 
+    
+    /**Asocia una {@link Forma} a este grupo. Si la forma ya pertence a otro grupo, entonces se saca de ese y se agrega al actual 
+     * @param Fr Forma que se va a agregar
+    */
+    public void agregarForma(Forma Fr){
+        Fr.Grp = this;
+        LstForma.add(Fr);
+        ActualizarBordes();
+        repaint();
+        
+    }
+
+
     /**
      * Saca una forma de este grupo. Si se intenta eliminar una forma que no pertence al grupo no sucedera nada. 
      * Cuando el grupo no tenga formas dentro, se elimina

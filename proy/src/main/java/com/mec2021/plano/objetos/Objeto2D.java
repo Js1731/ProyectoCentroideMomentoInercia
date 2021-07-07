@@ -5,7 +5,13 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import com.mec2021.Arrastrable;
+import com.mec2021.EstructIndex.EstructuraInd;
+import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.PnPlano;
+import com.mec2021.plano.objetos.formas.Forma;
+import com.mec2021.plano.objetos.formas.FrCirc;
+import com.mec2021.plano.objetos.formas.FrRect;
+import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Define un objeto generico con coordenadas relativas al Origen que se puede arrastrar*/
 public abstract class Objeto2D extends Arrastrable{
@@ -112,6 +118,67 @@ public abstract class Objeto2D extends Arrastrable{
                 SnapYs.add(obj.getY() + obj.getHeight());
             }
         }
+    }
+
+    public String generarDataString(){
+        return EstructuraInd.transformarEstrString(generarData());
+    }
+
+    public SeccionEI generarData(){
+        SeccionEI EstData = EstructuraInd.generarEstructuraIndVacia(Nombre);
+        EstData.agregarHoja("t", (this instanceof FrRect) ? "r" : (this instanceof FrCirc) ? "c" : (this instanceof FrTria) ? "t" : "g");
+
+
+        if(this instanceof FrRect){
+            FrRect FrR = (FrRect)this;
+            EstData.agregarHoja("x", "" + X);
+            EstData.agregarHoja("y", "" + Y);
+
+            EstData.agregarHoja("w", "" + FrR.Ancho);
+            EstData.agregarHoja("h", "" + FrR.Alto);
+            EstData.agregarHoja("u", "" + (FrR.Hueco ? 1:0));
+        }else if(this instanceof FrTria){
+            FrTria FrT = (FrTria)this;
+
+            EstData.agregarHoja("x", "" + X);
+            EstData.agregarHoja("y", "" + Y);
+
+            //VERTICE 1
+            SeccionEI V1 = EstData.agregarSeccion("a");
+            V1.agregarHoja("x",""+ FrT.Ver1.x);
+            V1.agregarHoja("y",""+ FrT.Ver1.y);
+
+            SeccionEI V2 = EstData.agregarSeccion("b");
+            V2.agregarHoja("x",""+ FrT.Ver2.x);
+            V2.agregarHoja("y",""+ FrT.Ver2.y);
+
+            SeccionEI V3 = EstData.agregarSeccion("c");
+            V3.agregarHoja("x",""+ FrT.Ver3.x);
+            V3.agregarHoja("y",""+ FrT.Ver3.y);
+
+            EstData.agregarHoja("u", "" + (FrT.Hueco ? 1:0));
+
+            
+        }else if(this instanceof FrCirc){
+            FrCirc FrC = (FrCirc)this;
+
+            EstData.agregarHoja("x", "" + X);
+            EstData.agregarHoja("y", "" + Y);
+
+            EstData.agregarHoja("r","" + FrC.Radio);
+            EstData.agregarHoja("a","" + FrC.Sector.start);
+            EstData.agregarHoja("e","" + FrC.Sector.extent);
+
+            EstData.agregarHoja("u", "" + (FrC.Hueco ? 1:0));
+        }else{
+            Grupo Gp = (Grupo)this;
+
+            for (Forma fr : Gp.LstForma) {
+                EstData.agregarSeccion(fr.generarData());
+            }
+        }
+
+        return EstData;
     }
 
     @Override

@@ -59,35 +59,35 @@ public class FrTria extends Forma{
     /**
      * Crea un tringulo en el origen de 50x50
      */
-    public FrTria(PnPlano plano){
-        this(0,-5*plano.Escala,0,5.0f*plano.Escala,2.5f*plano.Escala,0,5.0f*plano.Escala,5.0f*plano.Escala, plano);
+    public FrTria(PnPlano plano,  boolean hueco){
+        this(0,-5*plano.Escala,0,5.0f*plano.Escala,2.5f*plano.Escala,0,5.0f*plano.Escala,5.0f*plano.Escala, hueco, plano);
     }
 
     /**
      * Crea un tringulo en las coordenadas especificadas
      * @param X X del panel que contiene a la figura
      * @param Y Y del panel que contiene a la figura
-     * @param x1 X del Vertice 1 local al origen
-     * @param y1 Y del Vertice 1 local al origen
-     * @param x2 X del Vertice 2 local al origen
-     * @param y2 Y del Vertice 2 local al origen
-     * @param x3 X del Vertice 3 local al origen
-     * @param y3 Y del Vertice 3 local al origen
+     * @param y1 Y del Vertice 1 local a la figura
+     * @param x2 X del Vertice 2 local a la figura
+     * @param y2 Y del Vertice 2 local a la figura
+     * @param x1 X del Vertice 1 local a la figura
+     * @param x3 X del Vertice 3 local a la figura
+     * @param y3 Y del Vertice 3 local a la figura
      */
-    public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3, PnPlano plano){
-        super(plano);
+    public FrTria(float X, float Y,float x1, float y1, float x2, float y2, float x3, float y3,  boolean hueco, PnPlano plano){
+        super(plano, hueco);
         Pines = new Pin[3];
 
         Nombre = "Triangulo " + (ID++);
         
-        Ver1.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x1));
-        Ver1.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y1));
+        Ver1.x = X + x1;
+        Ver1.y = Y + y1;
         
-        Ver2.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x2));
-        Ver2.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y2));
+        Ver2.x = X + x2;
+        Ver2.y = Y + y2;
         
-        Ver3.x = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(X) + Ctrl.aplicarEscalaUPix(x3));
-        Ver3.y = Ctrl.aplicarEscalaLnPixU(Ctrl.aplicarEscalaUPix(Y) + Ctrl.aplicarEscalaUPix(y3));
+        Ver3.x = X + x3;
+        Ver3.y = Y + y3;
         
         
         //DEFINIR ECUACIONES DE LA RECTA LOCALES AL CENTROIDE

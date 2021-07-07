@@ -29,7 +29,7 @@ public class PnAgRect extends PnAgregarForma{
         float Alto = Float.parseFloat((TFAlto.getText().isEmpty() || TFAlto.getText().equals("-") || TFAlto.getText().equals("1") ? "1" : TFAlto.getText()));
         
         //CREAR NUEVO RECTANGULO
-        FrRect NuevoRect = new FrRect(0, -Alto, Ancho, Alto, Plano);
+        FrRect NuevoRect = new FrRect(0, -Alto, Ancho, Alto, false, Plano);
         
         if(TFNombre.getText() != "")
             NuevoRect.Nombre = TFNombre.getText();

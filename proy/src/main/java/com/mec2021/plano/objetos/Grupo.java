@@ -7,6 +7,10 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
@@ -186,6 +190,21 @@ public class Grupo extends Objeto2D{
         if(SwingUtilities.isRightMouseButton(e)){
             ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
             Grupo Gp = this;
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCopiar = new Opcion("Copiar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection SL = new StringSelection("<|||>" + generarDataString());
+                    CB.setContents(SL, null);
+
+                    Plano.remove(Lo);
+                }
+            };
+
             Opcion Agrupar = new Opcion(GrupoTemporal ? "Agrupar" : "Desagrupar"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -215,6 +234,7 @@ public class Grupo extends Objeto2D{
             };
 
 
+            Lo.agregarOpcion(OpCopiar);
             Lo.agregarOpcion(Agrupar);
             Lo.agregarOpcion(Op);
 

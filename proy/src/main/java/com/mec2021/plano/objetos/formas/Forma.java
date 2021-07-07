@@ -1,11 +1,16 @@
 package com.mec2021.plano.objetos.formas;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.EstructIndex.EstructuraInd;
+import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
 import com.mec2021.gui.PnPlano;
@@ -36,10 +41,10 @@ public abstract class Forma extends Objeto2D{
 
     
 
-    public Forma(PnPlano plano){
+    public Forma(PnPlano plano, boolean hueco){
         super(plano);
 
-        Plano = plano;
+        Hueco = hueco;
         FrCount++;
 
         //ESCOGE UN COLOR PARA LA FIGURA
@@ -94,7 +99,6 @@ public abstract class Forma extends Objeto2D{
     }
 
 
-
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
@@ -130,6 +134,21 @@ public abstract class Forma extends Objeto2D{
             ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
 
             Forma Fr = this;
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCopiar = new Opcion("Copiar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection SL = new StringSelection("<|||>" + generarData());
+                    CB.setContents(SL, null);
+
+                    Plano.remove(Lo);
+                }
+            };
+
             //OPCION PARA ELIMINAR LA FORMA
             Opcion OpEliminar = new Opcion("Eliminar"){
                 @Override
@@ -163,6 +182,7 @@ public abstract class Forma extends Objeto2D{
                 }
             };
 
+            Lo.agregarOpcion(OpCopiar);
             Lo.agregarOpcion(OpEliminar);
             Lo.agregarOpcion(OpEnvFrente);
             Lo.agregarOpcion(OpEnvFondo);
@@ -172,6 +192,8 @@ public abstract class Forma extends Objeto2D{
             Lo.repaint();
         }
     }
+
+
 
     @Override
     public void mouseDragged(MouseEvent e) {

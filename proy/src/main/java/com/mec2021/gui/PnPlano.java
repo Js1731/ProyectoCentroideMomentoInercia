@@ -16,7 +16,9 @@ import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseWheelListener;
 
 import com.mec2021.Ctrl;
-
+import com.mec2021.EstructIndex.EstructuraInd;
+import com.mec2021.EstructIndex.NodoEI;
+import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.agregarforma.PnAgregarForma;
 import com.mec2021.gui.propiedades.PnPropiedades;
 import com.mec2021.plano.PnCentroide;
@@ -24,6 +26,8 @@ import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
+import com.mec2021.plano.objetos.formas.FrCirc;
+import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */
@@ -347,6 +351,95 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         remove(Fr);
 
         notificarCambios(0);
+    }
+
+
+    public Objeto2D crearObjeto2D(String Data){
+        return crearObjeto2D(EstructuraInd.generarEstructuraInd(Data));
+    }
+
+    public Objeto2D crearObjeto2D(SeccionEI DatosEI){
+        Objeto2D NuevoObjeto = null;
+
+        String Tipo = DatosEI.extraerValorHoja("t");        
+
+
+        switch(Tipo){
+            case "r":{
+                float Xt = Float.parseFloat(DatosEI.extraerValorHoja("x"));
+                float Yt = Float.parseFloat(DatosEI.extraerValorHoja("y"));
+                boolean Hu = DatosEI.extraerValorHoja("u").equals("1");
+
+                float ancho = Float.parseFloat(DatosEI.extraerValorHoja("w"));
+                float alto = Float.parseFloat(DatosEI.extraerValorHoja("h"));
+
+                NuevoObjeto = new FrRect(Xt, Yt, ancho, alto, Hu, this);
+                break;
+            }
+
+            case "c":{
+                float Xt = Float.parseFloat(DatosEI.extraerValorHoja("x"));
+                float Yt = Float.parseFloat(DatosEI.extraerValorHoja("y"));
+                boolean Hu = DatosEI.extraerValorHoja("u").equals("1");
+
+                float radio = Float.parseFloat(DatosEI.extraerValorHoja("r"));
+                int anguloIn = Math.round(Float.parseFloat(DatosEI.extraerValorHoja("a")));
+                int ext = Math.round(Float.parseFloat(DatosEI.extraerValorHoja("e")));
+
+                NuevoObjeto = new FrCirc(Xt, Yt, radio, anguloIn, ext, Hu, this);
+                break;
+            }
+
+            case "t":{
+                float Xt = Float.parseFloat(DatosEI.extraerValorHoja("x"));
+                float Yt = Float.parseFloat(DatosEI.extraerValorHoja("y"));
+                boolean Hu = DatosEI.extraerValorHoja("u").equals("1");
+
+                SeccionEI Vertice1 = DatosEI.extraerSeccion("a");
+                float v1x = Float.parseFloat(Vertice1.extraerValorHoja("x")) - Xt;
+                float v1y = Float.parseFloat(Vertice1.extraerValorHoja("y")) - Yt;
+
+                SeccionEI Vertice2 = DatosEI.extraerSeccion("b");
+                float v2x = Float.parseFloat(Vertice2.extraerValorHoja("x")) - Xt;
+                float v2y = Float.parseFloat(Vertice2.extraerValorHoja("y")) - Yt;
+
+                SeccionEI Vertice3 = DatosEI.extraerSeccion("c");
+                float v3x = Float.parseFloat(Vertice3.extraerValorHoja("x")) - Xt;
+                float v3y = Float.parseFloat(Vertice3.extraerValorHoja("y")) - Yt;
+
+                NuevoObjeto = new FrTria(Xt, Yt, v1x, v1y, v2x, v2y, v3x, v3y, Hu, this);
+
+                break;
+            }
+
+            case "g":{
+                
+                NuevoObjeto = new Grupo(this);
+
+                ArrayList<NodoEI> Objetos = new ArrayList<NodoEI>();
+                Objetos.addAll(DatosEI.Hijos.subList(1, DatosEI.Hijos.size()));
+
+                
+                for (NodoEI nodoEI : Objetos) {
+                    Objeto2D obj = crearObjeto2D((SeccionEI)nodoEI);
+                    ((Grupo)NuevoObjeto).agregarForma((Forma)obj);
+                }
+
+                ((Grupo)NuevoObjeto).ActualizarBordes();
+
+                ((Grupo)NuevoObjeto).MoviendoFormas = false;
+
+                break;
+            }
+        }
+
+        add(NuevoObjeto, JLayeredPane.DRAG_LAYER);
+        moveToFront(NuevoObjeto);
+
+        notificarCambios(0);
+
+        return NuevoObjeto;
+
     }
 
 

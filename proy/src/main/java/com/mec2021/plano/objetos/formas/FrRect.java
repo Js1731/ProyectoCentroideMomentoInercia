@@ -27,8 +27,8 @@ public class FrRect extends Forma{
     /**
      * Crea un rectangulo de 50x50 en el origen {@code (0, 0)}
      */
-    public FrRect(PnPlano plano){
-        this(0*plano.Escala,-5*plano.Escala,5*plano.Escala, 5*plano.Escala, plano);
+    public FrRect(PnPlano plano, boolean hueco){
+        this(0*plano.Escala,-5*plano.Escala,5*plano.Escala, 5*plano.Escala, hueco, plano);
     }
 
     /**
@@ -38,8 +38,8 @@ public class FrRect extends Forma{
      * @param an Ancho
      * @param al Alto
      */
-    public FrRect(float x, float y, float an, float al, PnPlano plano){
-        super(plano);
+    public FrRect(float x, float y, float an, float al, boolean hueco, PnPlano plano){
+        super(plano, hueco);
 
         X = x;
         Y = y;

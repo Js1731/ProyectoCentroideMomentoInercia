@@ -35,8 +35,8 @@ public class FrCirc extends Forma{
     /**
      * Crea un circulo de diametro de 50 en el origen {@code (0, 0)}
      */
-    public FrCirc(PnPlano plano){
-        this(0*plano.Escala, -5*plano.Escala, 2.5f*plano.Escala, 90, 360, plano);
+    public FrCirc(PnPlano plano,  boolean hueco){
+        this(0*plano.Escala, -5*plano.Escala, 2.5f*plano.Escala, 90, 360, hueco, plano);
     }
 
     /**
@@ -46,8 +46,8 @@ public class FrCirc extends Forma{
      * @param AngIni Angulo inicial del sector
      * @param Ext Angulo del sector
      */
-    public FrCirc(float x, float y, float rad, int AngIni, int Ext, PnPlano plano){
-        super(plano);
+    public FrCirc(float x, float y, float rad, int AngIni, int Ext, boolean hueco, PnPlano plano){
+        super(plano, hueco);
         
         
         Nombre = "Circulo " + (ID++);

@@ -287,7 +287,7 @@ public class PnPrincipal extends JPanel{
         BtTria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrTria(PlanoActual);
+                Forma Fr = new FrTria(PlanoActual, false);
                 PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
                 PlanoActual.moveToFront(Fr);
             }

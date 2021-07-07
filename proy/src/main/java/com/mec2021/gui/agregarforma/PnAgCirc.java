@@ -135,7 +135,7 @@ public class PnAgCirc extends PnAgregarForma{
         }
 
         //CREAR NUEVO CIRCULO
-        FrCirc NuevoCirc = new FrCirc(X, Y, Radio, 0, Ext, Plano);
+        FrCirc NuevoCirc = new FrCirc(X, Y, Radio, 0, Ext, false,Plano);
         
         if(TFNombre.getText() != "")
              NuevoCirc.Nombre = TFNombre.getText();

@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
 
-import javafx.geometry.Pos;
 
 /**
  * PnCentroide

@@ -23,8 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrCirc;
-import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 import com.mec2021.Ctrl;
 import com.mec2021.gui.agregarforma.PnAgCirc;

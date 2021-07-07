@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JLayeredPane;
@@ -104,7 +103,7 @@ public class Grupo extends Objeto2D{
         repaint();
     }
 
-    
+
     /**Asocia una {@link Forma} a este grupo. Si la forma ya pertence a otro grupo, entonces se saca de ese y se agrega al actual 
      * @param Fr Forma que se va a agregar
     */

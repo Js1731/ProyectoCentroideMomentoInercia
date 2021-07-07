@@ -16,7 +16,7 @@ import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseWheelListener;
 
 import com.mec2021.Ctrl;
-import com.mec2021.gui.agregarforma.PnAgRect;
+
 import com.mec2021.gui.agregarforma.PnAgregarForma;
 import com.mec2021.gui.propiedades.PnPropiedades;
 import com.mec2021.plano.PnCentroide;
@@ -24,7 +24,6 @@ import com.mec2021.plano.Punto;
 import com.mec2021.plano.objetos.Grupo;
 import com.mec2021.plano.objetos.Objeto2D;
 import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
 /**Area de trabajo, aqui se colocan todas las formas */

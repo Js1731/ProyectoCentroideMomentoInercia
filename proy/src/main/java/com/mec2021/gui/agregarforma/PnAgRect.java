@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -13,10 +12,8 @@ import javax.swing.JTextField;
 
 import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
-import com.mec2021.gui.PnPrincipal;
 import com.mec2021.plano.objetos.formas.FrRect;
 
-import java.awt.event.ActionListener;
 
 public class PnAgRect extends PnAgregarForma{
 

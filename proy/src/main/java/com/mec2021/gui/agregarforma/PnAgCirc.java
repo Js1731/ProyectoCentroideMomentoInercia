@@ -13,7 +13,6 @@ import com.mec2021.gui.BotonGenerico;
 import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.formas.FrCirc;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Arc2D;

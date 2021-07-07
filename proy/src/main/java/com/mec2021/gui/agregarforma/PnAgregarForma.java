@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,10 +12,7 @@ import javax.swing.JTextField;
 import com.mec2021.Ctrl;
 import com.mec2021.gui.BotonGenerico;
 import com.mec2021.gui.PnPlano;
-import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrCirc;
-import com.mec2021.plano.objetos.formas.FrRect;
-import com.mec2021.plano.objetos.formas.FrTria;
+
 
 import java.awt.Polygon;
 import java.awt.BasicStroke;

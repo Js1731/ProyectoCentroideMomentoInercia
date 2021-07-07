@@ -122,20 +122,20 @@ public class PnAgCirc extends PnAgregarForma{
         float X = 0;
         if(BtSel.equals(BtCirNorm)){
             Ext = 360;
-            Y = -Radio*2;
-            X = 0;
+            PosIni.x += -Radio;
+            PosIni.y += Radio;
         }else if(BtSel.equals(BtCirSemi)){
             Ext = 180;
-            Y = -Radio;
-            X = 0;
+            PosIni.x += -Radio;
+            PosIni.y += Radio;
         }else{
             Ext = 90;
-            Y = -Radio;
-            X = -Radio;
+            PosIni.x += -Radio;
+            PosIni.y += Radio;
         }
 
         //CREAR NUEVO CIRCULO
-        FrCirc NuevoCirc = new FrCirc(X, Y, Radio, 0, Ext, false,Plano);
+        FrCirc NuevoCirc = new FrCirc(PosIni.x, PosIni.y - Radio*2, Radio, 0, Ext, false,Plano);
         
         if(TFNombre.getText() != "")
              NuevoCirc.Nombre = TFNombre.getText();

@@ -27,6 +27,7 @@ import com.mec2021.plano.objetos.formas.FrTria;
 import com.mec2021.Ctrl;
 import com.mec2021.gui.agregarforma.PnAgCirc;
 import com.mec2021.gui.agregarforma.PnAgRect;
+import com.mec2021.gui.agregarforma.PnAgTria;
 
 public class PnPrincipal extends JPanel{
 
@@ -287,9 +288,17 @@ public class PnPrincipal extends JPanel{
         BtTria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrTria(PlanoActual, false);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgTria PG = new PnAgTria(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 

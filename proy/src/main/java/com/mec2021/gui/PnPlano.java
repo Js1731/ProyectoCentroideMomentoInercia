@@ -14,11 +14,15 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseWheelListener;
+import java.io.IOException;
 
 import com.mec2021.Ctrl;
 import com.mec2021.EstructIndex.EstructuraInd;
 import com.mec2021.EstructIndex.NodoEI;
 import com.mec2021.EstructIndex.SeccionEI;
+import com.mec2021.gui.agregarforma.PnAgCirc;
+import com.mec2021.gui.agregarforma.PnAgRect;
+import com.mec2021.gui.agregarforma.PnAgTria;
 import com.mec2021.gui.agregarforma.PnAgregarForma;
 import com.mec2021.gui.propiedades.PnPropiedades;
 import com.mec2021.plano.PnCentroide;
@@ -29,6 +33,14 @@ import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
+
+import javafx.geometry.Pos;
+
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
 
 /**Area de trabajo, aqui se colocan todas las formas */
 public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWheelListener{
@@ -485,6 +497,144 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
             // moveToFront(LOP);
             // LOP.setVisible(true);
             // repaint();
+        }
+
+        //CREA UN MENU CONTEXTUAL PARA LA FORMA
+        if(SwingUtilities.isRightMouseButton(e)){
+
+            int PosX = e.getX();
+            int PosY =  e.getY();
+            ListaOpciones Lo = new ListaOpciones(getX() + PosX, getY() +  PosY, this);
+
+            PnPlano Pl = this;
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpPegar = new Opcion("Pegar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    String Datos;
+                    try {
+                        Datos = (String)CB.getData(DataFlavor.stringFlavor);
+                        String Llave = Datos.substring(0, 5);
+
+                        if(Llave.equals("<|||>")){
+                            Datos = Datos.substring(5, Datos.length());
+                            Pl.crearObjeto2D(Datos);
+                        }
+
+                    } catch (UnsupportedFlavorException e1) {
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+
+                    Pl.remove(Lo);
+                }
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    g.setColor(Ctrl.ClGris);
+                    g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
+                }
+            };
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpRec = new Opcion("Crear Rectangulo"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    if(Pl.PnAgActivo != null){
+                        Pl.remove(Pl.PnAgActivo);
+                        Pl.PnAgActivo = null;
+                    }
+    
+                    PnAgRect PG = new PnAgRect(Pl);
+                    Pl.add(PG, JLayeredPane.DRAG_LAYER);
+                    Pl.moveToFront(PG);
+                    PG.TFNombre.requestFocus();
+
+                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+
+                    System.out.println(e.getX());
+
+                    Pl.remove(Lo);
+                }
+            };
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCirc = new Opcion("Crear Circulo"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    if(Pl.PnAgActivo != null){
+                        Pl.remove(Pl.PnAgActivo);
+                        Pl.PnAgActivo = null;
+                    }
+    
+                    PnAgCirc PG = new PnAgCirc(Pl);
+                    Pl.add(PG, JLayeredPane.DRAG_LAYER);
+                    Pl.moveToFront(PG);
+                    PG.TFNombre.requestFocus();
+
+                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+
+                    System.out.println(e.getX());
+
+                    Pl.remove(Lo);
+                }
+            };
+
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpTria = new Opcion("Crear Triangulo"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    if(Pl.PnAgActivo != null){
+                        Pl.remove(Pl.PnAgActivo);
+                        Pl.PnAgActivo = null;
+                    }
+    
+                    PnAgTria PG = new PnAgTria(Pl);
+                    Pl.add(PG, JLayeredPane.DRAG_LAYER);
+                    Pl.moveToFront(PG);
+                    PG.TFNombre.requestFocus();
+
+                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+
+                    System.out.println(e.getX());
+
+                    Pl.remove(Lo);
+                }
+            };
+            
+
+
+            Lo.agregarOpcion(OpPegar);
+            Lo.agregarOpcion(OpRec);
+            Lo.agregarOpcion(OpCirc);
+            Lo.agregarOpcion(OpTria);
+
+
+            add(Lo, JLayeredPane.DRAG_LAYER);
+            moveToFront(Lo);
+            Lo.repaint();
         }
     }
 

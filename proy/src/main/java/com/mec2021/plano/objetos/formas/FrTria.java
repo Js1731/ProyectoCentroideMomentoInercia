@@ -60,7 +60,7 @@ public class FrTria extends Forma{
      * Crea un tringulo en el origen de 50x50
      */
     public FrTria(PnPlano plano,  boolean hueco){
-        this(0,-5*plano.Escala,0,5.0f*plano.Escala,2.5f*plano.Escala,0,5.0f*plano.Escala,5.0f*plano.Escala, hueco, plano);
+        this(-2.5f*plano.Escala,-2.5f*plano.Escala,0,5.0f*plano.Escala,2.5f*plano.Escala,0,5.0f*plano.Escala,5.0f*plano.Escala, hueco, plano);
     }
 
     /**

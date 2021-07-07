@@ -1,6 +1,7 @@
 package com.mec2021.plano.objetos.formas;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.Ctrl;
 import com.mec2021.EstructIndex.EstructuraInd;
 import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.ListaOpciones;
@@ -142,10 +144,35 @@ public abstract class Forma extends Objeto2D{
                     super.mousePressed(e);
 
                     Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
-                    StringSelection SL = new StringSelection("<|||>" + generarData());
+                    StringSelection SL = new StringSelection("<|||>" + Fr.generarDataString());
                     CB.setContents(SL, null);
 
                     Plano.remove(Lo);
+                }
+            };
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCortar = new Opcion("Cortar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection SL = new StringSelection("<|||>" + Fr.generarDataString());
+                    CB.setContents(SL, null);
+
+                    Plano.eliminarForma(Fr);
+
+                    Plano.remove(Lo);
+                }
+
+                
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    g.setColor(Ctrl.ClGris);
+                    g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
                 }
             };
 
@@ -157,6 +184,14 @@ public abstract class Forma extends Objeto2D{
 
                     Plano.eliminarForma(Fr);
                     Plano.remove(Lo);
+                }
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    g.setColor(Ctrl.ClGris);
+                    g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
                 }
             };
 
@@ -182,8 +217,9 @@ public abstract class Forma extends Objeto2D{
                 }
             };
 
-            Lo.agregarOpcion(OpCopiar);
             Lo.agregarOpcion(OpEliminar);
+            Lo.agregarOpcion(OpCopiar);
+            Lo.agregarOpcion(OpCortar);
             Lo.agregarOpcion(OpEnvFrente);
             Lo.agregarOpcion(OpEnvFondo);
 

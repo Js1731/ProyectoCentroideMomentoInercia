@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 import com.mec2021.Ctrl;
 import com.mec2021.gui.BotonGenerico;
 import com.mec2021.gui.PnPlano;
-
+import com.mec2021.plano.Punto;
 
 import java.awt.Polygon;
 import java.awt.BasicStroke;
@@ -22,6 +22,7 @@ import java.awt.BasicStroke;
 public abstract class PnAgregarForma extends JPanel{
 
 
+    public Punto PosIni = new Punto(0, 0);
 
     public JLabel LbNombre = new JLabel("Nombre");
     public BotonGenerico BtAceptar;

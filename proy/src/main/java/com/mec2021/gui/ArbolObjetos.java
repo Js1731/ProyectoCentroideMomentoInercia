@@ -31,7 +31,7 @@ public class ArbolObjetos extends JPanel{
     ArrayList<PnNodo> LstPaneles = new ArrayList<PnNodo>();
 
     /**Estructura de datos de los objetos*/
-    Nodo Arbol = new Nodo();
+    public Nodo Arbol = new Nodo();
 
     public PnPlano Plano;
 

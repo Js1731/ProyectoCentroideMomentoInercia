@@ -1,12 +1,9 @@
 package com.mec2021;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import com.mec2021.gui.PnPrincipal;
 import com.mec2021.plano.objetos.formas.Forma;
-
-import javafx.event.Event;
-import javafx.event.EventDispatchChain;
-import javafx.event.EventDispatcher;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -17,6 +14,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import javax.swing.UnsupportedLookAndFeelException;
 
 class DKE implements KeyEventDispatcher{
     boolean Presionado = false;
@@ -78,6 +76,11 @@ public class Main {
 
     public static void main(String[] args){
         JFrame Vent = VentPrinc = new JFrame();    
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        }
 
         Ctrl.importarArchivos();
 

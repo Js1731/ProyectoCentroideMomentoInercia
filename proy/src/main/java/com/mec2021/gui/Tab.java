@@ -70,6 +70,10 @@ public class Tab extends BotonGenerico{
                     PnPrincipal.TabSel = PrimTab;
                     PnPrincipal.PanelPrinc.Expositor.show(PnPrincipal.PanelPrinc.PnAreaTrabajo, PrimTab.Nombre);
                 }
+
+                if(PnPrincipal.PanelPrinc.PlanoActual == Plano){
+                    PnPrincipal.PanelPrinc.PlanoActual = null;
+                }
             }
         };
 
@@ -105,6 +109,10 @@ public class Tab extends BotonGenerico{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        seleccionarTab();
+    }
+
+    public void seleccionarTab(){
         PnPrincipal.TabSel = this;
         PnPrincipal.PanelPrinc.BarraTabs.repaint();
 

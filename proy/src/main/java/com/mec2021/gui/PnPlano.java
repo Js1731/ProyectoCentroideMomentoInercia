@@ -365,6 +365,18 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         notificarCambios(0);
     }
 
+    public SeccionEI generarData(){
+
+        SeccionEI Raiz = new SeccionEI(PnPrincipal.TabSel.Nombre);
+        Raiz.agregarHoja("t", "a");
+
+        for (Nodo nodo : AB.Arbol.Hijos) {
+            SeccionEI DatosObj = nodo.Objeto.generarData();
+            Raiz.agregarSeccion(DatosObj);
+        }
+
+        return Raiz;
+    }
 
     public Objeto2D crearObjeto2D(String Data){
         return crearObjeto2D(EstructuraInd.generarEstructuraInd(Data));
@@ -441,12 +453,26 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
                 ((Grupo)NuevoObjeto).MoviendoFormas = false;
 
+                LstObjetos.add(NuevoObjeto);
+
+                break;
+            }
+
+            case "a":{
+                ArrayList<NodoEI> Objetos = new ArrayList<NodoEI>();
+                Objetos.addAll(DatosEI.Hijos.subList(1, DatosEI.Hijos.size()));
+
+                for (NodoEI nodoEI : Objetos) 
+                    crearObjeto2D((SeccionEI)nodoEI);
+                
                 break;
             }
         }
 
-        add(NuevoObjeto, JLayeredPane.DRAG_LAYER);
-        moveToFront(NuevoObjeto);
+        if(!Tipo.equals("a")){
+            add(NuevoObjeto, JLayeredPane.DRAG_LAYER);
+            moveToFront(NuevoObjeto);
+        }
 
         notificarCambios(0);
 
@@ -492,15 +518,6 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
             PtInicioSel.y = Pos.y;
 
         }else if(SwingUtilities.isRightMouseButton(e)){
-            //ABRIR MENU CONTEXTUAL
-            // LOP.setLocation(e.getX(), e.getY());
-            // moveToFront(LOP);
-            // LOP.setVisible(true);
-            // repaint();
-        }
-
-        //CREA UN MENU CONTEXTUAL PARA LA FORMA
-        if(SwingUtilities.isRightMouseButton(e)){
 
             int PosX = e.getX();
             int PosY =  e.getY();

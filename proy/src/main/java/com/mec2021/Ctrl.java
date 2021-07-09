@@ -5,6 +5,8 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JFileChooser;
+
 import com.mec2021.gui.PnPrincipal;
 
 import java.awt.Color;
@@ -24,6 +26,8 @@ public class Ctrl {
     public static final Color ClGrisClaro3 = new Color(240, 240, 240);
     public static final Color ClGris = new Color(136, 136, 136);
     public static final Color ClGris2 = new Color(172, 172, 172);
+
+    public static JFileChooser ExploradorArch = new JFileChooser();
 
     public static void importarArchivos(){
         InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Regular.ttf");

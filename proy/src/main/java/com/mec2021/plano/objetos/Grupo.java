@@ -44,7 +44,7 @@ public class Grupo extends Objeto2D{
         super(plano);
         
         Nombre = "Grupo " + (ID++);
-        //setOpaque(false);
+        setOpaque(false);
         repaint();
     }
 

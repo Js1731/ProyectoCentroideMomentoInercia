@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.RenderingHints;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import com.mec2021.Ctrl;
 
@@ -18,14 +19,16 @@ public class Tab extends BotonGenerico{
     String Nombre;
     PnPlano Plano;
 
-    public Tab(String Nombre, PnPlano plano){
+    JLabel LbNombre;
+
+    public Tab(String Nom, PnPlano plano){
         setLayout(null);
 
-        this.Nombre = Nombre;
+        this.Nombre = Nom;
         Plano = plano;
 
         setBackground(Ctrl.ClGrisClaro2);
-        JLabel LbNombre = new JLabel(Nombre);
+        LbNombre = new JLabel(Nombre);
         LbNombre.setForeground(Color.GRAY);
         LbNombre.setFont(Ctrl.Fnt1);
         LbNombre.setBounds(5, 0, 100, 30);
@@ -108,6 +111,14 @@ public class Tab extends BotonGenerico{
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
+
+        if(e.getClickCount() >= 2){
+            String txt = JOptionPane.showInputDialog("Ingrese un nombre para la figura: ");
+
+            if(!txt.equals("")){
+                LbNombre.setText(txt);
+            }
+        }
 
         seleccionarTab();
     }

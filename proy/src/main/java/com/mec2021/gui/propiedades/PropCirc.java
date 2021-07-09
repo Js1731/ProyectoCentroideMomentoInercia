@@ -103,8 +103,8 @@ public class PropCirc extends PnPropiedades{
         TFExt.setText("" + f.format(Circulo.Sector.extent));
 
         LbArea.setText("Area:                      " + f.format(Circulo.calcularArea()));
-        LbCentX.setText("Centroide en x:     " + f.format(Circulo.centroideX()));
-        LbCentY.setText("Centroide en Y:     " + f.format(Circulo.centroideY()));
+        LbCentX.setText("Centroide en x:     " + f.format(Circulo.centroideX() + Circulo.X));
+        LbCentY.setText("Centroide en Y:     " + f.format(-(Circulo.centroideY() + Circulo.Y)));
 
         LbInX.setText("Inercia en x:     " + f.format(Circulo.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     " + f.format(Circulo.inerciaCentEjeY()));

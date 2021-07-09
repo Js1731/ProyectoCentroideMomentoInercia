@@ -47,7 +47,7 @@ public class PnAgRect extends PnAgregarForma{
     public PnAgRect(PnPlano plano) {
         super(plano);
         
-        setBounds(140, getY(), getWidth(), 220);
+        setBounds(260, getY(), getWidth(), 220);
         
         TFNombre.setText("Rectangulo " + FrRect.ID);
         TFNombre.addActionListener(new ActionListener(){

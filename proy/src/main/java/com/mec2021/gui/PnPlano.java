@@ -54,7 +54,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
     public float EscalaVieja = Escala/EscalaPix;
 
     /**Posicion del origen dentro del Panel del plano */
-    public Punto PtOrigen = new Punto(500,500);
+    public Punto PtOrigen = new Punto(0,0);
 
     /**Posicion inicial de la seleccion */
     Punto PtInicioSel = new Punto();
@@ -96,8 +96,11 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
     public PnCentroide PnCent = new PnCentroide(this);
 
+    public BotonGenerico BtMostrarCent;
+
     public PnPlano(){
         setLayout(null);
+        revalidate();
 
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -110,10 +113,58 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
         
         LOP.setVisible(false);
 
+
+        BtMostrarCent = new BotonGenerico(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                Graphics2D g2 = (Graphics2D)g;
+                
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                if(PnPrincipal.VerCentroide){
+                    g2.setColor(Color.red);
+                    g2.fillOval(20, 20, 3, 3);
+                    if(MouseEncima)
+                        g2.setColor(Ctrl.ClGrisClaro);
+                    else
+                        g2.setColor(Ctrl.ClGris);
+                }else
+                    if(MouseEncima)
+                        g2.setColor(Ctrl.ClGris2);
+                    else    
+                        g2.setColor(Ctrl.ClGrisClaro);
+
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                
+                if(PnPrincipal.VerCentroide){
+                    g2.setColor(Ctrl.ClGrisClaro);
+                    g2.fillOval(17, 17, 6, 6);
+                }
+
+                g2.setColor(Ctrl.ClGrisClaro3);
+                g2.drawRect(10, 10, 20, 20);
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                PnPrincipal.VerCentroide = !PnPrincipal.VerCentroide; 
+            }
+        };
+
+        BtMostrarCent.setOpaque(false);
+        BtMostrarCent.setBounds(getWidth() - 60, getHeight() - 60, 40, 40);
+
+
         notificarCambios(0);
         add(LOP, JLayeredPane.DRAG_LAYER);
         add(PnCent, JLayeredPane.DRAG_LAYER);
         add(AB);
+        add(BtMostrarCent);
     }
 
     @Override
@@ -130,6 +181,8 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                         120,
                         120);
         
+        BtMostrarCent.setBounds(getWidth() - 60, getHeight() - 60, 40, 40);
+
         PnCent.CX = CX;
         PnCent.CY = CY;
         PnCent.IX = IX;
@@ -367,8 +420,10 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
     public SeccionEI generarData(){
 
-        SeccionEI Raiz = new SeccionEI(PnPrincipal.TabSel.Nombre);
+        SeccionEI Raiz = new SeccionEI(PnPrincipal.TabSel.LbNombre.getText());
         Raiz.agregarHoja("t", "a");
+        Raiz.agregarHoja("p", "" + EscalaPix);
+        Raiz.agregarHoja("u", "" + Escala);
 
         for (Nodo nodo : AB.Arbol.Hijos) {
             SeccionEI DatosObj = nodo.Objeto.generarData();
@@ -460,7 +515,7 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
 
             case "a":{
                 ArrayList<NodoEI> Objetos = new ArrayList<NodoEI>();
-                Objetos.addAll(DatosEI.Hijos.subList(1, DatosEI.Hijos.size()));
+                Objetos.addAll(DatosEI.Hijos.subList(3, DatosEI.Hijos.size()));
 
                 for (NodoEI nodoEI : Objetos) 
                     crearObjeto2D((SeccionEI)nodoEI);

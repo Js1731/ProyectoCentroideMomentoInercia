@@ -24,7 +24,7 @@ public class PnAgTria extends PnAgregarForma{
 
         TFNombre.setText("Triangulo " + FrTria.ID);
 
-        setBounds(220, getY(), getWidth(), 160);
+        setBounds(340, getY(), getWidth(), 160);
 
         PnAgTria PG = this;
 

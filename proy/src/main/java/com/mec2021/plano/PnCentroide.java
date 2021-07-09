@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
+import com.mec2021.gui.PnPrincipal;
 
 
 /**
@@ -28,7 +29,6 @@ public class PnCentroide extends JPanel{
     public PnCentroide(PnPlano plano){
         Plano = plano;
 
-        setBackground(Color.BLACK);
         setOpaque(false);
         setBounds(10, 10, 100, 100);
     }
@@ -46,12 +46,17 @@ public class PnCentroide extends JPanel{
         int PosX = 5;
         int PosY = 15;
 
-        g2.setColor(Fondo);
-
-        g2.fillRoundRect(0, 0, getWidth(), getHeight() - 8, 10, 10);
-
+        
         g2.setColor(Color.BLACK);
-        g2.fillOval(getWidth()/2 - 3, getHeight() - 6, 6, 6);
+
+        if(Plano.LstObjetos.size() > 0)
+            g2.fillOval(getWidth()/2 - 3, getHeight() - 6, 6, 6);
+        
+        if(!PnPrincipal.VerCentroide)
+            return;
+            
+        g2.setColor(Fondo);
+        g2.fillRoundRect(0, 0, getWidth(), getHeight() - 8, 10, 10);
 
         g2.setColor(Color.WHITE);
 
@@ -59,7 +64,7 @@ public class PnCentroide extends JPanel{
 
         g2.drawString("Centroide", PosX, PosY);
         g2.drawString("x " + f.format(CX), PosX, PosY + 20);
-        g2.drawString("y " + f.format(CY), PosX, PosY + 35);
+        g2.drawString("y " + f.format(-CY), PosX, PosY + 35);
 
         g2.drawString("Inercia", PosX, PosY + 55);
         g2.drawString("x " + f.format(IX), PosX, PosY + 70);

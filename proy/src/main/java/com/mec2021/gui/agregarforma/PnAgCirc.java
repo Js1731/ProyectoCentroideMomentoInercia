@@ -150,7 +150,7 @@ public class PnAgCirc extends PnAgregarForma{
 
     public PnAgCirc(PnPlano plano) {
         super(plano);
-        setBounds(180, getY(), getWidth(), 280);
+        setBounds(300, getY(), getWidth(), 280);
 
         PnAgCirc PAg = this;
 

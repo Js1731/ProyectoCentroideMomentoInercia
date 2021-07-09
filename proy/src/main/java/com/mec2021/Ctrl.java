@@ -19,6 +19,7 @@ public class Ctrl {
     public static Font Fnt0;
     public static Font Fnt1;
     public static Font Fnt2;
+    public static Font Fnt3;
 
     //CONSTANTES PARA COLORES
     public static final Color ClGrisClaro = new Color(196, 196, 196);
@@ -33,10 +34,12 @@ public class Ctrl {
         InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Regular.ttf");
         InputStream stream1 = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Regular.ttf");
         InputStream stream2 = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Bold.ttf");
+        InputStream stream3 = ClassLoader.getSystemClassLoader().getResourceAsStream("Roboto-Bold.ttf");
         try {
             Fnt0 = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(9f);
             Fnt1 = Font.createFont(Font.TRUETYPE_FONT, stream1).deriveFont(15f);
             Fnt2 = Font.createFont(Font.TRUETYPE_FONT, stream2).deriveFont(20f);
+            Fnt3 = Font.createFont(Font.TRUETYPE_FONT, stream3).deriveFont(30f);
         } catch (FontFormatException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -23,11 +23,9 @@ class DKE implements KeyEventDispatcher{
     public boolean dispatchKeyEvent(KeyEvent e) {
         if(!Presionado){
             
-            if(e.isControlDown())
+            if(e.isControlDown() && PnPrincipal.PanelPrinc.PlanoActual != null)
                 if(e.getKeyCode() == KeyEvent.VK_V){
                     
-                    System.out.println("Soi nuebo");
-
                     Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
                     String Datos;
                     try {
@@ -47,10 +45,9 @@ class DKE implements KeyEventDispatcher{
 
                     Presionado = true;
                 }else if(e.getKeyCode() == KeyEvent.VK_C){
-                    System.out.println("Soi nuebo");
 
                     Forma FrS = PnPrincipal.PanelPrinc.PlanoActual.FrSel;
-                    String Data = "<|||>" + FrS.generarData();
+                    String Data = "<|||>" + FrS.generarDataString();
 
                     Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
                     StringSelection SL = new StringSelection(Data);
@@ -86,12 +83,13 @@ public class Main {
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new DKE());
 
-        Vent.add(new PnPrincipal());
-
+        
         Vent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Vent.setSize(500, 500);
+        Vent.setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(),(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50);
         Vent.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        Vent.add(new PnPrincipal());
         Vent.setVisible(true);
+        
     }
 }
 

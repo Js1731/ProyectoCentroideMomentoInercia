@@ -39,7 +39,8 @@ public abstract class Arrastrable extends JPanel implements MouseInputListener{
         Point Pos = e.getLocationOnScreen();
         SwingUtilities.convertPointFromScreen(Pos, Plano);
 
-        setBounds(Pos.x - PtOffset.x, Pos.y - PtOffset.y, getWidth(), getHeight());
+        if(SwingUtilities.isLeftMouseButton(e))
+            setBounds(Pos.x - PtOffset.x, Pos.y - PtOffset.y, getWidth(), getHeight());
     }
 
     public void mouseClicked(MouseEvent e) {}

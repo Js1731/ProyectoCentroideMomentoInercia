@@ -20,6 +20,7 @@ import java.util.Scanner;
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import java.awt.Polygon;
+import javax.swing.JOptionPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
@@ -28,6 +29,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrTria;
@@ -35,6 +37,7 @@ import com.mec2021.plano.objetos.formas.FrTria;
 import javafx.scene.shape.Line;
 
 import com.mec2021.Ctrl;
+import com.mec2021.Main;
 import com.mec2021.EstructIndex.EstructuraInd;
 import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.agregarforma.PnAgCirc;
@@ -67,6 +70,8 @@ public class PnPrincipal extends JPanel{
     public final Polygon Carpeta = new Polygon();
 
     public static Tab TabSel;
+
+    public static boolean VerCentroide = true;
 
     public PnPrincipal(){
 
@@ -153,6 +158,14 @@ public class PnPrincipal extends JPanel{
         Ly.putConstraint(SpringLayout.SOUTH, PnAreaTrabajo, 0, SpringLayout.SOUTH, this);
         Ly.putConstraint(SpringLayout.EAST, PnAreaTrabajo, 0, SpringLayout.EAST, this);
 
+
+        JLabel LbSinFigura = new JLabel("Agrega o carga una figura para verla");
+        LbSinFigura.setFont(Ctrl.Fnt3);
+        LbSinFigura.setHorizontalAlignment(JLabel.CENTER);
+        LbSinFigura.setForeground(Ctrl.ClGrisClaro);
+
+        PnAreaTrabajo.add(LbSinFigura);
+
         add(PnBarraSup);
         add(BarraTabs);
         add(PnAreaTrabajo);
@@ -171,6 +184,11 @@ public class PnPrincipal extends JPanel{
 
         PnPlano Plano = new PnPlano();
         PnPrincipal.PanelPrinc.PnAreaTrabajo.add(Nom, Plano);
+        
+        PnPrincipal.PanelPrinc.PnAreaTrabajo.revalidate();
+
+        Plano.PtOrigen.x = Main.VentPrinc.getWidth()/2;
+        Plano.PtOrigen.y = Main.VentPrinc.getHeight()/2;
 
         if(TabsCount == 1){
             PnPrincipal.PanelPrinc.PlanoActual = Plano;
@@ -306,8 +324,6 @@ public class PnPrincipal extends JPanel{
 
                 int[] xs = {10,20,30};
                 int[] ys = {30,10,30};
-    
-                
 
                 if(MouseEncima){
                     g2.drawPolygon(xs, ys, 3);
@@ -374,6 +390,8 @@ public class PnPrincipal extends JPanel{
                         EstructuraInd.iniciarSeccion(Raiz, Sc, Limite);
 
                         Tab NuevaTab = agregarTab(Nombre);
+                        NuevaTab.Plano.Escala = Integer.parseInt(Raiz.extraerValorHoja("u"));
+                        NuevaTab.Plano.EscalaPix = Integer.parseInt(Raiz.extraerValorHoja("p"));
                         NuevaTab.seleccionarTab();
                         NuevaTab.Plano.crearObjeto2D(Raiz);
                         BarraTabs.setComponentZOrder(BtAgregarTab, BarraTabs.getComponentCount()-1);
@@ -388,6 +406,9 @@ public class PnPrincipal extends JPanel{
         BtRect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                if(PlanoActual == null)
+                    return;
 
                 if(PlanoActual.PnAgActivo != null){
                     PlanoActual.remove(PlanoActual.PnAgActivo);
@@ -405,6 +426,9 @@ public class PnPrincipal extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                if(PlanoActual == null)
+                    return;
+
                 if(PlanoActual.PnAgActivo != null){
                     PlanoActual.remove(PlanoActual.PnAgActivo);
                     PlanoActual.PnAgActivo = null;
@@ -421,6 +445,8 @@ public class PnPrincipal extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                if(PlanoActual == null)
+                    return;
 
                 if(PlanoActual.PnAgActivo != null){
                     PlanoActual.remove(PlanoActual.PnAgActivo);

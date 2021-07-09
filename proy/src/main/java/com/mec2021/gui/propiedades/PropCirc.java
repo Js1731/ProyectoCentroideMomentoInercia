@@ -97,14 +97,14 @@ public class PropCirc extends PnPropiedades{
 
         TFX.setText("" + f.format(Circulo.X));
         TFY.setText("" + f.format(-Circulo.Y));
-        TFRadio.setText("" + f.format(Circulo.Diametro/2));
+        TFRadio.setText("" + f.format(Circulo.Radio));
     
         TFAngIni.setText("" + f.format(Circulo.Sector.start));
         TFExt.setText("" + f.format(Circulo.Sector.extent));
 
         LbArea.setText("Area:                      " + f.format(Circulo.calcularArea()));
-        LbCentX.setText("Centroide en x:     " + f.format(Circulo.centroideX()));
-        LbCentY.setText("Centroide en Y:     " + f.format(Circulo.centroideY()));
+        LbCentX.setText("Centroide en x:     " + f.format(Circulo.centroideX() + Circulo.X));
+        LbCentY.setText("Centroide en Y:     " + f.format(-(Circulo.centroideY() + Circulo.Y)));
 
         LbInX.setText("Inercia en x:     " + f.format(Circulo.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     " + f.format(Circulo.inerciaCentEjeY()));
@@ -127,7 +127,7 @@ public class PropCirc extends PnPropiedades{
         //APLICAR PROPIEDADES
         Circ.X = PosX;
         Circ.Y = PosY;
-        Circ.Diametro = Radio*2;
+        Circ.Radio = Radio;
 
         Circ.Sector.start = AngIni;
         Circ.Sector.extent = AngExt;
@@ -135,7 +135,7 @@ public class PropCirc extends PnPropiedades{
         Circ.Hueco = CBHueco.isSelected();
 
         Circ.actualizarDimensiones();
-        Circ.ActualizarPines();
+        Circ.actualizarPines();
 
         Circ.repaint();
     }

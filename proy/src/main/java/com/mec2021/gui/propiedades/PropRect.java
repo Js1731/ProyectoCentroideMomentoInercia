@@ -91,8 +91,8 @@ public class PropRect extends PnPropiedades{
         TFAl.setText(""+ f.format(Rect.Alto));
         
         LbArea.setText("Area:                      " +f.format(Rect.calcularArea()));
-        LbCentX.setText("Centroide en x:     " + f.format(Rect.centroideX()));
-        LbCentY.setText("Centroide en Y:     " + f.format(Rect.centroideY()));
+        LbCentX.setText("Centroide en x:     " + f.format(Rect.centroideX() + Rect.X));
+        LbCentY.setText("Centroide en Y:     " + f.format(-(Rect.centroideY() + Rect.Y)));
 
         LbInX.setText("Inercia en X:     "+f.format(Rect.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     "+f.format(Rect.inerciaCentEjeY()));
@@ -119,7 +119,7 @@ public class PropRect extends PnPropiedades{
         Rec.Hueco = CBHueco.isSelected();
 
         Rec.actualizarDimensiones();
-        Rec.ActualizarPines();
+        Rec.actualizarPines();
 
         Plano.repaint();
     }

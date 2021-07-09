@@ -31,7 +31,7 @@ public class ArbolObjetos extends JPanel{
     ArrayList<PnNodo> LstPaneles = new ArrayList<PnNodo>();
 
     /**Estructura de datos de los objetos*/
-    Nodo Arbol = new Nodo();
+    public Nodo Arbol = new Nodo();
 
     public PnPlano Plano;
 
@@ -275,11 +275,10 @@ class PnNodo extends BotonGenerico{
                 Plano.add(Plano.PnPropActual = new PropCirc(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }else if(Nd.Objeto instanceof FrTria){
                 Plano.add(Plano.PnPropActual = new PropTria(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
-            }else if(Nd.Objeto instanceof Grupo){
-                Plano.add(Plano.PnPropActual = new PropGrupo(Nd.Objeto, Plano), JLayeredPane.DRAG_LAYER);
             }
 
-            Plano.moveToFront(Plano.PnPropActual);
+            if(!(Nd.Objeto instanceof Grupo))
+                Plano.moveToFront(Plano.PnPropActual);
         }
     }
 }

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.RenderingHints;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import com.mec2021.Ctrl;
 
@@ -18,14 +19,16 @@ public class Tab extends BotonGenerico{
     String Nombre;
     PnPlano Plano;
 
-    public Tab(String Nombre, PnPlano plano){
+    JLabel LbNombre;
+
+    public Tab(String Nom, PnPlano plano){
         setLayout(null);
 
-        this.Nombre = Nombre;
+        this.Nombre = Nom;
         Plano = plano;
 
         setBackground(Ctrl.ClGrisClaro2);
-        JLabel LbNombre = new JLabel(Nombre);
+        LbNombre = new JLabel(Nombre);
         LbNombre.setForeground(Color.GRAY);
         LbNombre.setFont(Ctrl.Fnt1);
         LbNombre.setBounds(5, 0, 100, 30);
@@ -64,11 +67,15 @@ public class Tab extends BotonGenerico{
                 PnPrincipal.PanelPrinc.BarraTabs.revalidate();
                 PnPrincipal.PanelPrinc.BarraTabs.repaint();
 
-                if(PnPrincipal.TabSel == tb){
+                if(PnPrincipal.TabSel == tb && PnPrincipal.PanelPrinc.BarraTabs.getComponentCount() > 1){
                     Tab PrimTab = (Tab)PnPrincipal.PanelPrinc.BarraTabs.getComponent(0);
                     PnPrincipal.PanelPrinc.PlanoActual = PrimTab.Plano;
                     PnPrincipal.TabSel = PrimTab;
                     PnPrincipal.PanelPrinc.Expositor.show(PnPrincipal.PanelPrinc.PnAreaTrabajo, PrimTab.Nombre);
+                }
+
+                if(PnPrincipal.PanelPrinc.PlanoActual == Plano){
+                    PnPrincipal.PanelPrinc.PlanoActual = null;
                 }
             }
         };
@@ -105,6 +112,18 @@ public class Tab extends BotonGenerico{
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        if(e.getClickCount() >= 2){
+            String txt = JOptionPane.showInputDialog("Ingrese un nombre para la figura: ");
+
+            if(!txt.equals("")){
+                LbNombre.setText(txt);
+            }
+        }
+
+        seleccionarTab();
+    }
+
+    public void seleccionarTab(){
         PnPrincipal.TabSel = this;
         PnPrincipal.PanelPrinc.BarraTabs.repaint();
 

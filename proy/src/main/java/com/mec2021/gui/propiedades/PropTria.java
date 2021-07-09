@@ -209,8 +209,8 @@ public class PropTria extends PnPropiedades{
         
 
         LbArea.setText("Area:                      " + f.format(Tria.calcularArea()));
-        LbCentX.setText("Centroide en x:     " + f.format(Tria.centroideX()));
-        LbCentY.setText("Centroide en Y:     " + f.format(Ctrl.aplicarEscalaLnPixU(ObjRef.getHeight()) - Tria.centroideY()));
+        LbCentX.setText("Centroide en x:     " + f.format(Tria.centroideX() + Tria.X));
+        LbCentY.setText("Centroide en Y:     " + f.format(-(Ctrl.aplicarEscalaLnPixU(ObjRef.getHeight()) - Tria.centroideY()) + Tria.Y));
 
         LbInX.setText("Inercia en x:     " + f.format(Tria.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     " + f.format(Tria.inerciaCentEjeY()));
@@ -234,7 +234,7 @@ public class PropTria extends PnPropiedades{
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.ActualizarBordes();
-        Tria.ActualizarPines();
+        Tria.actualizarPines();
 
         Plano.repaint();
     }
@@ -243,8 +243,8 @@ public class PropTria extends PnPropiedades{
     public void actualizarPosTriangulo() {
         FrTria Tria = (FrTria)ObjRef;
 
-        int DifX = Math.round(Ctrl.aplicarEscalaUPix(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))  - Tria.X);
-        int DifY = -Math.round(Ctrl.aplicarEscalaUPix(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText()))) - Tria.Y);
+        float DifX = Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText()))  - Tria.X;
+        float DifY = -Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText())) - Tria.Y;
 
         Tria.setBounds(Math.round(Plano.PtOrigen.x + Ctrl.aplicarEscalaUPix(Float.parseFloat((TFX.getText().isEmpty() || TFX.getText().equals("-") ? "0" : TFX.getText())))),
                       Math.round(Plano.PtOrigen.y - Ctrl.aplicarEscalaUPix(Float.parseFloat((TFY.getText().isEmpty() || TFY.getText().equals("-") ? "0" : TFY.getText())))),
@@ -256,18 +256,20 @@ public class PropTria extends PnPropiedades{
         Tria.Hueco = CBHueco.isSelected();
 
         Tria.actualizarCoordenadas();
-        Tria.ActualizarPines();
+        Tria.actualizarPines();
         Plano.repaint();
 
+        DecimalFormat f = new DecimalFormat("#0.00");
+
         //ACTUALIZAR CAMPOS
-        TFX1.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver1.x - Plano.PtOrigen.x));
-        TFY1.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver1.y + Plano.PtOrigen.y));
+        TFX1.setText("" + f.format(Tria.Ver1.x ));
+        TFY1.setText("" + f.format(-Tria.Ver1.y));
 
-        TFX2.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver2.x - Plano.PtOrigen.x));
-        TFY2.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver2.y + Plano.PtOrigen.y));
+        TFX2.setText("" + f.format(Tria.Ver2.x ));
+        TFY2.setText("" + f.format(-Tria.Ver2.y));
 
-        TFX3.setText("" + Ctrl.aplicarEscalaUPix(Tria.Ver3.x - Plano.PtOrigen.x));
-        TFY3.setText("" + Ctrl.aplicarEscalaUPix(-Tria.Ver3.y + Plano.PtOrigen.y));
+        TFX3.setText("" + f.format(Tria.Ver3.x ));
+        TFY3.setText("" + f.format(-Tria.Ver3.y));
     }
 
 }

@@ -1,11 +1,18 @@
 package com.mec2021.plano.objetos.formas;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
+import com.mec2021.Ctrl;
+import com.mec2021.EstructIndex.EstructuraInd;
+import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
 import com.mec2021.gui.PnPlano;
@@ -20,7 +27,11 @@ import com.mec2021.plano.objetos.Pin;
 */
 public abstract class Forma extends Objeto2D{
     
-    protected Color ColFig;
+    /**Contador de formas creadas */
+    public static int FrCount = 0;
+
+    /**Color de la forma */
+    protected Color ColForma;
 
     /**Hace referencia al grupo al que pertenece la figura (Si pertenece a uno) */
     public Grupo Grp;
@@ -30,29 +41,45 @@ public abstract class Forma extends Objeto2D{
 
     public boolean Hueco = false;
 
-    public static int FrCount = 0;
+    
 
-    public Forma(PnPlano plano){
+    public Forma(PnPlano plano, boolean hueco){
         super(plano);
 
-        Plano = plano;
+        Hueco = hueco;
         FrCount++;
 
+        //ESCOGE UN COLOR PARA LA FIGURA
         int Val = 230 - Math.round((float)(40*(Math.cos(Math.toRadians(FrCount*60)) + 1)/2));
-        ColFig = new Color(Val, Val, Val);
+        ColForma = new Color(Val, Val, Val);
 
         Plano.LstObjetos.add(this);
-
-        
     }
 
     /**Calcula el area de esta forma, si la figura esta hueca el area sera negativa */
     public abstract float calcularArea();
 
+    /**Calcula la coordenada X del centroide (Es local a la forma)*/
+    public abstract float centroideX();
+
+    /**Calcula la coordenada Y del centroide (Es local a la forma)*/
+    public abstract float centroideY();
+
+
+    /**Calcula la inercia con respecto al centroide X para esta Forma 
+     *<p>Si la forma no pertence a un grupo, no se podra calcular la inercia y se retornara 0.
+    */
+    public abstract float inerciaCentEjeX();
+    
+    /**Calcula la inercia con respecto al centroide Y para esta Forma
+     * <p>Si la forma no pertence a un grupo, no se podra calcular la inercia y se retornara 0.
+     */
+    public abstract float inerciaCentEjeY();
+
     /**
      * Actualiza la posicion de los pines de la figura
      */
-    public abstract void ActualizarPines();
+    public abstract void actualizarPines();
 
     /**
      * Mostrar los Pines de la Forma
@@ -74,14 +101,12 @@ public abstract class Forma extends Objeto2D{
     }
 
 
-
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-
-        requestFocus();
         actualizarCoordenadas();
 
+        //ABRIR PANEL DE PROPIEDADES
         if(e.getClickCount() > 1){
             //ELIMINAR OTROS PANELES ACTIVOS
             if(Plano.PnPropActual != null){
@@ -101,22 +126,57 @@ public abstract class Forma extends Objeto2D{
 
             Plano.moveToFront(Plano.PnPropActual);
         }
-
-        //SELECCIONA LA FORMA
-        //Plano.moveToFront(this);
-
-        if(Pines[0] != null){
-            for (Pin pin : Pines) 
-            Plano.moveToFront(pin);
-        }
+        
 
         if(Plano.FrSel != this)
             Plano.seleccionarForma(this);
 
+        //CREA UN MENU CONTEXTUAL PARA LA FORMA
         if(SwingUtilities.isRightMouseButton(e)){
             ListaOpciones Lo = new ListaOpciones(getX() + e.getX(), getY() +  e.getY(), Plano);
 
             Forma Fr = this;
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCopiar = new Opcion("Copiar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection SL = new StringSelection("<|||>" + Fr.generarDataString());
+                    CB.setContents(SL, null);
+
+                    Plano.remove(Lo);
+                }
+            };
+
+            //OPCION PARA COPIAR FORMA
+            Opcion OpCortar = new Opcion("Cortar"){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+
+                    Clipboard CB =Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection SL = new StringSelection("<|||>" + Fr.generarDataString());
+                    CB.setContents(SL, null);
+
+                    Plano.eliminarForma(Fr);
+
+                    Plano.remove(Lo);
+                }
+
+                
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    g.setColor(Ctrl.ClGris);
+                    g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
+                }
+            };
+
+            //OPCION PARA ELIMINAR LA FORMA
             Opcion OpEliminar = new Opcion("Eliminar"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -125,8 +185,17 @@ public abstract class Forma extends Objeto2D{
                     Plano.eliminarForma(Fr);
                     Plano.remove(Lo);
                 }
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    g.setColor(Ctrl.ClGris);
+                    g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
+                }
             };
 
+            //OPCION PARA ENVIAR LA FORMA AL FRENTE DEL PLANO
             Opcion OpEnvFrente = new Opcion("Enviar al Frente"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -137,6 +206,7 @@ public abstract class Forma extends Objeto2D{
                 }
             };
 
+            //OPCION PARA ENVIAR LA FORMA DETRAS DE TODAS LAS FORMAS DEL PLANO
             Opcion OpEnvFondo = new Opcion("Enviar al Fondo"){
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -148,6 +218,8 @@ public abstract class Forma extends Objeto2D{
             };
 
             Lo.agregarOpcion(OpEliminar);
+            Lo.agregarOpcion(OpCopiar);
+            Lo.agregarOpcion(OpCortar);
             Lo.agregarOpcion(OpEnvFrente);
             Lo.agregarOpcion(OpEnvFondo);
 
@@ -156,6 +228,8 @@ public abstract class Forma extends Objeto2D{
             Lo.repaint();
         }
     }
+
+
 
     @Override
     public void mouseDragged(MouseEvent e) {

@@ -7,6 +7,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -44,6 +45,7 @@ public class ListaOpciones extends JPanel{
 
         Toolkit.getDefaultToolkit().addAWTEventListener(Listener, AWTEvent.MOUSE_EVENT_MASK);
 
+        setBorder(new EmptyBorder(1, 1, 1, 1));
     }
     
     @Override

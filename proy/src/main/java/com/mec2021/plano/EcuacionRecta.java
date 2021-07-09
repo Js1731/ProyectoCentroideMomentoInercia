@@ -28,6 +28,7 @@ public class EcuacionRecta {
     /**Interseccion con el eje Y */
     public float b = 0;
 
+    /**Plano al que pertence esta recta */
     public PnPlano Plano;
 
     /**

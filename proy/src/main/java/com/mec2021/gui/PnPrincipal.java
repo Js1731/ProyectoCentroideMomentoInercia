@@ -11,8 +11,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
+import java.awt.Polygon;
+import javax.swing.JOptionPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFormattedTextField;
@@ -21,31 +29,72 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 
 import com.mec2021.plano.objetos.formas.Forma;
-import com.mec2021.plano.objetos.formas.FrCirc;
-import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
+
+import javafx.scene.shape.Line;
+
 import com.mec2021.Ctrl;
+import com.mec2021.Main;
+import com.mec2021.EstructIndex.EstructuraInd;
+import com.mec2021.EstructIndex.SeccionEI;
+import com.mec2021.gui.agregarforma.PnAgCirc;
+import com.mec2021.gui.agregarforma.PnAgRect;
+import com.mec2021.gui.agregarforma.PnAgTria;
+import javax.swing.JFileChooser;
 
 public class PnPrincipal extends JPanel{
 
     public CardLayout Expositor = new CardLayout(); 
+    BotonGenerico BtAgregarTab;
 
     public static PnPrincipal PanelPrinc;
-    public JPanel PnBarraSup = new JPanel();
+    public JPanel PnBarraSup = new JPanel(){
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            g.setColor(Ctrl.ClGrisClaro);
+            g.drawLine(115, 5, 115, 35);
+        }
+    };
     public JPanel BarraTabs = new JPanel();
     public PnPlano PlanoActual;
     public JPanel PnAreaTrabajo = new JPanel();
 
     public static int TabsCount = 1;
 
+    public final Polygon Disquete = new Polygon();
+    public final Polygon Carpeta = new Polygon();
+
     public static Tab TabSel;
+
+    public static boolean VerCentroide = true;
 
     public PnPrincipal(){
 
         PanelPrinc = this;
         Ctrl.PnPrinc = this;
+
+
+        int posx[] = {10, 10, 30, 30, 25};
+        int posy[] = {10, 30, 30, 15, 10};
+
+        Disquete.npoints = 5;
+        Disquete.xpoints = posx;
+        Disquete.ypoints = posy;
+
+        
+        int posx2[] = {10, 20, 23, 30, 30, 10};
+        int posy2[] = {10, 10, 15, 15, 30, 30};
+
+        Carpeta.npoints = 6;
+        Carpeta.xpoints = posx2;
+        Carpeta.ypoints = posy2;
+
+
 
         setBackground(Ctrl.ClGris2);
 
@@ -61,7 +110,7 @@ public class PnPrincipal extends JPanel{
 
         TabSel = agregarTab();
 
-        BotonGenerico BtAgregarTab = new BotonGenerico(){
+        BtAgregarTab = new BotonGenerico(){
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -83,7 +132,7 @@ public class PnPrincipal extends JPanel{
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
 
-                agregarTab();
+                agregarTab().seleccionarTab();
                 BarraTabs.setComponentZOrder(this, BarraTabs.getComponentCount()-1);
             }
         };
@@ -109,6 +158,14 @@ public class PnPrincipal extends JPanel{
         Ly.putConstraint(SpringLayout.SOUTH, PnAreaTrabajo, 0, SpringLayout.SOUTH, this);
         Ly.putConstraint(SpringLayout.EAST, PnAreaTrabajo, 0, SpringLayout.EAST, this);
 
+
+        JLabel LbSinFigura = new JLabel("Agrega o carga una figura para verla");
+        LbSinFigura.setFont(Ctrl.Fnt3);
+        LbSinFigura.setHorizontalAlignment(JLabel.CENTER);
+        LbSinFigura.setForeground(Ctrl.ClGrisClaro);
+
+        PnAreaTrabajo.add(LbSinFigura);
+
         add(PnBarraSup);
         add(BarraTabs);
         add(PnAreaTrabajo);
@@ -118,11 +175,20 @@ public class PnPrincipal extends JPanel{
     }
     
     public static Tab agregarTab(){
+        return agregarTab("Figura " + TabsCount);
+    }
 
-        String Nom = "Figura " + TabsCount;
+    public static Tab agregarTab(String nom){
+
+        String Nom = nom;
 
         PnPlano Plano = new PnPlano();
         PnPrincipal.PanelPrinc.PnAreaTrabajo.add(Nom, Plano);
+        
+        PnPrincipal.PanelPrinc.PnAreaTrabajo.revalidate();
+
+        Plano.PtOrigen.x = Main.VentPrinc.getWidth()/2;
+        Plano.PtOrigen.y = Main.VentPrinc.getHeight()/2;
 
         if(TabsCount == 1){
             PnPrincipal.PanelPrinc.PlanoActual = Plano;
@@ -130,7 +196,8 @@ public class PnPrincipal extends JPanel{
         
         Tab tab = new Tab(Nom, Plano);
         PnPrincipal.PanelPrinc.BarraTabs.add(tab);        
-        
+        PnPrincipal.PanelPrinc.BarraTabs.revalidate();
+
         TabsCount ++;
 
         return tab;
@@ -145,6 +212,62 @@ public class PnPrincipal extends JPanel{
         PnBarraSup.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
     
+        BotonGenerico BtGuardar = new BotonGenerico(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                Graphics2D g2 = (Graphics2D) g;
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setStroke(new BasicStroke(2f));
+                g2.setColor(Ctrl.ClGrisClaro);
+
+
+
+                if(MouseEncima){
+                    setBackground(Color.darkGray);
+
+                    g2.drawPolygon(Disquete);
+                    g2.drawOval(15, 18, 10, 10);
+
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+                    g2.drawRect(11, 11, 9, 4);
+                }else{
+                    setBackground(Color.GRAY);
+
+                    g2.fillPolygon(Disquete);
+                    g2.setColor(Color.GRAY);
+                    g2.fillOval(15, 18, 10, 10);
+                    g.fillRect(11, 11, 9, 4);
+                }
+            }
+        };
+
+
+        BotonGenerico BtCargar = new BotonGenerico(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                Graphics2D g2 = (Graphics2D) g;
+
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setStroke(new BasicStroke(2f));
+                g2.setColor(Ctrl.ClGrisClaro);
+
+                if(MouseEncima){
+                    setBackground(Color.darkGray);
+                    g2.drawPolygon(Carpeta);
+                }else{
+                    setBackground(Color.GRAY);                    
+                    g2.fillPolygon(Carpeta);
+                }
+            }
+        };
+
+
         BotonGenerico BtRect = new BotonGenerico(){
             @Override
             protected void paintComponent(Graphics g) {
@@ -201,8 +324,6 @@ public class PnPrincipal extends JPanel{
 
                 int[] xs = {10,20,30};
                 int[] ys = {30,10,30};
-    
-                
 
                 if(MouseEncima){
                     g2.drawPolygon(xs, ys, 3);
@@ -214,67 +335,128 @@ public class PnPrincipal extends JPanel{
             }
         };
 
+        BtGuardar.setPreferredSize(new Dimension(40, 40));
+        BtCargar.setPreferredSize(new Dimension(40, 40));
         BtRect.setPreferredSize(new Dimension(40, 40));
         BtCirc.setPreferredSize(new Dimension(40, 40));
         BtTria.setPreferredSize(new Dimension(40, 40));
 
-        JFormattedTextField JFTScale = new JFormattedTextField(1);
-        JFTScale.setBounds(0, 0, 40, 25);
-        JFTScale.setPreferredSize(new Dimension(40, 25));
-        JFTScale.setBorder(BorderFactory.createEmptyBorder());
-        JFTScale.setHorizontalAlignment(JTextField.CENTER);
-        JFTScale.addKeyListener(new KeyListener(){
 
-            private void actualizarEscala(){
-                PlanoActual.EscalaVieja = (float)PlanoActual.Escala/PlanoActual.EscalaPix;
-                PlanoActual.Escala = (int)JFTScale.getValue();
-                PlanoActual.notificarCambios(2);
-            }
-
+        BtGuardar.addActionListener(new ActionListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                actualizarEscala();
-            }
+            public void actionPerformed(ActionEvent e) {
+                
+                if(PlanoActual == null)
+                    return;
+                
+                File Archivo = new File("");
+                
+                if(Ctrl.ExploradorArch.showSaveDialog(Ctrl.ExploradorArch) == JFileChooser.APPROVE_OPTION){
+                    Archivo = Ctrl.ExploradorArch.getSelectedFile().getAbsoluteFile();
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                actualizarEscala();
-            }
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                actualizarEscala();
+                    try {
+                        FileWriter FW = new FileWriter(Archivo, false);
+                        BufferedWriter BW = new BufferedWriter(FW);
+                        BW.write(EstructuraInd.transformarEstrString(PlanoActual.generarData()));
+
+                        BW.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    
+                }
             }
-            
         });
 
+        BtCargar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File Archivo = new File("");
+                
+                if(Ctrl.ExploradorArch.showOpenDialog(Ctrl.ExploradorArch) == JFileChooser.APPROVE_OPTION){
+                    Archivo = Ctrl.ExploradorArch.getSelectedFile().getAbsoluteFile();
 
 
+                    try {
+
+                        Scanner Sc = new Scanner(Archivo);
+                        String Linea = Sc.nextLine();
+
+                        String Nombre = EstructuraInd.extraerValor(Linea, 1);
+                        SeccionEI Raiz = new SeccionEI(Nombre);
+                        int Limite = Integer.parseInt(EstructuraInd.extraerValor(Linea, 2));
+
+                        EstructuraInd.iniciarSeccion(Raiz, Sc, Limite);
+
+                        Tab NuevaTab = agregarTab(Nombre);
+                        NuevaTab.Plano.Escala = Integer.parseInt(Raiz.extraerValorHoja("u"));
+                        NuevaTab.Plano.EscalaPix = Integer.parseInt(Raiz.extraerValorHoja("p"));
+                        NuevaTab.seleccionarTab();
+                        NuevaTab.Plano.crearObjeto2D(Raiz);
+                        BarraTabs.setComponentZOrder(BtAgregarTab, BarraTabs.getComponentCount()-1);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    
+                }
+            }
+        });
 
         BtRect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrRect(PlanoActual);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+                if(PlanoActual == null)
+                    return;
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgRect PG = new PnAgRect(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 
         BtCirc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrCirc(PlanoActual);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+                if(PlanoActual == null)
+                    return;
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgCirc PG = new PnAgCirc(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 
         BtTria.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Forma Fr = new FrTria(PlanoActual);
-                PlanoActual.add(Fr, JLayeredPane.DRAG_LAYER);
-                PlanoActual.moveToFront(Fr);
+
+                if(PlanoActual == null)
+                    return;
+
+                if(PlanoActual.PnAgActivo != null){
+                    PlanoActual.remove(PlanoActual.PnAgActivo);
+                    PlanoActual.PnAgActivo = null;
+                }
+
+                PnAgTria PG = new PnAgTria(PlanoActual);
+                PlanoActual.add(PG, JLayeredPane.DRAG_LAYER);
+                PlanoActual.moveToFront(PG);
+                PG.TFNombre.requestFocus();
             }
         });
 
@@ -282,16 +464,21 @@ public class PnPrincipal extends JPanel{
         LbIngresarFr.setForeground(Color.WHITE);
         LbIngresarFr.setFont(Ctrl.Fnt1);
         
-        JLabel LbEscala = new JLabel("Escala");
-        LbEscala.setFont(Ctrl.Fnt1);
-        LbEscala.setForeground(Color.WHITE);
-
         JLabel LbTitulo = new JLabel("Centroide y Momento de Inercia");
         LbTitulo.setFont(Ctrl.Fnt2);
         LbTitulo.setForeground(Color.WHITE);
         LbTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-        Ly2.putConstraint(SpringLayout.WEST, LbIngresarFr, 20, SpringLayout.WEST, PnBarraSup);
+
+        Ly2.putConstraint(SpringLayout.WEST, BtGuardar, 20, SpringLayout.WEST, PnBarraSup);
+        Ly2.putConstraint(SpringLayout.NORTH,BtGuardar, 0, SpringLayout.NORTH, PnBarraSup);
+        Ly2.putConstraint(SpringLayout.SOUTH,BtGuardar, 0, SpringLayout.SOUTH, PnBarraSup);
+
+        Ly2.putConstraint(SpringLayout.WEST, BtCargar, 0, SpringLayout.EAST, BtGuardar);
+        Ly2.putConstraint(SpringLayout.NORTH, BtCargar, 0, SpringLayout.NORTH, PnBarraSup);
+        Ly2.putConstraint(SpringLayout.SOUTH, BtCargar, 0, SpringLayout.SOUTH, PnBarraSup);
+
+        Ly2.putConstraint(SpringLayout.WEST, LbIngresarFr, 40, SpringLayout.EAST, BtCargar);
         Ly2.putConstraint(SpringLayout.NORTH, LbIngresarFr, 0, SpringLayout.NORTH, PnBarraSup);
         Ly2.putConstraint(SpringLayout.SOUTH, LbIngresarFr, 0, SpringLayout.SOUTH, PnBarraSup);
 
@@ -307,25 +494,16 @@ public class PnPrincipal extends JPanel{
         Ly2.putConstraint(SpringLayout.NORTH, BtTria, 0, SpringLayout.NORTH, PnBarraSup);
         Ly2.putConstraint(SpringLayout.SOUTH, BtTria, 0, SpringLayout.SOUTH, PnBarraSup);
 
-        Ly2.putConstraint(SpringLayout.WEST, LbTitulo, 10, SpringLayout.EAST, BtTria);
-        Ly2.putConstraint(SpringLayout.EAST, LbTitulo, -150, SpringLayout.WEST, LbEscala);
+        Ly2.putConstraint(SpringLayout.EAST, LbTitulo, -10, SpringLayout.EAST, PnBarraSup);
         Ly2.putConstraint(SpringLayout.NORTH, LbTitulo, 10, SpringLayout.NORTH, PnBarraSup);
         Ly2.putConstraint(SpringLayout.SOUTH, LbTitulo, -10, SpringLayout.SOUTH, PnBarraSup);
 
-        Ly2.putConstraint(SpringLayout.EAST, LbEscala, -10, SpringLayout.WEST, JFTScale);
-        Ly2.putConstraint(SpringLayout.NORTH, LbEscala, 10, SpringLayout.NORTH, PnBarraSup);
-        Ly2.putConstraint(SpringLayout.SOUTH, LbEscala, -10, SpringLayout.SOUTH, PnBarraSup);
-
-        Ly2.putConstraint(SpringLayout.EAST, JFTScale, -10, SpringLayout.EAST, PnBarraSup);
-        Ly2.putConstraint(SpringLayout.NORTH, JFTScale, 10, SpringLayout.NORTH, PnBarraSup);
-        Ly2.putConstraint(SpringLayout.SOUTH, JFTScale, -10, SpringLayout.SOUTH, PnBarraSup);
-
+        PnBarraSup.add(BtGuardar);
+        PnBarraSup.add(BtCargar);
         PnBarraSup.add(BtRect);
         PnBarraSup.add(BtCirc);
         PnBarraSup.add(BtTria);
         PnBarraSup.add(LbIngresarFr);
-        PnBarraSup.add(JFTScale);
-        PnBarraSup.add(LbEscala);
         PnBarraSup.add(LbTitulo);
     }
 }

@@ -633,15 +633,18 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                     Pl.moveToFront(PG);
                     PG.TFNombre.requestFocus();
 
-                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
-                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
-                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+                    Point PtMouse = new Point(Lo.getX(), Lo.getY());
 
-                    System.out.println(e.getX());
+                    PG.setBounds(PtMouse.x - 20, PtMouse.y, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PtMouse.x - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PtMouse.y - Pl.PtOrigen.y);
 
                     Pl.remove(Lo);
                 }
             };
+
+
+            
 
             //OPCION PARA COPIAR FORMA
             Opcion OpCirc = new Opcion("Crear Circulo"){
@@ -659,9 +662,11 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                     Pl.moveToFront(PG);
                     PG.TFNombre.requestFocus();
 
-                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
-                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
-                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+                    Point PtMouse = new Point(Lo.getX(), Lo.getY());
+
+                    PG.setBounds(PtMouse.x - 20, PtMouse.y, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PtMouse.x - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PtMouse.y - Pl.PtOrigen.y);
 
                     System.out.println(e.getX());
 
@@ -686,9 +691,12 @@ public class PnPlano extends JLayeredPane implements MouseInputListener, MouseWh
                     Pl.moveToFront(PG);
                     PG.TFNombre.requestFocus();
 
-                    PG.setBounds(PosX + 5, PosY + 40, PG.getWidth(), PG.getHeight());
-                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PosX - Pl.PtOrigen.x);
-                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PosY - Pl.PtOrigen.y);
+
+                    Point PtMouse = new Point(Lo.getX(), Lo.getY());
+
+                    PG.setBounds(PtMouse.x - 20, PtMouse.y, PG.getWidth(), PG.getHeight());
+                    PG.PosIni.x = Ctrl.aplicarEscalaLnPixU(PtMouse.x - Pl.PtOrigen.x);
+                    PG.PosIni.y = Ctrl.aplicarEscalaLnPixU(PtMouse.y - Pl.PtOrigen.y);
 
                     System.out.println(e.getX());
 

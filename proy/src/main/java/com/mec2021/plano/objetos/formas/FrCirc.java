@@ -236,8 +236,14 @@ public class FrCirc extends Forma{
 
             float r = Radio;
             float a = (float)Math.toRadians(Sector.extent)/2f;
-
-            float ix = ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
+            
+            float ix;
+            
+            if(Sector.extent != 90){
+                ix = ((r*r*r*r)/4)*(a+((float)Math.sin(2*a)/2)) - (4*r*r*r*r*(float)Math.sin(a)*(float)Math.sin(a))/(9*a);
+            }else{
+                ix = 0.05488f*r*r*r*r;
+            }
             
             float dy = (-Y - centroideY()) + Plano.centroideY();
 
@@ -254,8 +260,14 @@ public class FrCirc extends Forma{
         
             float r = Radio;
             float a = (float)Math.toRadians(Sector.extent)/2f;
-
-            float ix = ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
+            
+            float ix;
+            
+            if(Sector.extent != 90){
+                ix = ((r*r*r*r)/4)*(a-((float)Math.sin(2*a)/2));
+            }else{
+                ix = 0.05488f*r*r*r*r;
+            }
 
             float dy = (centroideX() + X) - Plano.centroideX();
 

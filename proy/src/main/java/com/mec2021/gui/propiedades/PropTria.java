@@ -210,7 +210,7 @@ public class PropTria extends PnPropiedades{
 
         LbArea.setText("Area:                      " + f.format(Tria.calcularArea()));
         LbCentX.setText("Centroide en x:     " + f.format(Tria.centroideX() + Tria.X));
-        LbCentY.setText("Centroide en Y:     " + f.format(-(Ctrl.aplicarEscalaLnPixU(ObjRef.getHeight()) - Tria.centroideY()) + Tria.Y));
+        LbCentY.setText("Centroide en Y:     " + f.format(-Tria.centroideY() - Tria.Y));
 
         LbInX.setText("Inercia en x:     " + f.format(Tria.inerciaCentEjeX()));
         LbInY.setText("Inercia en Y:     " + f.format(Tria.inerciaCentEjeY()));

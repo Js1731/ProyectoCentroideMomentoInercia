@@ -34,8 +34,6 @@ import javax.swing.SwingUtilities;
 import com.mec2021.plano.objetos.formas.Forma;
 import com.mec2021.plano.objetos.formas.FrTria;
 
-import javafx.scene.shape.Line;
-
 import com.mec2021.Ctrl;
 import com.mec2021.Main;
 import com.mec2021.EstructIndex.EstructuraInd;

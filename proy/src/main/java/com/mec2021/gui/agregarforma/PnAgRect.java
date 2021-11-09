@@ -14,8 +14,6 @@ import com.mec2021.Ctrl;
 import com.mec2021.gui.PnPlano;
 import com.mec2021.plano.objetos.formas.FrRect;
 
-import javafx.geometry.Pos;
-
 
 public class PnAgRect extends PnAgregarForma{
 

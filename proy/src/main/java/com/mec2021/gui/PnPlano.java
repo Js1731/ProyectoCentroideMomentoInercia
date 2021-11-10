@@ -34,12 +34,10 @@ import com.mec2021.plano.objetos.formas.FrCirc;
 import com.mec2021.plano.objetos.formas.FrRect;
 import com.mec2021.plano.objetos.formas.FrTria;
 
-import javafx.geometry.Pos;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
 /**Area de trabajo, aqui se colocan todas las formas */

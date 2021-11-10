@@ -118,8 +118,6 @@ public class PnAgCirc extends PnAgregarForma{
         float Radio = Float.parseFloat((TFRadio.getText().isEmpty() || TFRadio.getText().equals("-") || TFRadio.getText().equals("1")? "1" : TFRadio.getText()));
         
         int Ext = 0;
-        float Y = 0;
-        float X = 0;
         if(BtSel.equals(BtCirNorm)){
             Ext = 360;
             PosIni.x += -Radio;

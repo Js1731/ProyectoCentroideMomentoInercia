@@ -11,8 +11,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import com.mec2021.Ctrl;
-import com.mec2021.EstructIndex.EstructuraInd;
-import com.mec2021.EstructIndex.SeccionEI;
 import com.mec2021.gui.ListaOpciones;
 import com.mec2021.gui.Opcion;
 import com.mec2021.gui.PnPlano;

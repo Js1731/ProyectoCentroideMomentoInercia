@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JLayeredPane;
